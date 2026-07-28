@@ -15,11 +15,19 @@ Preferences and product decisions distilled from building/iterating the Monterey
 
 ## Schedule preferences
 
-- Prefer **Fri + Sun**
-- **Never Sat + Sun** (one weekend run max — usually Sunday long/race)
-- Default midweek: **Tue** (+ Fri + Sun)
-- Week 7 exception: **Tue + Wed** before fly, then Italy stop
-- Weeks are **Mon–Sun**; race is **Sunday Nov 8**
+- Prefer **Friday long** + **Sunday short** (easy / strides / race-pace practice)
+- **Never Sat + Sun**
+- Default midweek: **Tue**
+- Week 7 exception: **Tue + Wed** before Italy flight
+- Weeks are **Mon–Sun**; race is **Sunday Nov 8** (Fri that week = shakeout only)
+
+## Pace / speed (important)
+
+- Easy ~12:00/mi does **not** need to become race pace overnight — easy stays easy (Z2)
+- Sub-2 needs **short race-pace practice**, not mystery track speedwork
+- Progression: strides → 1-min RP reps → 3-min reps → continuous 2–3 mi @ RP
+- Quality lives on **Sunday** after Italy rebuild; Friday stays the long
+- Prior half ~10:23/mi; A-goal 9:09 is a stretch; B-goal ~9:55 is the more natural bridge
 
 ## Training philosophy (vs famous plans)
 
