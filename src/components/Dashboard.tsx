@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import type { CoachReport, SessionStatus, TrainingPlan, WeekStatus } from "@/lib/types";
 import { formatDuration, formatHalfShort, formatShortDate, paceToString, weekdayShort } from "@/lib/format";
 import { LogRunForm } from "@/components/LogRunForm";
@@ -87,11 +87,20 @@ function SessionRow({ s }: { s: SessionStatus }) {
   );
 }
 
-function WeekCard({ w, current }: { w: WeekStatus; current?: boolean }) {
+function WeekCard({
+  w,
+  current,
+  cardRef,
+}: {
+  w: WeekStatus;
+  current?: boolean;
+  cardRef?: (el: HTMLElement | null) => void;
+}) {
   const over = w.overTarget;
   const fill = Math.min(w.progressPct, 100);
   return (
     <article
+      ref={cardRef}
       className={`panel week-card ${current ? "week-card-current" : ""} ${over ? "week-over" : ""}`}
     >
       <h3>
@@ -125,6 +134,8 @@ export function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("plan");
   const [pending, startTransition] = useTransition();
+  const currentWeekEl = useRef<HTMLElement | null>(null);
+  const didScrollToWeek = useRef(false);
 
   const load = useCallback(() => {
     startTransition(async () => {
@@ -143,6 +154,14 @@ export function Dashboard() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (!data || tab !== "plan" || didScrollToWeek.current) return;
+    const el = currentWeekEl.current;
+    if (!el) return;
+    el.scrollIntoView({ behavior: "instant", inline: "start", block: "nearest" });
+    didScrollToWeek.current = true;
+  }, [data, tab]);
 
   if (error) {
     return (
@@ -179,6 +198,7 @@ export function Dashboard() {
           <p className="plan-label">Training plan · Quinn TV</p>
         </div>
         <div className="hero-goals">
+          <h2 className="goals-heading">Goals</h2>
           {pred.goals.map((g) => (
             <div key={g.label} className="goal-row">
               <span className="goal-name">
@@ -232,9 +252,23 @@ export function Dashboard() {
         <>
           <section className="weeks-scroll-wrap">
             <div className="weeks-scroll">
-              {weeks.map((w) => (
-                <WeekCard key={w.week.id} w={w} current={w.week.id === week?.week.id} />
-              ))}
+              {weeks.map((w) => {
+                const isCurrent = w.week.id === week?.week.id;
+                return (
+                  <WeekCard
+                    key={w.week.id}
+                    w={w}
+                    current={isCurrent}
+                    cardRef={
+                      isCurrent
+                        ? (el) => {
+                            currentWeekEl.current = el;
+                          }
+                        : undefined
+                    }
+                  />
+                );
+              })}
             </div>
           </section>
         </>

@@ -178,6 +178,13 @@ a {
   backdrop-filter: blur(10px);
 }
 
+.goals-heading {
+  margin: 0 0 0.15rem;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
 .goal-row {
   display: flex;
   justify-content: space-between;

@@ -4,7 +4,7 @@
     "goalTime": "1:59:59",
     "goalPaceSecPerMi": 549,
     "priorHalf": "2:15:56",
-    "notes": "Knee/calf history. True easy HR ~143 bpm; 150+ usually means surge/drift. Prefer consistency over aggressive pace early."
+    "notes": "Knee/calf history. True easy HR ~143 bpm; 150+ usually means surge/drift. Prefer Fri + Sun; never Sat+Sun. Consistency over aggressive pace early."
   },
   "race": {
     "name": "Monterey Bay Half",
@@ -57,7 +57,7 @@
         "label": "Z5"
       }
     },
-    "notes": "Easy in Z2 (139–152), true easy ~143. Race pace 9:05–9:15 from week 10+. Weeks Mon–Sun; race Sun Nov 8."
+    "notes": "Easy in Z2 (139–152), true easy ~143. Prefer Fri + Sun; never Sat+Sun. Race pace 9:05–9:15 from week 11+. Weeks Mon–Sun; race Sun Nov 8."
   },
   "weeks": [
     {
@@ -103,16 +103,16 @@
       "focus": "Leave Chicago + re-entry easy",
       "sessions": [
         {
-          "id": "w2-mon",
-          "date": "2026-08-03",
+          "id": "w2-tue",
+          "date": "2026-08-04",
           "type": "easy",
           "targetMi": 3.5,
           "optional": false,
-          "notes": "Chicago / travel easy"
+          "notes": "Chicago / re-entry easy"
         },
         {
-          "id": "w2-thu",
-          "date": "2026-08-06",
+          "id": "w2-fri",
+          "date": "2026-08-07",
           "type": "easy",
           "targetMi": 4,
           "optional": false
@@ -142,8 +142,8 @@
           "optional": false
         },
         {
-          "id": "w3-thu",
-          "date": "2026-08-13",
+          "id": "w3-fri",
+          "date": "2026-08-14",
           "type": "easy_strides",
           "targetMi": 4.5,
           "optional": false,
@@ -174,8 +174,8 @@
           "optional": false
         },
         {
-          "id": "w4-thu",
-          "date": "2026-08-20",
+          "id": "w4-fri",
+          "date": "2026-08-21",
           "type": "easy_strides",
           "targetMi": 5,
           "optional": false
@@ -205,18 +205,11 @@
           "optional": false
         },
         {
-          "id": "w5-thu",
-          "date": "2026-08-27",
+          "id": "w5-fri",
+          "date": "2026-08-28",
           "type": "easy_strides",
           "targetMi": 5,
           "optional": false
-        },
-        {
-          "id": "w5-sat",
-          "date": "2026-08-29",
-          "type": "easy",
-          "targetMi": 3.5,
-          "optional": true
         },
         {
           "id": "w5-sun",
@@ -231,9 +224,9 @@
       "id": 6,
       "start": "2026-08-31",
       "end": "2026-09-06",
-      "targetMi": 19,
+      "targetMi": 16,
       "phase": "build",
-      "focus": "Pre-Italy peak (capped — full zero week ahead)",
+      "focus": "Pre-Italy peak (capped — Fri/Sun pattern)",
       "sessions": [
         {
           "id": "w6-tue",
@@ -243,17 +236,10 @@
           "optional": false
         },
         {
-          "id": "w6-thu",
-          "date": "2026-09-03",
+          "id": "w6-fri",
+          "date": "2026-09-04",
           "type": "easy_strides",
           "targetMi": 5,
-          "optional": false
-        },
-        {
-          "id": "w6-sat",
-          "date": "2026-09-05",
-          "type": "easy",
-          "targetMi": 3,
           "optional": false
         },
         {
@@ -272,7 +258,7 @@
       "end": "2026-09-13",
       "targetMi": 9,
       "phase": "italy",
-      "focus": "Two easy runs Tue/Wed before fly — then travel",
+      "focus": "Tue + Wed easy before fly — then travel",
       "sessions": [
         {
           "id": "w7-tue",
@@ -310,8 +296,8 @@
       "focus": "Return week — ~50% of pre-Italy load, all easy",
       "sessions": [
         {
-          "id": "w9-wed",
-          "date": "2026-09-23",
+          "id": "w9-tue",
+          "date": "2026-09-22",
           "type": "easy",
           "targetMi": 2.5,
           "optional": false,
@@ -350,19 +336,12 @@
           "optional": false
         },
         {
-          "id": "w10-thu",
-          "date": "2026-10-01",
+          "id": "w10-fri",
+          "date": "2026-10-02",
           "type": "easy_strides",
           "targetMi": 4,
           "optional": false,
           "notes": "4–6 × 20s strides only"
-        },
-        {
-          "id": "w10-sat",
-          "date": "2026-10-03",
-          "type": "easy",
-          "targetMi": 3,
-          "optional": true
         },
         {
           "id": "w10-sun",
@@ -377,7 +356,7 @@
       "id": 11,
       "start": "2026-10-05",
       "end": "2026-10-11",
-      "targetMi": 17,
+      "targetMi": 14,
       "phase": "quality",
       "focus": "First light quality after rebuild",
       "sessions": [
@@ -389,19 +368,12 @@
           "optional": false
         },
         {
-          "id": "w11-thu",
-          "date": "2026-10-08",
+          "id": "w11-fri",
+          "date": "2026-10-09",
           "type": "quality",
           "targetMi": 4.5,
           "optional": false,
           "notes": "4 × 3 min @ ~9:20 w/ equal jog"
-        },
-        {
-          "id": "w11-sat",
-          "date": "2026-10-10",
-          "type": "easy",
-          "targetMi": 3,
-          "optional": false
         },
         {
           "id": "w11-sun",
@@ -416,7 +388,7 @@
       "id": 12,
       "start": "2026-10-12",
       "end": "2026-10-18",
-      "targetMi": 21,
+      "targetMi": 17,
       "phase": "quality",
       "focus": "Race-pace intro",
       "sessions": [
@@ -428,19 +400,12 @@
           "optional": false
         },
         {
-          "id": "w12-thu",
-          "date": "2026-10-15",
+          "id": "w12-fri",
+          "date": "2026-10-16",
           "type": "quality",
           "targetMi": 5.5,
           "optional": false,
           "notes": "3 mi continuous @ ~9:10–9:20"
-        },
-        {
-          "id": "w12-sat",
-          "date": "2026-10-17",
-          "type": "easy",
-          "targetMi": 3.5,
-          "optional": false
         },
         {
           "id": "w12-sun",
@@ -455,7 +420,7 @@
       "id": 13,
       "start": "2026-10-19",
       "end": "2026-10-25",
-      "targetMi": 23,
+      "targetMi": 19,
       "phase": "peak",
       "focus": "Peak week",
       "sessions": [
@@ -467,19 +432,12 @@
           "optional": false
         },
         {
-          "id": "w13-thu",
-          "date": "2026-10-22",
+          "id": "w13-fri",
+          "date": "2026-10-23",
           "type": "quality",
           "targetMi": 6,
           "optional": false,
           "notes": "4 mi @ ~9:10"
-        },
-        {
-          "id": "w13-sat",
-          "date": "2026-10-24",
-          "type": "easy",
-          "targetMi": 3.5,
-          "optional": false
         },
         {
           "id": "w13-sun",
@@ -496,7 +454,7 @@
       "end": "2026-11-01",
       "targetMi": 12,
       "phase": "taper",
-      "focus": "Taper — cut ~40%, one short race-pace touch",
+      "focus": "Taper — Fri/Sun only + one Tue easy",
       "sessions": [
         {
           "id": "w14-tue",
@@ -506,19 +464,12 @@
           "optional": false
         },
         {
-          "id": "w14-thu",
-          "date": "2026-10-29",
+          "id": "w14-fri",
+          "date": "2026-10-30",
           "type": "quality",
           "targetMi": 3.5,
           "optional": false,
           "notes": "1.5–2 mi @ race-pace feel, rest easy"
-        },
-        {
-          "id": "w14-sat",
-          "date": "2026-10-31",
-          "type": "easy",
-          "targetMi": 2.5,
-          "optional": true
         },
         {
           "id": "w14-sun",
@@ -534,33 +485,25 @@
       "id": 15,
       "start": "2026-11-02",
       "end": "2026-11-08",
-      "targetMi": 18,
+      "targetMi": 15,
       "phase": "race",
-      "focus": "Race-week taper — short easy midweek, freshen, race Sunday",
+      "focus": "Race-week taper — Fri shakeout only, rest Sat, race Sun",
       "sessions": [
         {
           "id": "w15-tue",
           "date": "2026-11-03",
           "type": "easy",
-          "targetMi": 3,
-          "optional": false,
-          "notes": "Easy Z2 only"
-        },
-        {
-          "id": "w15-thu",
-          "date": "2026-11-05",
-          "type": "easy_strides",
-          "targetMi": 2.5,
-          "optional": false,
-          "notes": "4–6 × 20s strides"
-        },
-        {
-          "id": "w15-sat",
-          "date": "2026-11-07",
-          "type": "easy",
-          "targetMi": 1.5,
+          "targetMi": 2,
           "optional": true,
-          "notes": "Optional shakeout or rest"
+          "notes": "Optional very easy · or rest"
+        },
+        {
+          "id": "w15-fri",
+          "date": "2026-11-06",
+          "type": "easy_strides",
+          "targetMi": 2,
+          "optional": false,
+          "notes": "Shakeout + 4×20s strides · Z2"
         },
         {
           "id": "w15-race",
