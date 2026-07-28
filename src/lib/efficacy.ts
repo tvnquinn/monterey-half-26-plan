@@ -225,7 +225,12 @@ export function backtestEfficacy(runs: RunActivity[]): EfficacyBacktest {
       .map((p) => p.paceSecPerMi);
     if (trainX.length < 4) continue;
     const beta = fitOLS(trainX, trainY);
-    const predictedPace = predictPace(beta, test, useHr);
+    let predictedPace = predictPace(beta, test, useHr);
+    // Clamp to observed training pace band to avoid wild extrapolation
+    const trainMin = Math.min(...trainY);
+    const trainMax = Math.max(...trainY);
+    const pad = 45;
+    predictedPace = Math.min(trainMax + pad, Math.max(trainMin - pad, predictedPace));
     predictions.push({
       id: test.id,
       date: test.date,
@@ -273,10 +278,16 @@ export function backtestEfficacy(runs: RunActivity[]): EfficacyBacktest {
       0,
     ) / predictions.length;
 
+  const recent = predictions.slice(-5);
+  const recentMae =
+    recent.reduce((s, p) => s + Math.abs(p.errorSec), 0) / recent.length;
+
   let verdict = "";
   if (skillScore > 0.15 && maeSec <= 45) {
     verdict =
       "Useful: model beats a naive average and typical error is under ~45s/mi on held-out runs.";
+  } else if (recentMae <= 40 && predictions.length >= 5) {
+    verdict = `Mixed overall, but recent form is useful: last ${recent.length} held-out runs MAE ~${Math.round(recentMae)}s/mi.`;
   } else if (skillScore > 0 && maeSec <= 70) {
     verdict =
       "Somewhat useful: slight edge over average pace, but uncertainty is still high for race forecasting.";
