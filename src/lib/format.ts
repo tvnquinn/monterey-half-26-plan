@@ -31,6 +31,14 @@ export function formatDuration(totalSec: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+/** Half marathon clock as h:mm (drops seconds). */
+export function formatHalfShort(totalSec: number): string {
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.round((totalSec % 3600) / 60);
+  if (m === 60) return `${h + 1}:00`;
+  return `${h}:${String(m).padStart(2, "0")}`;
+}
+
 export function metersToMiles(meters: number): number {
   return meters / 1609.344;
 }

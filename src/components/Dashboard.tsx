@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import type { CoachReport, SessionStatus, TrainingPlan, WeekStatus } from "@/lib/types";
-import { formatDuration, paceToString, weekdayShort } from "@/lib/format";
+import { formatDuration, formatHalfShort, paceToString, weekdayShort } from "@/lib/format";
 import { LogRunForm } from "@/components/LogRunForm";
 import { HealthUpload } from "@/components/HealthUpload";
 import { ScreenshotRunUpload } from "@/components/ScreenshotRunUpload";
 
-type Tab = "plan" | "log" | "recent" | "backtest";
+type Tab = "plan" | "summary" | "log" | "recent" | "backtest";
 
 interface CoachPayload {
   plan: TrainingPlan;
@@ -35,6 +35,12 @@ function statusLabel(status: string) {
     default:
       return status;
   }
+}
+
+function formatDeltaMin(delta: number | null): string {
+  if (delta == null) return "—";
+  if (delta === 0) return "±0 min";
+  return `${delta > 0 ? "+" : ""}${delta} min`;
 }
 
 function SessionRow({ s }: { s: SessionStatus }) {
@@ -83,7 +89,7 @@ function SessionRow({ s }: { s: SessionStatus }) {
 
 function WeekCard({ w, current }: { w: WeekStatus; current?: boolean }) {
   const over = w.overTarget;
-  const fill = Math.min(w.progressPct, over ? 100 : 100);
+  const fill = Math.min(w.progressPct, 100);
   return (
     <article
       className={`panel week-card ${current ? "week-card-current" : ""} ${over ? "week-over" : ""}`}
@@ -99,7 +105,7 @@ function WeekCard({ w, current }: { w: WeekStatus; current?: boolean }) {
         {over ? " · over" : ""}
       </p>
       <div className={`meter ${over ? "meter-over" : ""}`}>
-        <div className="meter-fill" style={{ width: `${Math.min(fill, 100)}%` }} />
+        <div className="meter-fill" style={{ width: `${fill}%` }} />
       </div>
       {w.sessions.length === 0 ? (
         <p className="muted week-focus">No runs planned</p>
@@ -156,6 +162,7 @@ export function Dashboard() {
 
   const { plan, report } = data;
   const pg = report.paceGuidance;
+  const pred = report.predictions;
   const week = report.currentWeek;
   const weeks = report.upcomingWeeks.length
     ? report.upcomingWeeks
@@ -163,29 +170,42 @@ export function Dashboard() {
       ? [week]
       : [];
   const zones = plan.paceGuidance.hrZones;
+  const estDelta =
+    pred.deltaMinVsPrevEst != null ? pred.deltaMinVsPrevEst : pred.deltaMinVsPrior;
 
   return (
     <div className="shell">
       <header className="hero hero-compact">
         <div className="hero-copy">
-          <p className="eyebrow">Monterey · Nov 8</p>
-          <h1 className="brand">SUB-2</h1>
+          <h1 className="brand brand-title">Monterey Bay Half</h1>
+          <p className="plan-label">Training plan · Nov 8</p>
         </div>
-        <div className="hero-stats">
-          <div>
-            <span className="stat-label">Days</span>
-            <strong>{report.daysToRace}</strong>
-          </div>
-          <div>
-            <span className="stat-label">Odds</span>
-            <strong>{report.sub2OddsBand}</strong>
-          </div>
-          <div>
-            <span className="stat-label">Est</span>
-            <strong>
-              {pg.estimatedHalfSec ? formatDuration(pg.estimatedHalfSec) : "—"}
+        <div className="hero-goals">
+          {pred.goals.map((g) => (
+            <div key={g.label} className="goal-row">
+              <span className="goal-name">
+                {g.label} · {g.timeLabel}
+              </span>
+              <strong>{g.pct}%</strong>
+            </div>
+          ))}
+          <div className="goal-row goal-est">
+            <span className="goal-name">
+              Est ·{" "}
+              {pred.estimatedHalfSec ? formatHalfShort(pred.estimatedHalfSec) : "—"}
+            </span>
+            <strong className={estDelta != null && estDelta < 0 ? "delta-good" : ""}>
+              {formatDeltaMin(estDelta)}
             </strong>
           </div>
+          <p className="muted small goal-footnote">
+            {report.daysToRace}d · prior {pred.priorHalfLabel}
+            {pred.deltaMinVsPrevEst != null
+              ? " · Δ vs last log"
+              : pred.deltaMinVsPrior != null
+                ? " · Δ vs prior half"
+                : ""}
+          </p>
         </div>
       </header>
 
@@ -193,6 +213,7 @@ export function Dashboard() {
         {(
           [
             ["plan", "This week"],
+            ["summary", "Summary"],
             ["log", "Log"],
             ["recent", "Recent"],
             ["backtest", "Backtest"],
@@ -262,41 +283,47 @@ export function Dashboard() {
               })}
             </ul>
           </section>
-
-          <section className="panel">
-            <h2>Mileage</h2>
-            <ul className="mileage-list">
-              {report.weeklyMileage.map((w) => {
-                const pct =
-                  w.targetMi <= 0
-                    ? w.loggedMi > 0
-                      ? 100
-                      : 0
-                    : Math.min(140, (w.loggedMi / w.targetMi) * 100);
-                const over = w.targetMi > 0 && w.loggedMi > w.targetMi;
-                return (
-                  <li key={w.weekId}>
-                    <div className="mileage-row">
-                      <span>
-                        W{w.weekId} · {w.start.slice(5)}
-                      </span>
-                      <span>
-                        {w.loggedMi.toFixed(1)} / {w.targetMi}
-                        {over ? " · over" : ""}
-                      </span>
-                    </div>
-                    <div className={`meter thin ${over ? "meter-over" : ""}`}>
-                      <div
-                        className="meter-fill"
-                        style={{ width: `${Math.min(pct, 100)}%` }}
-                      />
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
         </>
+      ) : null}
+
+      {tab === "summary" ? (
+        <section className="panel">
+          <h2>Summary</h2>
+          <p className={`narrative narrative-${report.mileageNarrative.status}`}>
+            <strong>{report.mileageNarrative.headline}</strong>
+            <span className="muted">{report.mileageNarrative.detail}</span>
+          </p>
+          <ul className="mileage-list">
+            {report.weeklyMileage.map((w) => {
+              const pct =
+                w.targetMi <= 0
+                  ? w.loggedMi > 0
+                    ? 100
+                    : 0
+                  : Math.min(140, (w.loggedMi / w.targetMi) * 100);
+              const over = w.targetMi > 0 && w.loggedMi > w.targetMi;
+              return (
+                <li key={w.weekId}>
+                  <div className="mileage-row">
+                    <span>
+                      W{w.weekId} · {w.start.slice(5)}
+                    </span>
+                    <span>
+                      {w.loggedMi.toFixed(1)} / {w.targetMi}
+                      {over ? " · over" : ""}
+                    </span>
+                  </div>
+                  <div className={`meter thin ${over ? "meter-over" : ""}`}>
+                    <div
+                      className="meter-fill"
+                      style={{ width: `${Math.min(pct, 100)}%` }}
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       ) : null}
 
       {tab === "log" ? (
@@ -305,7 +332,7 @@ export function Dashboard() {
           <ol className="howto">
             <li>Finish the run (Watch / Strava / Fitness).</li>
             <li>Add it here via screenshot, Health file, or manual entry.</li>
-            <li>Odds, pace, and weekly progress update from what’s logged.</li>
+            <li>A/B/C odds and Est update from what’s logged.</li>
           </ol>
 
           <h2 className="subhead">Screenshots</h2>

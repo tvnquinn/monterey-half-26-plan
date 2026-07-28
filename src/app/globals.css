@@ -87,7 +87,7 @@ a {
   }
 
   .hero-compact .brand {
-    font-size: clamp(3rem, 8vw, 4.5rem);
+    font-size: clamp(1.55rem, 6.2vw, 2.35rem);
   }
 }
 
@@ -137,6 +137,97 @@ a {
   letter-spacing: -0.04em;
   color: var(--accent);
   text-shadow: 0 0 40px rgba(200, 245, 66, 0.15);
+}
+
+.brand-title {
+  font-size: clamp(1.55rem, 6.2vw, 2.35rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: none;
+}
+
+.plan-label {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero-goals {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.goal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.goal-name {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.goal-row strong {
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.goal-est {
+  margin-top: 0.25rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--line);
+}
+
+.delta-good {
+  color: var(--ok);
+}
+
+.goal-footnote {
+  margin: 0.15rem 0 0;
+}
+
+.narrative {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0 0 1rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.narrative strong {
+  font-size: 1.05rem;
+}
+
+.narrative-ahead {
+  border-color: rgba(143, 214, 148, 0.45);
+}
+
+.narrative-on_track {
+  border-color: rgba(125, 211, 192, 0.4);
+}
+
+.narrative-behind {
+  border-color: rgba(255, 209, 102, 0.45);
+}
+
+.narrative-rest {
+  border-color: rgba(238, 245, 239, 0.2);
 }
 
 .lede {
@@ -744,7 +835,7 @@ a {
     text-align: left;
   }
 
-  .brand {
-    font-size: clamp(3.4rem, 22vw, 5rem);
+  .brand-title {
+    font-size: clamp(1.35rem, 7vw, 1.75rem);
   }
 }

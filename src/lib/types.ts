@@ -155,6 +155,28 @@ export interface PaceGuidanceLive {
   rationale: string[];
 }
 
+export interface GoalOdds {
+  label: "A" | "B" | "C";
+  timeLabel: string;
+  timeSec: number;
+  pct: number;
+}
+
+export interface PredictionSummary {
+  goals: GoalOdds[];
+  estimatedHalfSec: number | null;
+  deltaMinVsPrevEst: number | null;
+  deltaMinVsPrior: number | null;
+  priorHalfSec: number;
+  priorHalfLabel: string;
+}
+
+export interface MileageNarrative {
+  status: "ahead" | "on_track" | "behind" | "rest";
+  headline: string;
+  detail: string;
+}
+
 export interface CoachReport {
   asOf: string;
   daysToRace: number;
@@ -164,7 +186,10 @@ export interface CoachReport {
   weeklyMileage: { weekId: number; start: string; loggedMi: number; targetMi: number }[];
   paceGuidance: PaceGuidanceLive;
   recommendations: Recommendation[];
+  /** @deprecated use predictions.goals */
   sub2OddsBand: string;
+  predictions: PredictionSummary;
+  mileageNarrative: MileageNarrative;
   summary: string;
   efficacy: EfficacyBacktestSummary;
 }

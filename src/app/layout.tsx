@@ -15,9 +15,9 @@ const body = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "SUB-2 · Half Marathon Coach",
+  title: "Monterey Bay Half · Training Plan",
   description:
-    "Strava-powered half marathon trainer with adaptive pace guidance and plan recommendations.",
+    "Monterey Bay Half training plan with adaptive A/B/C goal odds and weekly mileage tracking.",
 };
 
 export default function RootLayout({

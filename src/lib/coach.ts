@@ -4,6 +4,7 @@ import { buildWeekStatus, runsInRange } from "./matching";
 import { backtestEfficacy } from "./efficacy";
 import { attachPaceRecsToWeek } from "./pace-recs";
 import { dedupeRuns } from "./dedupe-runs";
+import { buildMileageNarrative, buildPredictionSummary } from "./predictions";
 import type {
   CoachReport,
   PaceGuidanceLive,
@@ -141,6 +142,30 @@ export function buildCoachReport(
   }
   if (mi14 < 12) sub2OddsBand = "15–25%";
 
+  const predictions = buildPredictionSummary({
+    plan,
+    runs,
+    pace: paceGuidance,
+    weeklyMi: recentWeeklyMi,
+    mi14,
+  });
+  if (predictions.goals[0]) {
+    sub2OddsBand = `${predictions.goals[0].pct}%`;
+  }
+
+  const weeklyMileage = weekStatuses.map((w) => ({
+    weekId: w.week.id,
+    start: w.week.start,
+    loggedMi: w.loggedMi,
+    targetMi: w.targetMi,
+  }));
+
+  const mileageNarrative = buildMileageNarrative({
+    weeklyMileage,
+    currentWeekId: current?.week.id ?? null,
+    asOf,
+  });
+
   const summary = current
     ? `Week ${current.week.id}: ${current.loggedMi.toFixed(1)} / ${current.targetMi} mi. ${current.week.focus}`
     : "Outside planned weeks.";
@@ -171,15 +196,12 @@ export function buildCoachReport(
     currentWeek: current,
     upcomingWeeks,
     recentRuns: runs.slice(0, 12),
-    weeklyMileage: weekStatuses.map((w) => ({
-      weekId: w.week.id,
-      start: w.week.start,
-      loggedMi: w.loggedMi,
-      targetMi: w.targetMi,
-    })),
+    weeklyMileage,
     paceGuidance,
     recommendations,
     sub2OddsBand,
+    predictions,
+    mileageNarrative,
     summary,
     efficacy,
   };
