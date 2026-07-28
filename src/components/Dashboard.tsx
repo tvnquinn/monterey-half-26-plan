@@ -5,6 +5,7 @@ import type { CoachReport, RunActivity, TrainingPlan } from "@/lib/types";
 import { formatDuration, paceToString } from "@/lib/format";
 import { LogRunForm } from "@/components/LogRunForm";
 import { HealthUpload } from "@/components/HealthUpload";
+import { ScreenshotRunUpload } from "@/components/ScreenshotRunUpload";
 
 interface CoachPayload {
   plan: TrainingPlan;
@@ -118,7 +119,7 @@ export function Dashboard() {
           </p>
           <div className="cta-row animate-fade delay-2">
             <a className="btn primary" href="#log-run">
-              Log a run
+              Log from screenshots
             </a>
             <button
               type="button"
@@ -155,13 +156,15 @@ export function Dashboard() {
       <p className="summary">{report.summary}</p>
 
       <section className="panel" id="log-run">
-        <h2>Import from Apple Health</h2>
+        <h2>Log from Strava screenshots</h2>
+        <ScreenshotRunUpload onSaved={load} />
+
+        <h2 className="subhead">Import Apple Health files</h2>
         <p className="muted log-help">
-          Upload the JSON files from <strong>iCloud Drive → AutoExport → Autosync</strong>
-          (last 90 days). Or configure Health Auto Export REST API to POST to{" "}
-          <code>/api/health/ingest</code> for automatic updates.
+          Upload AutoExport <strong>JSON or GPX</strong> from iCloud for backfill.
         </p>
         <HealthUpload onImported={load} />
+
         <h2 className="subhead">Or log one run manually</h2>
         <LogRunForm onLogged={load} />
       </section>

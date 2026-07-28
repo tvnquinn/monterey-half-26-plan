@@ -497,6 +497,15 @@ a {
   font-size: 0.9rem;
 }
 
+.shot-box {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.shot-grid {
+  margin-top: 0.35rem;
+}
+
 .muted {
   color: var(--muted);
 }
