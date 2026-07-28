@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { convertHaePayload } from "@/lib/hae";
+import { convertGpxFiles } from "@/lib/gpx";
 import { upsertRuns } from "@/lib/storage";
+import type { RunActivity } from "@/lib/types";
 
 function unauthorized() {
   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -8,7 +10,7 @@ function unauthorized() {
 
 function checkAuth(req: NextRequest): boolean {
   const expected = process.env.HEALTH_INGEST_TOKEN;
-  if (!expected) return true; // open during setup; set token later
+  if (!expected) return true;
   const header =
     req.headers.get("x-api-key") ||
     req.headers.get("api-key") ||
@@ -21,27 +23,38 @@ export async function POST(req: NextRequest) {
     if (!checkAuth(req)) return unauthorized();
 
     const contentType = req.headers.get("content-type") || "";
-    let payload: unknown;
+    let runs: RunActivity[] = [];
 
     if (contentType.includes("multipart/form-data")) {
       const form = await req.formData();
-      const file = form.get("file");
-      if (!(file instanceof File)) {
+      const files = form.getAll("file").filter((f): f is File => f instanceof File);
+      if (!files.length) {
         return NextResponse.json({ error: "Expected file field" }, { status: 400 });
       }
-      const text = await file.text();
-      payload = JSON.parse(text);
+
+      const gpxFiles: { name: string; text: string }[] = [];
+      for (const file of files) {
+        const text = await file.text();
+        const lower = file.name.toLowerCase();
+        if (lower.endsWith(".gpx") || text.trimStart().startsWith("<?xml") || text.includes("<gpx")) {
+          gpxFiles.push({ name: file.name, text });
+        } else {
+          runs.push(...convertHaePayload(JSON.parse(text)));
+        }
+      }
+      if (gpxFiles.length) {
+        runs.push(...convertGpxFiles(gpxFiles));
+      }
     } else {
-      payload = await req.json();
+      const payload = await req.json();
+      runs = convertHaePayload(payload);
     }
 
-    const runs = convertHaePayload(payload);
     if (runs.length === 0) {
       return NextResponse.json({
         imported: 0,
-        total: (await upsertRuns([])).length,
         message:
-          "No running workouts found in payload. Make sure the export includes Workouts (Outdoor/Indoor Run).",
+          "No running workouts found. Upload Health Auto Export workout JSON or Outdoor Run GPX files.",
       });
     }
 
