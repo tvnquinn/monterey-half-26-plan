@@ -1,6 +1,12 @@
-export function paceToString(secPerMi: number): string {
+/** Round pace to nearest N seconds to avoid false precision. */
+export function roundPaceSec(secPerMi: number, nearest = 10): number {
+  if (!Number.isFinite(secPerMi) || secPerMi <= 0) return 0;
+  return Math.round(secPerMi / nearest) * nearest;
+}
+
+export function paceToString(secPerMi: number, roundTo = 0): string {
   if (!Number.isFinite(secPerMi) || secPerMi <= 0) return "—";
-  const total = Math.round(secPerMi);
+  const total = roundTo > 0 ? roundPaceSec(secPerMi, roundTo) : Math.round(secPerMi);
   const m = Math.floor(total / 60);
   const s = total % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
@@ -67,6 +73,13 @@ export function estimateHalfFromRecent(
   bestRecentPaceSecPerMi: number | null,
   weeklyMi: number,
   longestRecentMi: number,
+  opts?: {
+    /** Month 1–12 of as-of date — summer heat slows training paces. */
+    month?: number;
+    /** Typical training elev ft/mi; race course elev for credit. */
+    trainingElevFtPerMi?: number;
+    raceElevFtPerMi?: number;
+  },
 ): number | null {
   if (!bestRecentPaceSecPerMi) return null;
   // Conservative: easy/training paces are slower than race. Use a mild conversion.
@@ -75,5 +88,20 @@ export function estimateHalfFromRecent(
   if (weeklyMi >= 22) racePace *= 0.98;
   if (longestRecentMi < 8) racePace *= 1.04;
   if (longestRecentMi >= 10) racePace *= 0.99;
+
+  // Crude heat: summer training (Jul–Sep) understates cool-race fitness (~+2s/mi per °F over 60 ≈ ~15–25s)
+  const month = opts?.month;
+  if (month != null && month >= 7 && month <= 9) {
+    racePace -= 18; // credit cooler November race vs summer heat
+  } else if (month === 10) {
+    racePace -= 8;
+  }
+
+  // Flat race vs hilly training: ~0.25s per ft/mi difference
+  const trainElev = opts?.trainingElevFtPerMi ?? 40;
+  const raceElev = opts?.raceElevFtPerMi ?? 0;
+  const elevDelta = Math.max(0, trainElev - raceElev);
+  racePace -= elevDelta * 0.25;
+
   return Math.round(racePace * 13.1);
 }

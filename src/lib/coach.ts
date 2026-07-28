@@ -1,6 +1,6 @@
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { estimateHalfFromRecent } from "./format";
-import { buildWeekStatus, runsInRange } from "./matching";
+import { buildWeekStatus, markNextSession, runsInRange } from "./matching";
 import { backtestEfficacy } from "./efficacy";
 import { attachPaceRecsToWeek } from "./pace-recs";
 import { dedupeRuns } from "./dedupe-runs";
@@ -59,6 +59,11 @@ function buildPaceGuidance(
     bestRecent,
     recentWeeklyMi,
     longestRecent,
+    {
+      month: new Date().getMonth() + 1,
+      trainingElevFtPerMi: 40,
+      raceElevFtPerMi: plan.race.elevationFtPerMi ?? 0,
+    },
   );
 
   let confidence: PaceGuidanceLive["confidence"] = "low";
@@ -156,7 +161,7 @@ export function buildCoachReport(
 
   const weeklyMileage = weekStatuses.map((w) => {
     const longSession = [...w.week.sessions]
-      .filter((s) => s.type === "long" || s.type === "race")
+      .filter((s) => s.type === "long")
       .sort((a, b) => b.targetMi - a.targetMi)[0];
     return {
       weekId: w.week.id,
@@ -173,6 +178,12 @@ export function buildCoachReport(
     currentWeekId: current?.week.id ?? null,
     asOf,
   });
+
+  const nextSession = markNextSession(upcomingWeeks);
+  if (current) {
+    const withNext = upcomingWeeks.find((w) => w.week.id === current.week.id);
+    if (withNext) current.sessions = withNext.sessions;
+  }
 
   const summary = current
     ? `Week ${current.week.id}: ${current.loggedMi.toFixed(1)} / ${current.targetMi} mi. ${current.week.focus}`
@@ -212,6 +223,7 @@ export function buildCoachReport(
     mileageNarrative,
     summary,
     efficacy,
+    nextSession,
   };
 }
 
@@ -247,7 +259,7 @@ function buildRecommendations(
       priority: "critical",
       title: "No running this week",
       detail: "Full Italy stop — planned zero miles.",
-      action: "Walk / rest only. Rebuild starts Sep 22.",
+      action: "Walk / rest only. First run back Wed Sep 23.",
       planChange: { type: "hold_mileage", weekId: 8 },
     });
   } else if (key >= plan.constraints.italy.start && key <= plan.constraints.italy.end) {

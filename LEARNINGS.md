@@ -5,38 +5,40 @@ Preferences and product decisions distilled from building/iterating the Monterey
 ## Athlete & constraints
 
 - **Athlete:** Quinn TV · race **Monterey Bay Half · 11/8/2026**
-- **A / B / C goals:** `2:00` / `2:10` / `2:30` (C is finish-strong, not prior half)
-- **Prior half:** `2:15:56` → treat as **~2:16**
+- **Design target = B `2:10` (~9:55/mi)**; A `2:00` is stretch; C `2:30` finish-strong
+- **Prior half:** `2:15:56` → treat as **~2:16** (~10:23/mi)
 - **True easy HR ~143 bpm**; 150+ usually surge/drift
 - **HR zones (estimated):** Z1 ≤138 · Z2 139–152 · Z3 153–165 · Z4 166–179 · Z5 180+
 - **Injury history:** knee / calf → protect easy days; don’t stack aggressive early quality
-- **Travel:** Chicago late Jul/early Aug (max ~2 easy runs) · Italy **Sep 10–22** with **full zero week of Sep 14**
+- **Travel:** Chicago late Jul/early Aug (max ~2 easy runs) · Italy **Sep 10–22** with **full zero week of Sep 14**; first run back **Wed Sep 23** (not on trip end day)
 - Can run **Wed before Italy flight**; avoid packing runs onto travel day
 
 ## Schedule preferences
 
-- Prefer **Friday long** + **Sunday short** (easy / strides / race-pace practice)
+- Prefer **Friday long** + **Sunday short** (easy / strides / threshold / B-pace)
 - **Never Sat + Sun**
-- Default midweek: **Tue**
-- Week 7 exception: **Tue + Wed** before Italy flight
-- Weeks are **Mon–Sun**; race is **Sunday Nov 8** (Fri that week = shakeout only)
+- Default midweek: **Tue + Wed short 4th day** (~3 mi easy, or bike/elliptical if knee talks)
+- **Strength 2×/week** (15 min: single-leg calf raises, hip abduction, step-downs) on non-run days
+- Week 7 exception: **Tue + Wed** before Italy flight (no 4th day into travel)
+- Weeks are **Mon–Sun**; race is **Sunday Nov 8** (Wed sharpen + Fri shakeout)
 
 ## Pace / speed (important)
 
-- Easy ~12:00/mi does **not** need to become race pace overnight — easy stays easy (Z2)
-- Sub-2 needs **short race-pace practice**, not mystery track speedwork
-- Progression: strides → 1-min RP reps → 3-min reps → continuous 2–3 mi @ RP
+- Easy ~12:00–12:40/mi does **not** need to become race pace overnight — easy stays easy (Z2)
+- Quality workouts anchor to **B-pace ~9:45–10:00**, not A 9:09 (that’s threshold/VO2 for current fitness)
+- Progression: strides → threshold Sundays alternating with B-pace practice → continuous B-pace miles
+- Threshold = “comfortably hard, could hold ~1 hr” (2×8–10 min)
 - Quality lives on **Sunday** after Italy rebuild; Friday stays the long
-- Prior half ~10:23/mi; A-goal 9:09 is a stretch; B-goal ~9:55 is the more natural bridge
+- Summer heat understates fitness vs cool Nov race; Monterey is flat — model credits both
 
 ## Training philosophy (vs famous plans)
 
 - **Closest famous plan:** Hal Higdon **Intermediate 1** half (long ladder to **10**, late quality, 2-week taper)
-- Volume is still a bit under classic Int 1 peak (~25–30 mpw) because of **3 days/week** + Italy zero → feels like **Novice 2 → light Intermediate 1**
-- Not Hansons / Pfitz denser midweek mileage
+- **4 run days/week** keeps long-run share nearer ~35–42% (3 days pushed longs to 45–48%)
+- Rebuild after Italy: **13 → 16 → 19 → 16 cutback → 22 peak** (no five-week grind)
+- Weekly `targetMi` is derived from non-optional non-race sessions; race week bar = training only
 - Easy intensity is more **Daniels / 80-20 / Z2** than classic Higdon pace charts
-- Peak long **10 mi** (Higdon Int 1 style); don’t leave peak long at 8
-- Italy zero requires softer neighbors: capped pre-Italy week, gradual rebuild after (no jump straight into quality)
+- Peak long **10 mi**; Italy zero requires softer neighbors
 
 ## Plan / coaching rules that stuck
 
@@ -91,9 +93,14 @@ Preferences and product decisions distilled from building/iterating the Monterey
 4. Separate recommendation cards + wordy collapsed text created noise
 5. Sat + Sun doubles conflicted with how Quinn actually trains
 6. Peak long at 8 was too soft vs Higdon Intermediate 1 expectations
+7. Hand-authored `targetMi` drifted from session sums → progress capped ~97%
+8. Quality paced at A-goal when fitness is ~10:20 — injury bait; design around B
+9. 3 days/week forced long runs to 43–48% of weekly volume
+10. Italy end date + first rebuild run on same day (off-by-one)
 
 ## Open / optional later
 
 - Health Auto Export auto-push if wanted
 - Gemini/OpenAI key for screenshot logging
-- If fitness rises post-Italy, consider a fourth weekday only if recovery stays clean — default stays 3 days
+- Weather API instead of month heuristic for heat adjustment
+- If fitness rises, tighten B-pace band toward A only when earned

@@ -93,7 +93,11 @@ function estimateFromRuns(
       .map((r) => r.paceSecPerMi)
       .sort((a, b) => a - b)[0] ?? null;
   const longestRecent = last28.reduce((m, r) => Math.max(m, r.distanceMi), 0);
-  return estimateHalfFromRecent(bestRecent, weeklyMi, longestRecent);
+  return estimateHalfFromRecent(bestRecent, weeklyMi, longestRecent, {
+    month: new Date().getMonth() + 1,
+    trainingElevFtPerMi: 40,
+    raceElevFtPerMi: plan.race.elevationFtPerMi ?? 0,
+  });
 }
 
 export function buildPredictionSummary(args: {
