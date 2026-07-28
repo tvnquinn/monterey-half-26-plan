@@ -1,4 +1,5 @@
 import { paceToString, roundPaceSec } from "./format";
+import { monthOf } from "./dates";
 import { buildEfficacyPoints, fitPaceModel, type PaceModel } from "./efficacy";
 import type {
   PaceGuidanceLive,
@@ -132,29 +133,28 @@ export function buildSessionPaceRec(args: {
   let easyExpected = (guidance.easyMinSecPerMi + guidance.easyMaxSecPerMi) / 2;
 
   if (model && session.targetMi > 0) {
+    // asOf, not Date.now() — otherwise the backtest can't time-travel.
+    const milesWithin = (days: number) =>
+      runs
+        .filter((r) => {
+          const d = (args.asOf.getTime() - new Date(r.startDate).getTime()) / 86400000;
+          return d >= 0 && d <= days;
+        })
+        .reduce((s, r) => s + r.distanceMi, 0);
+
     const predicted = model.predict({
       distanceMi: session.targetMi,
       elevationFt: expectedElev,
       averageHeartrate: easyHr,
       daysSincePrev: 2,
-      miles7d: runs
-        .filter((r) => {
-          const d = (Date.now() - new Date(r.startDate).getTime()) / 86400000;
-          return d >= 0 && d <= 7;
-        })
-        .reduce((s, r) => s + r.distanceMi, 0),
-      miles14d: runs
-        .filter((r) => {
-          const d = (Date.now() - new Date(r.startDate).getTime()) / 86400000;
-          return d >= 0 && d <= 14;
-        })
-        .reduce((s, r) => s + r.distanceMi, 0),
+      miles7d: milesWithin(7),
+      miles14d: milesWithin(14),
     });
     if (predicted) easyExpected = predicted;
   }
 
   // Summer heat: training paces are slower than cool-race fitness — widen easy band slightly
-  const month = args.asOf.getMonth() + 1;
+  const month = monthOf(args.asOf, plan.athlete.timeZone);
   if (month >= 7 && month <= 9 && (session.type === "easy" || session.type === "long" || session.type === "easy_strides")) {
     easyExpected += 15;
   }
@@ -197,7 +197,8 @@ export function buildSessionPaceRec(args: {
     hrTarget: zone.hrTarget,
     hrZoneLabel: zone.label,
     hrZoneRange: zone.range,
-    rationale: `${zone.label} ${zone.range} bpm · ${paceToString(minSec)}–${paceToString(maxSec)}`,
+    // Rows show a single target pace; the band stays available for tooltips.
+    rationale: `${paceToString(roundPaceSec(target, 10))}/mi · ${zone.label} ${zone.range}`,
   };
 }
 

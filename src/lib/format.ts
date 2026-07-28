@@ -69,39 +69,7 @@ export function mpsToPaceSecPerMi(mps: number): number {
   return 1609.344 / mps;
 }
 
-export function estimateHalfFromRecent(
-  bestRecentPaceSecPerMi: number | null,
-  weeklyMi: number,
-  longestRecentMi: number,
-  opts?: {
-    /** Month 1–12 of as-of date — summer heat slows training paces. */
-    month?: number;
-    /** Typical training elev ft/mi; race course elev for credit. */
-    trainingElevFtPerMi?: number;
-    raceElevFtPerMi?: number;
-  },
-): number | null {
-  if (!bestRecentPaceSecPerMi) return null;
-  // Conservative: easy/training paces are slower than race. Use a mild conversion.
-  let racePace = bestRecentPaceSecPerMi * 0.78;
-  if (weeklyMi < 15) racePace *= 1.06;
-  if (weeklyMi >= 22) racePace *= 0.98;
-  if (longestRecentMi < 8) racePace *= 1.04;
-  if (longestRecentMi >= 10) racePace *= 0.99;
-
-  // Crude heat: summer training (Jul–Sep) understates cool-race fitness (~+2s/mi per °F over 60 ≈ ~15–25s)
-  const month = opts?.month;
-  if (month != null && month >= 7 && month <= 9) {
-    racePace -= 18; // credit cooler November race vs summer heat
-  } else if (month === 10) {
-    racePace -= 8;
-  }
-
-  // Flat race vs hilly training: ~0.25s per ft/mi difference
-  const trainElev = opts?.trainingElevFtPerMi ?? 40;
-  const raceElev = opts?.raceElevFtPerMi ?? 0;
-  const elevDelta = Math.max(0, trainElev - raceElev);
-  racePace -= elevDelta * 0.25;
-
-  return Math.round(racePace * 13.1);
-}
+// estimateHalfFromRecent lived here. It multiplied the single fastest run in
+// 28 days by a flat 0.78, so one downhill Tuesday moved the race projection by
+// minutes. Replaced by estimateHalf() in ./fitness, which anchors on the prior
+// half and moves it with the efficiency-factor trend.

@@ -1,4 +1,4 @@
-import { differenceInCalendarDays, parseISO, formatISO, startOfDay } from "date-fns";
+import { dayKeyOf, daysBetweenKeys, runDayKey } from "./dates";
 import type {
   PlanWeek,
   PlannedSession,
@@ -8,9 +8,13 @@ import type {
   WeekStatus,
 } from "./types";
 
-export function dateKey(iso: string): string {
-  if (/^\d{4}-\d{2}-\d{2}/.test(iso)) return iso.slice(0, 10);
-  return formatISO(startOfDay(parseISO(iso)), { representation: "date" });
+/**
+ * Calendar day of a stored timestamp, in the athlete's timezone.
+ * Previously a raw `slice(0, 10)`, which put evening Pacific runs on the next
+ * UTC day and matched them to the wrong session.
+ */
+export function dateKey(iso: string, tz?: string): string {
+  return runDayKey(iso, tz);
 }
 
 export function getWeekForDate(plan: TrainingPlan, date: string): PlanWeek | null {
@@ -19,7 +23,7 @@ export function getWeekForDate(plan: TrainingPlan, date: string): PlanWeek | nul
 }
 
 export function getCurrentWeek(plan: TrainingPlan, asOf = new Date()): PlanWeek | null {
-  return getWeekForDate(plan, asOf.toISOString());
+  return getWeekForDate(plan, dayKeyOf(asOf, plan.athlete.timeZone));
 }
 
 export function runsInRange(runs: RunActivity[], start: string, end: string): RunActivity[] {
@@ -64,10 +68,7 @@ function matchRunToSession(
   const flex = runs
     .filter((r) => {
       if (used.has(r.id)) return false;
-      const delta = Math.abs(
-        differenceInCalendarDays(parseISO(dateKey(r.startDate)), parseISO(session.date)),
-      );
-      return delta === 1;
+      return Math.abs(daysBetweenKeys(session.date, dateKey(r.startDate))) === 1;
     })
     .sort((a, b) => b.distanceMi - a.distanceMi);
 
@@ -81,7 +82,7 @@ export function buildWeekStatus(
 ): WeekStatus {
   const weekRuns = runsInRange(runs, week.start, week.end);
   const used = new Set<string>();
-  const today = dateKey(asOf.toISOString());
+  const today = dayKeyOf(asOf);
   const raceSession = week.sessions.find((s) => s.type === "race");
 
   const sessions: SessionStatus[] = week.sessions.map((session) => {

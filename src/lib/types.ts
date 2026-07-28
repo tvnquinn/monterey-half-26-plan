@@ -49,6 +49,8 @@ export interface TrainingPlan {
     designGoalTime?: string;
     designPaceSecPerMi?: number;
     priorHalf: string;
+    /** IANA zone used for all calendar-day math. Defaults to America/Los_Angeles. */
+    timeZone?: string;
     notes: string;
   };
   race: {
@@ -68,6 +70,8 @@ export interface TrainingPlan {
     easyMaxSecPerMi: number;
     racePaceSecPerMi: number;
     designPaceSecPerMi?: number;
+    /** Typical training elevation, for the flat-course credit. */
+    trainingElevFtPerMi?: number;
     hrEasyCap: number;
     hrZones?: {
       z1: { max: number; label: string };
@@ -153,19 +157,10 @@ export interface WeekStatus {
   avgHr: number | null;
 }
 
-export type RecommendationPriority = "critical" | "high" | "medium" | "low";
-
-export interface Recommendation {
-  id: string;
-  priority: RecommendationPriority;
-  title: string;
-  detail: string;
-  action?: string;
-  planChange?: {
-    type: "hold_mileage" | "cut_session" | "shift_quality" | "ease_pace" | "advance_quality";
-    weekId?: number;
-  };
-}
+// Recommendation / RecommendationPriority lived here alongside a ~160-line
+// buildRecommendations() in coach.ts. Nothing ever rendered it — the decision
+// in LEARNINGS.md was to keep guidance on the session rows instead of a
+// separate card — so it shipped on every /api/coach response for nothing.
 
 export interface PaceGuidanceLive {
   easyMinSecPerMi: number;
@@ -173,11 +168,15 @@ export interface PaceGuidanceLive {
   racePaceSecPerMi: number;
   estimatedHalfSec: number | null;
   confidence: "low" | "medium" | "high";
+  /** Which signal produced the estimate — see ./fitness. */
+  method: "prior_only" | "ef_trend" | "hard_effort" | "blended";
   rationale: string[];
 }
 
+export type GoalKey = "A" | "A-" | "B" | "C";
+
 export interface GoalOdds {
-  label: "A" | "B" | "C";
+  label: GoalKey;
   timeLabel: string;
   timeSec: number;
   pct: number;
@@ -185,8 +184,18 @@ export interface GoalOdds {
 
 export interface PredictionSummary {
   goals: GoalOdds[];
+  /** Current fitness, before crediting remaining training. */
   estimatedHalfSec: number | null;
-  deltaMinVsPrevEst: number | null;
+  /** Race-day projection: fitness + earned improvement. */
+  projectedSec: number;
+  /** Seconds of improvement credited from logged work so far. */
+  creditSec: number;
+  /** Spread of plausible outcomes, minutes. Widens with time to race. */
+  sigmaMin: number;
+  confidence: "low" | "medium" | "high";
+  /** Change in the estimate over the trailing window (negative = faster). */
+  trendMin: number | null;
+  trendWindowDays: number;
   deltaMinVsPrior: number | null;
   priorHalfSec: number;
   priorHalfLabel: string;
@@ -213,9 +222,6 @@ export interface CoachReport {
     longestLoggedMi: number;
   }[];
   paceGuidance: PaceGuidanceLive;
-  recommendations: Recommendation[];
-  /** @deprecated use predictions.goals */
-  sub2OddsBand: string;
   predictions: PredictionSummary;
   mileageNarrative: MileageNarrative;
   summary: string;

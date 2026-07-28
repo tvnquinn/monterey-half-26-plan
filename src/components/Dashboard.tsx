@@ -3,6 +3,11 @@
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import type { CoachReport, SessionStatus, TrainingPlan, WeekStatus } from "@/lib/types";
 import { formatDuration, formatHalfShort, formatShortDate, paceToString, weekdayShort } from "@/lib/format";
+import {
+  SESSION_DEFINITIONS,
+  isNonRunSession,
+  sessionShortLabel,
+} from "@/lib/session-glossary";
 import { LogRunForm } from "@/components/LogRunForm";
 import { HealthUpload } from "@/components/HealthUpload";
 import { ScreenshotRunUpload } from "@/components/ScreenshotRunUpload";
@@ -39,20 +44,7 @@ function statusLabel(status: string) {
   }
 }
 
-function sessionTypeLabel(type: string) {
-  switch (type) {
-    case "easy_strides":
-      return "strides";
-    case "quality":
-      return "B-pace";
-    case "threshold":
-      return "threshold";
-    case "strength":
-      return "strength";
-    default:
-      return type.replaceAll("_", " ");
-  }
-}
+const sessionTypeLabel = sessionShortLabel;
 
 function usefulNote(type: string, notes?: string): string | null {
   if (!notes) return null;
@@ -78,18 +70,15 @@ function SessionRow({ s }: { s: SessionStatus }) {
   const type = s.session.type;
   const typeLabel = sessionTypeLabel(type);
   const isRace = type === "race";
-  const isStrength = type === "strength";
-  const showPace =
-    !isStrength &&
-    (type === "easy" || type === "easy_strides" || type === "long" || type === "quality" || type === "threshold");
+  const nonRun = isNonRunSession(type);
+  // One estimated pace, not a band — the glossary explains what the effort means.
+  const showPace = !nonRun && Boolean(pace && pace.targetSecPerMi > 0);
   const note = usefulNote(type, s.session.notes);
   const line = [
     `${weekdayShort(s.session.date)} ${formatShortDate(s.session.date)}`,
     typeLabel,
-    isStrength ? null : `${s.session.targetMi}mi`,
-    showPace && pace && pace.minSecPerMi > 0
-      ? `${paceToString(pace.minSecPerMi)}–${paceToString(pace.maxSecPerMi)}`
-      : null,
+    nonRun ? null : `${s.session.targetMi}mi`,
+    showPace ? `${paceToString(pace!.targetSecPerMi)}/mi` : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -107,7 +96,11 @@ function SessionRow({ s }: { s: SessionStatus }) {
   }
 
   return (
-    <li className={`session ${s.status} ${isRace ? "session-race" : ""} ${s.isNext ? "session-next" : ""}`}>
+    <li
+      className={`session ${s.status} ${isRace ? "session-race" : ""} ${
+        nonRun ? "session-nonrun" : ""
+      } ${s.isNext ? "session-next" : ""}`}
+    >
       <div className="session-row">
         <div className="session-main">
           <strong>{line}</strong>
@@ -183,28 +176,24 @@ function WeekCard({
 function NextSessionHero({ s }: { s: SessionStatus }) {
   const pace = s.paceRec;
   const type = s.session.type;
-  const showPace =
-    type !== "strength" &&
-    pace &&
-    pace.minSecPerMi > 0 &&
-    (type === "easy" ||
-      type === "easy_strides" ||
-      type === "long" ||
-      type === "quality" ||
-      type === "threshold");
+  const nonRun = isNonRunSession(type);
+  const showPace = !nonRun && Boolean(pace && pace.targetSecPerMi > 0);
   return (
-    <section className="next-hero panel" aria-label="Next session">
+    <section
+      className={`next-hero panel ${nonRun ? "next-hero-nonrun" : ""}`}
+      aria-label="Next session"
+    >
       <p className="next-hero-eyebrow">
         {s.status === "today" ? "Today" : "Next"} · {weekdayShort(s.session.date)}{" "}
         {formatShortDate(s.session.date)}
       </p>
       <h2 className="next-hero-title">
         {sessionTypeLabel(type)}
-        {type !== "strength" ? ` · ${s.session.targetMi} mi` : ""}
+        {nonRun ? "" : ` · ${s.session.targetMi} mi`}
       </h2>
       {showPace ? (
         <p className="next-hero-pace">
-          {paceToString(pace!.minSecPerMi)}–{paceToString(pace!.maxSecPerMi)}
+          {paceToString(pace!.targetSecPerMi)}/mi
           {pace?.hrZoneLabel && pace.hrZoneLabel !== "—"
             ? ` · ${pace.hrZoneLabel} ${pace.hrZoneRange}`
             : ""}
@@ -215,13 +204,82 @@ function NextSessionHero({ s }: { s: SessionStatus }) {
   );
 }
 
+/** Fixed definitions so session rows can stay terse. */
+function SessionGuide() {
+  return (
+    <details className="panel guide">
+      <summary>What the session types mean</summary>
+      <dl className="guide-list">
+        {SESSION_DEFINITIONS.map((d) => (
+          <div key={d.type} className={d.nonRun ? "guide-item guide-nonrun" : "guide-item"}>
+            <dt>{d.short}</dt>
+            <dd>
+              <span className="guide-what">{d.what}</span>
+              <span className="muted">{d.feel}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </details>
+  );
+}
+
+function GoalsCard({
+  goals,
+  estLabel,
+  trendMin,
+  daysToRace,
+  sigmaMin,
+  confidence,
+}: {
+  goals: CoachReport["predictions"]["goals"];
+  estLabel: string;
+  trendMin: number | null;
+  daysToRace: number;
+  sigmaMin: number;
+  confidence: string;
+}) {
+  return (
+    <section className="panel goals-card" aria-label="Goal odds">
+      <div className="goals-head">
+        <h2 className="goals-heading">Goals</h2>
+        <span className="muted small">
+          Est {estLabel}
+          {trendMin != null && trendMin !== 0 ? (
+            <span className={trendMin < 0 ? "delta-good" : "delta-bad"}>
+              {" "}
+              {trendMin > 0 ? "+" : ""}
+              {trendMin} min / 4wk
+            </span>
+          ) : null}
+        </span>
+      </div>
+      <ul className="goal-rows">
+        {goals.map((g) => (
+          <li key={g.label} className="goal-row">
+            <span className="goal-name">
+              {g.label} · {g.timeLabel}
+            </span>
+            <span className="goal-bar" aria-hidden="true">
+              <span className="goal-bar-fill" style={{ width: `${g.pct}%` }} />
+            </span>
+            <strong className="goal-pct">{g.pct}%</strong>
+          </li>
+        ))}
+      </ul>
+      <p className="muted small goal-footnote">
+        {daysToRace}d out · ±{sigmaMin} min spread · {confidence} confidence
+      </p>
+    </section>
+  );
+}
+
 export function Dashboard() {
   const [data, setData] = useState<CoachPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("plan");
   const [pending, startTransition] = useTransition();
   const currentWeekEl = useRef<HTMLElement | null>(null);
-  const didScrollToWeek = useRef(false);
 
   const load = useCallback(() => {
     startTransition(async () => {
@@ -241,12 +299,12 @@ export function Dashboard() {
     load();
   }, [load]);
 
+  // Re-centre the current week every time the plan tab is shown, not just once.
   useEffect(() => {
-    if (!data || tab !== "plan" || didScrollToWeek.current) return;
+    if (!data || tab !== "plan") return;
     const el = currentWeekEl.current;
     if (!el) return;
     el.scrollIntoView({ behavior: "instant", inline: "start", block: "nearest" });
-    didScrollToWeek.current = true;
   }, [data, tab]);
 
   if (error) {
@@ -262,8 +320,11 @@ export function Dashboard() {
 
   if (!data) {
     return (
-      <div className="shell">
-        <p className="muted">Loading…</p>
+      <div className="shell" aria-busy="true" aria-label="Loading training plan">
+        <div className="skeleton skeleton-title" />
+        <div className="skeleton skeleton-line" />
+        <div className="skeleton skeleton-card" />
+        <div className="skeleton skeleton-card" />
       </div>
     );
   }
@@ -276,12 +337,7 @@ export function Dashboard() {
     : week
       ? [week]
       : [];
-  const bGoal = pred.goals.find((g) => g.label === "B");
   const estLabel = pred.estimatedHalfSec ? formatHalfShort(pred.estimatedHalfSec) : "—";
-  const showEstDelta =
-    pred.deltaMinVsPrevEst != null && pred.deltaMinVsPrevEst !== 0
-      ? pred.deltaMinVsPrevEst
-      : null;
   const z2 = plan.paceGuidance.hrZones?.z2;
   const z2Label = z2 ? `Z2 ${z2.min}–${z2.max}` : null;
 
@@ -292,20 +348,18 @@ export function Dashboard() {
           <h1 className="brand brand-title">Monterey Bay Half 11/8</h1>
           <p className="plan-label">Training plan · Quinn TV</p>
         </div>
-        <p className="goals-strip" aria-label="Goal snapshot">
-          <span>Est {estLabel}</span>
-          {showEstDelta != null ? (
-            <span className={showEstDelta < 0 ? "delta-good" : ""}>
-              {showEstDelta > 0 ? "+" : ""}
-              {showEstDelta} min
-            </span>
-          ) : null}
-          <span>B {bGoal?.pct ?? "—"}%</span>
-          <span>{report.daysToRace}d</span>
-        </p>
       </header>
 
       {report.nextSession ? <NextSessionHero s={report.nextSession} /> : null}
+
+      <GoalsCard
+        goals={pred.goals}
+        estLabel={estLabel}
+        trendMin={pred.trendMin}
+        daysToRace={report.daysToRace}
+        sigmaMin={pred.sigmaMin}
+        confidence={pred.confidence}
+      />
 
       <nav className="tabs-wrap" aria-label="Sections">
         <div className="tabs" role="tablist">
@@ -355,6 +409,8 @@ export function Dashboard() {
           </div>
         </section>
       ) : null}
+
+      {tab === "plan" ? <SessionGuide /> : null}
 
       {tab === "summary" ? (
         <section className="panel">

@@ -6,7 +6,8 @@
     "designGoalTime": "2:10:00",
     "designPaceSecPerMi": 595,
     "priorHalf": "2:15:56",
-    "notes": "Knee/calf history. True easy HR ~143. Prefer Fri long + midweek short 4th day + Sun quality (never Sat+Sun). Design target is B 2:10 (~9:55); A 2:00 is stretch. Easy stays Z2. Strength 2×/week on non-run days."
+    "notes": "Knee/calf history. True easy HR ~143. Long run Friday, never Saturday. Shorts up to 5 mi, 2×/week. Sunday = strides / threshold / B-pace. Strength 2×/week on non-run days (Mon heavy, Thu light). Design target is B 2:10 (~9:55); A 2:00 is stretch.",
+    "timeZone": "America/Los_Angeles"
   },
   "race": {
     "name": "Monterey Bay Half",
@@ -61,32 +62,33 @@
         "label": "Z5"
       }
     },
-    "notes": "Easy Z2 (139–152) ~true easy 143. Design quality around B-pace ~9:45–10:00 (not A 9:09). Fri = long. Midweek short = 4th day. Sun = strides / threshold / B-pace practice. Strength 2×15 min. Race is flat coastal Nov — summer heat slows training paces."
+    "notes": "Easy Z2 (139–152) ~true easy 143. Quality anchors to B-pace ~9:55, not A 9:09. Fri = long. Sat = never. Strength Mon (heavy) + Thu (light). Race is flat coastal Nov — summer heat slows training paces.",
+    "trainingElevFtPerMi": 40
   },
   "weeks": [
     {
       "id": 1,
       "start": "2026-07-27",
       "end": "2026-08-02",
-      "targetMi": 9,
+      "targetMi": 12,
       "phase": "chicago",
       "focus": "Chicago travel week — keep it easy",
       "sessions": [
         {
-          "id": "w1-tue",
-          "date": "2026-07-28",
+          "id": "w1-mon",
+          "date": "2026-07-27",
           "type": "easy",
           "targetMi": 4.5,
           "optional": false,
           "notes": "Already completed"
         },
         {
-          "id": "w1-wed",
-          "date": "2026-07-29",
-          "type": "easy",
-          "targetMi": 2.5,
-          "optional": true,
-          "notes": "Travel"
+          "id": "w1-thu",
+          "date": "2026-07-30",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "Bodyweight only: calf raises, glute bridge, side plank. 10 min."
         },
         {
           "id": "w1-fri",
@@ -97,12 +99,11 @@
           "notes": "Chicago"
         },
         {
-          "id": "w1-str",
-          "date": "2026-08-01",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
+          "id": "w1-sun",
+          "date": "2026-08-02",
+          "type": "easy",
+          "targetMi": 3,
+          "optional": false
         }
       ]
     },
@@ -110,10 +111,18 @@
       "id": 2,
       "start": "2026-08-03",
       "end": "2026-08-09",
-      "targetMi": 17,
+      "targetMi": 16.5,
       "phase": "base",
-      "focus": "4th day starts · Fri long 6 · Sun short",
+      "focus": "Base builds · Fri long 6",
       "sessions": [
+        {
+          "id": "w2-mon",
+          "date": "2026-08-03",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "25 min lower: goblet squat 3×10, single-leg RDL 3×8/side, eccentric calf raise 3×12/side, side plank"
+        },
         {
           "id": "w2-tue",
           "date": "2026-08-04",
@@ -125,9 +134,16 @@
           "id": "w2-wed",
           "date": "2026-08-05",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 3.5,
+          "optional": false
+        },
+        {
+          "id": "w2-thu",
+          "date": "2026-08-06",
+          "type": "strength",
+          "targetMi": 0,
           "optional": false,
-          "notes": "Short · bike/elliptical OK if knee talks"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w2-fri",
@@ -137,20 +153,11 @@
           "optional": false
         },
         {
-          "id": "w2-str",
-          "date": "2026-08-08",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
-        },
-        {
           "id": "w2-sun",
           "date": "2026-08-09",
           "type": "easy",
-          "targetMi": 4,
-          "optional": false,
-          "notes": "Open cadence"
+          "targetMi": 3,
+          "optional": false
         }
       ]
     },
@@ -158,10 +165,18 @@
       "id": 3,
       "start": "2026-08-10",
       "end": "2026-08-16",
-      "targetMi": 18.5,
+      "targetMi": 19,
       "phase": "base",
       "focus": "Long 7 · Sun strides",
       "sessions": [
+        {
+          "id": "w3-mon",
+          "date": "2026-08-10",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "25 min lower: goblet squat 3×10, single-leg RDL 3×8/side, eccentric calf raise 3×12/side, side plank"
+        },
         {
           "id": "w3-tue",
           "date": "2026-08-11",
@@ -173,9 +188,16 @@
           "id": "w3-wed",
           "date": "2026-08-12",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 4,
+          "optional": false
+        },
+        {
+          "id": "w3-thu",
+          "date": "2026-08-13",
+          "type": "strength",
+          "targetMi": 0,
           "optional": false,
-          "notes": "Short easy"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w3-fri",
@@ -185,20 +207,12 @@
           "optional": false
         },
         {
-          "id": "w3-str",
-          "date": "2026-08-15",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
-        },
-        {
           "id": "w3-sun",
           "date": "2026-08-16",
           "type": "easy_strides",
-          "targetMi": 4,
+          "targetMi": 3.5,
           "optional": false,
-          "notes": "4–6 × 20s strides @ end"
+          "notes": "4–6 × 20s"
         }
       ]
     },
@@ -206,10 +220,18 @@
       "id": 4,
       "start": "2026-08-17",
       "end": "2026-08-23",
-      "targetMi": 20.5,
+      "targetMi": 21.5,
       "phase": "build",
-      "focus": "Long 8 · Sun strides",
+      "focus": "Long 8 · shorts up to 5",
       "sessions": [
+        {
+          "id": "w4-mon",
+          "date": "2026-08-17",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "25 min lower: goblet squat 3×10, single-leg RDL 3×8/side, eccentric calf raise 3×12/side, side plank"
+        },
         {
           "id": "w4-tue",
           "date": "2026-08-18",
@@ -221,9 +243,16 @@
           "id": "w4-wed",
           "date": "2026-08-19",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 4.5,
+          "optional": false
+        },
+        {
+          "id": "w4-thu",
+          "date": "2026-08-20",
+          "type": "strength",
+          "targetMi": 0,
           "optional": false,
-          "notes": "Short easy"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w4-fri",
@@ -233,20 +262,12 @@
           "optional": false
         },
         {
-          "id": "w4-str",
-          "date": "2026-08-22",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
-        },
-        {
           "id": "w4-sun",
           "date": "2026-08-23",
           "type": "easy_strides",
-          "targetMi": 4.5,
+          "targetMi": 4,
           "optional": false,
-          "notes": "5–6 × 20s strides"
+          "notes": "5–6 × 20s"
         }
       ]
     },
@@ -254,10 +275,18 @@
       "id": 5,
       "start": "2026-08-24",
       "end": "2026-08-30",
-      "targetMi": 22,
+      "targetMi": 24,
       "phase": "build",
-      "focus": "Long 9 · sharper Sun strides",
+      "focus": "Long 9 · biggest pre-Italy week",
       "sessions": [
+        {
+          "id": "w5-mon",
+          "date": "2026-08-24",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "25 min lower: goblet squat 3×10, single-leg RDL 3×8/side, eccentric calf raise 3×12/side, side plank"
+        },
         {
           "id": "w5-tue",
           "date": "2026-08-25",
@@ -269,9 +298,16 @@
           "id": "w5-wed",
           "date": "2026-08-26",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 5,
+          "optional": false
+        },
+        {
+          "id": "w5-thu",
+          "date": "2026-08-27",
+          "type": "strength",
+          "targetMi": 0,
           "optional": false,
-          "notes": "Short easy"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w5-fri",
@@ -281,20 +317,12 @@
           "optional": false
         },
         {
-          "id": "w5-str",
-          "date": "2026-08-29",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
-        },
-        {
           "id": "w5-sun",
           "date": "2026-08-30",
           "type": "easy_strides",
           "targetMi": 5,
           "optional": false,
-          "notes": "6 × 20–25s strides · sharper"
+          "notes": "6 × 20–25s"
         }
       ]
     },
@@ -304,8 +332,16 @@
       "end": "2026-09-06",
       "targetMi": 20,
       "phase": "build",
-      "focus": "Hold into Italy · Fri long 8",
+      "focus": "Cutback · hold fitness into travel",
       "sessions": [
+        {
+          "id": "w6-mon",
+          "date": "2026-08-31",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "25 min lower: goblet squat 3×10, single-leg RDL 3×8/side, eccentric calf raise 3×12/side, side plank"
+        },
         {
           "id": "w6-tue",
           "date": "2026-09-01",
@@ -317,25 +353,24 @@
           "id": "w6-wed",
           "date": "2026-09-02",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 4,
+          "optional": false
+        },
+        {
+          "id": "w6-thu",
+          "date": "2026-09-03",
+          "type": "strength",
+          "targetMi": 0,
           "optional": false,
-          "notes": "Short easy"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w6-fri",
           "date": "2026-09-04",
           "type": "long",
-          "targetMi": 8,
+          "targetMi": 7,
           "optional": false,
           "notes": "Last solid long before travel"
-        },
-        {
-          "id": "w6-str",
-          "date": "2026-09-05",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
         },
         {
           "id": "w6-sun",
@@ -351,17 +386,24 @@
       "id": 7,
       "start": "2026-09-07",
       "end": "2026-09-13",
-      "targetMi": 9,
+      "targetMi": 10,
       "phase": "italy",
-      "focus": "Tue + Wed easy before fly — then travel",
+      "focus": "Two easy runs, then fly Wed",
       "sessions": [
+        {
+          "id": "w7-mon",
+          "date": "2026-09-07",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+        },
         {
           "id": "w7-tue",
           "date": "2026-09-08",
           "type": "easy",
-          "targetMi": 4,
-          "optional": false,
-          "notes": "Day before pre-flight"
+          "targetMi": 5,
+          "optional": false
         },
         {
           "id": "w7-wed",
@@ -369,15 +411,7 @@
           "type": "easy",
           "targetMi": 5,
           "optional": false,
-          "notes": "Wed fly · last before Italy"
-        },
-        {
-          "id": "w7-str",
-          "date": "2026-09-10",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
+          "notes": "Wed — run before the flight"
         }
       ]
     },
@@ -387,40 +421,39 @@
       "end": "2026-09-20",
       "targetMi": 0,
       "phase": "italy",
-      "focus": "No running — full Italy stop",
+      "focus": "Italy — no running",
       "sessions": []
     },
     {
       "id": 9,
       "start": "2026-09-21",
       "end": "2026-09-27",
-      "targetMi": 13,
+      "targetMi": 14,
       "phase": "rebuild",
-      "focus": "Rebuild 13 · first run Wed after Italy",
+      "focus": "Rebuild · first run back Wed",
       "sessions": [
         {
           "id": "w9-wed",
           "date": "2026-09-23",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4,
           "optional": false,
-          "notes": "First back · after Italy"
+          "notes": "First run back"
         },
         {
-          "id": "w9-str",
+          "id": "w9-thu",
           "date": "2026-09-24",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w9-fri",
           "date": "2026-09-25",
           "type": "long",
-          "targetMi": 5.5,
-          "optional": false,
-          "notes": "Short long"
+          "targetMi": 6,
+          "optional": false
         },
         {
           "id": "w9-sun",
@@ -435,39 +468,46 @@
       "id": 10,
       "start": "2026-09-28",
       "end": "2026-10-04",
-      "targetMi": 16,
+      "targetMi": 18,
       "phase": "quality",
-      "focus": "Long 6.5 · first threshold Sunday",
+      "focus": "Long 7 · first threshold",
       "sessions": [
+        {
+          "id": "w10-mon",
+          "date": "2026-09-28",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "25 min lower: goblet squat 3×10, single-leg RDL 3×8/side, eccentric calf raise 3×12/side, side plank"
+        },
         {
           "id": "w10-tue",
           "date": "2026-09-29",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4,
           "optional": false
         },
         {
           "id": "w10-wed",
           "date": "2026-09-30",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 4,
+          "optional": false
+        },
+        {
+          "id": "w10-thu",
+          "date": "2026-10-01",
+          "type": "strength",
+          "targetMi": 0,
           "optional": false,
-          "notes": "Short easy"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w10-fri",
           "date": "2026-10-02",
           "type": "long",
-          "targetMi": 6.5,
+          "targetMi": 7,
           "optional": false
-        },
-        {
-          "id": "w10-str",
-          "date": "2026-10-03",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
         },
         {
           "id": "w10-sun",
@@ -475,7 +515,7 @@
           "type": "threshold",
           "targetMi": 3,
           "optional": false,
-          "notes": "2 × 10 min comfortably hard (could hold ~1 hr) · easy jog between"
+          "notes": "2 × 8 min comfortably hard · 3 min jog"
         }
       ]
     },
@@ -483,39 +523,46 @@
       "id": 11,
       "start": "2026-10-05",
       "end": "2026-10-11",
-      "targetMi": 19,
+      "targetMi": 22,
       "phase": "quality",
-      "focus": "Long 8 · B-pace reps Sunday",
+      "focus": "Long 8.5 · B-pace reps",
       "sessions": [
+        {
+          "id": "w11-mon",
+          "date": "2026-10-05",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "25 min lower: goblet squat 3×10, single-leg RDL 3×8/side, eccentric calf raise 3×12/side, side plank"
+        },
         {
           "id": "w11-tue",
           "date": "2026-10-06",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 5,
           "optional": false
         },
         {
           "id": "w11-wed",
           "date": "2026-10-07",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 4.5,
+          "optional": false
+        },
+        {
+          "id": "w11-thu",
+          "date": "2026-10-08",
+          "type": "strength",
+          "targetMi": 0,
           "optional": false,
-          "notes": "Short easy"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w11-fri",
           "date": "2026-10-09",
           "type": "long",
-          "targetMi": 8,
+          "targetMi": 8.5,
           "optional": false
-        },
-        {
-          "id": "w11-str",
-          "date": "2026-10-10",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
         },
         {
           "id": "w11-sun",
@@ -523,7 +570,7 @@
           "type": "quality",
           "targetMi": 4,
           "optional": false,
-          "notes": "4 × 3 min @ ~9:45–10:00 · equal jog"
+          "notes": "5 × 3 min @ B-pace · equal jog"
         }
       ]
     },
@@ -531,40 +578,46 @@
       "id": 12,
       "start": "2026-10-12",
       "end": "2026-10-18",
-      "targetMi": 16,
+      "targetMi": 19,
       "phase": "quality",
-      "focus": "Cutback 16 · threshold Sunday · freshen for peak",
+      "focus": "Cutback before peak · threshold holds",
       "sessions": [
+        {
+          "id": "w12-mon",
+          "date": "2026-10-12",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "25 min lower: goblet squat 3×10, single-leg RDL 3×8/side, eccentric calf raise 3×12/side, side plank"
+        },
         {
           "id": "w12-tue",
           "date": "2026-10-13",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4.5,
           "optional": false
         },
         {
           "id": "w12-wed",
           "date": "2026-10-14",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 4,
+          "optional": false
+        },
+        {
+          "id": "w12-thu",
+          "date": "2026-10-15",
+          "type": "strength",
+          "targetMi": 0,
           "optional": false,
-          "notes": "Short easy"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w12-fri",
           "date": "2026-10-16",
           "type": "long",
-          "targetMi": 6,
-          "optional": false,
-          "notes": "Cutback long"
-        },
-        {
-          "id": "w12-str",
-          "date": "2026-10-17",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
+          "targetMi": 7,
+          "optional": false
         },
         {
           "id": "w12-sun",
@@ -572,7 +625,7 @@
           "type": "threshold",
           "targetMi": 3.5,
           "optional": false,
-          "notes": "2 × 8–10 min comfortably hard · easy jog between"
+          "notes": "2 × 10 min comfortably hard · 3 min jog"
         }
       ]
     },
@@ -580,24 +633,39 @@
       "id": 13,
       "start": "2026-10-19",
       "end": "2026-10-25",
-      "targetMi": 22,
+      "targetMi": 26,
       "phase": "peak",
-      "focus": "Peak 22 · long 10 + continuous B-pace",
+      "focus": "Peak · long 10 + 3 mi @ B-pace",
       "sessions": [
+        {
+          "id": "w13-mon",
+          "date": "2026-10-19",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "25 min lower: goblet squat 3×10, single-leg RDL 3×8/side, eccentric calf raise 3×12/side, side plank"
+        },
         {
           "id": "w13-tue",
           "date": "2026-10-20",
           "type": "easy",
-          "targetMi": 4.5,
+          "targetMi": 5,
           "optional": false
         },
         {
           "id": "w13-wed",
           "date": "2026-10-21",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 5,
+          "optional": false
+        },
+        {
+          "id": "w13-thu",
+          "date": "2026-10-22",
+          "type": "strength",
+          "targetMi": 0,
           "optional": false,
-          "notes": "Short easy"
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w13-fri",
@@ -605,23 +673,15 @@
           "type": "long",
           "targetMi": 10,
           "optional": false,
-          "notes": "Last 1–2 mi @ ~9:45–10:00 OK"
-        },
-        {
-          "id": "w13-str",
-          "date": "2026-10-24",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
+          "notes": "Last 1–2 mi @ B-pace OK"
         },
         {
           "id": "w13-sun",
           "date": "2026-10-25",
           "type": "quality",
-          "targetMi": 4,
+          "targetMi": 6,
           "optional": false,
-          "notes": "2–3 mi continuous @ ~9:45–10:00"
+          "notes": "3 mi continuous @ B-pace"
         }
       ]
     },
@@ -629,40 +689,39 @@
       "id": 14,
       "start": "2026-10-26",
       "end": "2026-11-01",
-      "targetMi": 13,
+      "targetMi": 18,
       "phase": "taper",
-      "focus": "Taper · Fri long 6 · short Sun B-pace touch",
+      "focus": "Taper · volume down, sharpness stays",
       "sessions": [
+        {
+          "id": "w14-mon",
+          "date": "2026-10-26",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+        },
         {
           "id": "w14-tue",
           "date": "2026-10-27",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4,
           "optional": false
         },
         {
           "id": "w14-wed",
           "date": "2026-10-28",
           "type": "easy",
-          "targetMi": 2.5,
-          "optional": true,
-          "notes": "Short easy"
+          "targetMi": 3.5,
+          "optional": false
         },
         {
           "id": "w14-fri",
           "date": "2026-10-30",
           "type": "long",
-          "targetMi": 6,
+          "targetMi": 7,
           "optional": false,
           "notes": "Last long"
-        },
-        {
-          "id": "w14-str",
-          "date": "2026-10-31",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
         },
         {
           "id": "w14-sun",
@@ -670,7 +729,7 @@
           "type": "quality",
           "targetMi": 3.5,
           "optional": false,
-          "notes": "4 × 90s @ ~9:45–10:00 feel"
+          "notes": "2 mi @ B-pace"
         }
       ]
     },
@@ -678,17 +737,24 @@
       "id": 15,
       "start": "2026-11-02",
       "end": "2026-11-08",
-      "targetMi": 5,
+      "targetMi": 9,
       "phase": "race",
-      "focus": "Race week · Wed sharpen, Fri shakeout, race Sun",
+      "focus": "Race week · Fri shakeout, rest Sat, race Sun",
       "sessions": [
+        {
+          "id": "w15-mon",
+          "date": "2026-11-02",
+          "type": "strength",
+          "targetMi": 0,
+          "optional": false,
+          "notes": "10 min mobility only — no loading. Hips, calves, ankles."
+        },
         {
           "id": "w15-tue",
           "date": "2026-11-03",
           "type": "easy",
-          "targetMi": 2,
-          "optional": true,
-          "notes": "Optional or rest"
+          "targetMi": 4,
+          "optional": false
         },
         {
           "id": "w15-wed",
@@ -696,15 +762,7 @@
           "type": "easy_strides",
           "targetMi": 3,
           "optional": false,
-          "notes": "4 × 30s @ goal-pace feel · keep sharp"
-        },
-        {
-          "id": "w15-str",
-          "date": "2026-11-05",
-          "type": "strength",
-          "targetMi": 0,
-          "optional": false,
-          "notes": "15 min: single-leg calf raises, hip abduction, step-downs"
+          "notes": "4 × 20s"
         },
         {
           "id": "w15-fri",
@@ -712,15 +770,15 @@
           "type": "easy_strides",
           "targetMi": 2,
           "optional": false,
-          "notes": "Shakeout · 4×20s · not a long"
+          "notes": "Shakeout · 4 × 20s · not a long"
         },
         {
-          "id": "w15-race",
+          "id": "w15-sun",
           "date": "2026-11-08",
           "type": "race",
           "targetMi": 13.1,
           "optional": false,
-          "notes": "Open controlled · chase B, A only if gifted"
+          "notes": "Open controlled at B-pace"
         }
       ]
     }

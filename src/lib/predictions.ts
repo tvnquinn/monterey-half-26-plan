@@ -1,26 +1,22 @@
-import { differenceInCalendarDays, parseISO } from "date-fns";
-import { estimateHalfFromRecent } from "./format";
-import type { PaceGuidanceLive, RunActivity, TrainingPlan } from "./types";
+import { dayKeyOf, daysBetweenKeys, runDayKey } from "./dates";
+import { estimateHalf } from "./fitness";
+import type {
+  GoalOdds,
+  GoalKey,
+  PredictionSummary,
+  RunActivity,
+  TrainingPlan,
+} from "./types";
 
-export interface GoalOdds {
-  label: "A" | "B" | "C";
-  timeLabel: string;
-  timeSec: number;
-  pct: number;
-}
+/** Goal ladder. A- sits between the stretch goal and the design target. */
+export const GOAL_LADDER: { label: GoalKey; timeLabel: string; timeSec: number }[] = [
+  { label: "A", timeLabel: "2:00", timeSec: 2 * 3600 },
+  { label: "A-", timeLabel: "2:05", timeSec: 2 * 3600 + 5 * 60 },
+  { label: "B", timeLabel: "2:10", timeSec: 2 * 3600 + 10 * 60 },
+  { label: "C", timeLabel: "2:30", timeSec: 2 * 3600 + 30 * 60 },
+];
 
-export interface PredictionSummary {
-  goals: GoalOdds[];
-  estimatedHalfSec: number | null;
-  /** Minutes vs estimate before latest run (negative = faster). */
-  deltaMinVsPrevEst: number | null;
-  /** Minutes vs prior half (negative = faster than prior). */
-  deltaMinVsPrior: number | null;
-  priorHalfSec: number;
-  priorHalfLabel: string;
-}
-
-function parseTimeToSec(raw: string): number {
+export function parseTimeToSec(raw: string): number {
   const parts = raw.split(":").map(Number);
   if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
   if (parts.length === 2) return parts[0] * 60 + parts[1];
@@ -38,102 +34,133 @@ function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
 }
 
+export interface TrainingSignal {
+  /** Logged vs target across finished weeks. 1.0 = executed the plan. */
+  adherence: number;
+  avgWeeklyMi4: number;
+  longestMi28: number;
+  weeksRemaining: number;
+}
+
 /**
- * Honest race-day projection: blend fitness with prior half, modest credit
- * for training time left (injury + travel make big jumps unlikely).
+ * Race-day projection.
+ *
+ * The old version handed out ~28s of half-time per remaining calendar week —
+ * about 7 free minutes at 15 weeks out, earned by nothing. Credit is now tied
+ * to work actually logged: stop training and the projection decays back toward
+ * current fitness.
  */
-function raceDayProjectionSec(args: {
+export function raceDayProjectionSec(args: {
   estimatedHalfSec: number | null;
   priorHalfSec: number;
-  daysToRace: number;
-  mi14: number;
-  weeklyMi: number;
-}): number {
-  const { estimatedHalfSec, priorHalfSec, daysToRace, mi14, weeklyMi } = args;
-  const weeksLeft = Math.max(0, daysToRace / 7);
-
+  confidence: "low" | "medium" | "high";
+  signal: TrainingSignal;
+}): { projectedSec: number; creditSec: number } {
+  const { estimatedHalfSec, priorHalfSec, confidence, signal } = args;
   const fitness = estimatedHalfSec ?? priorHalfSec;
-  // Lean on prior half more — easy-pace conversion is noisy early
-  const blended = fitness * 0.4 + priorHalfSec * 0.6;
 
-  // ~25–30s/week of half-time credit while building; less near race
-  const weeklyCreditSec = weeksLeft > 4 ? 28 : 18;
-  let credit = weeksLeft * weeklyCreditSec;
+  // Lean on the known race result until the fitness estimate earns trust.
+  const fitnessWeight =
+    confidence === "high" ? 0.7 : confidence === "medium" ? 0.55 : 0.4;
+  const blended = fitness * fitnessWeight + priorHalfSec * (1 - fitnessWeight);
 
-  if (mi14 >= 20) credit += 40;
-  if (mi14 >= 30) credit += 30;
-  if (weeklyMi >= 18) credit += 25;
-  // Italy zero + short longs early: don't pretend fitness is surging
-  if (mi14 < 12) credit -= 60;
-  if (weeksLeft > 10 && mi14 < 20) credit -= 45;
+  // Remaining improvement, scaled by how well the plan is actually being run.
+  const adherence = clamp(signal.adherence, 0, 1.1);
+  const perWeekSec = 20;
+  let credit = signal.weeksRemaining * perWeekSec * adherence;
 
-  return Math.round(blended - credit);
+  // Durability and volume are earned, not scheduled.
+  if (signal.longestMi28 >= 10) credit += 45;
+  else if (signal.longestMi28 >= 8) credit += 20;
+
+  if (signal.avgWeeklyMi4 >= 24) credit += 40;
+  else if (signal.avgWeeklyMi4 >= 18) credit += 20;
+  else if (signal.avgWeeklyMi4 > 0 && signal.avgWeeklyMi4 < 12) credit -= 45;
+
+  // 15 weeks of 3–4 day training doesn't buy unlimited time.
+  credit = clamp(credit, -120, 480);
+
+  return { projectedSec: Math.round(blended - credit), creditSec: Math.round(credit) };
 }
 
-/** Soft probability of finishing at or under goal on race day. */
-export function goalPct(projectedSec: number, goalSec: number): number {
+/**
+ * Spread of plausible race-day outcomes, in minutes.
+ * Wide when the race is far away or the data is thin — a single fixed spread
+ * was what produced "94% for C" at 15 weeks out.
+ */
+export function projectionSigmaMin(
+  daysToRace: number,
+  confidence: "low" | "medium" | "high",
+): number {
+  const base = confidence === "high" ? 3.2 : confidence === "medium" ? 4.3 : 5.5;
+  return base + Math.max(0, daysToRace) / 30;
+}
+
+/**
+ * Probability of finishing at or under `goalSec`.
+ *
+ * Mildly skewed: beating a projection is harder than missing it, so the upside
+ * tail is tighter than the downside. Keeps C off 99% without inflating A.
+ */
+export function goalPct(
+  projectedSec: number,
+  goalSec: number,
+  sigmaMin: number,
+): number {
   const gapMin = (projectedSec - goalSec) / 60;
-  // Steeper than before: ~50% only when projection ≈ goal
-  const logistic = 100 / (1 + Math.exp(gapMin / 4.2));
-  return clamp(Math.round(logistic), 3, 94);
-}
-
-function estimateFromRuns(
-  plan: TrainingPlan,
-  runs: RunActivity[],
-  weeklyMi: number,
-): number | null {
-  const last28 = runs.filter((r) => {
-    const days = differenceInCalendarDays(new Date(), parseISO(r.startDate));
-    return days >= 0 && days <= 28;
-  });
-  const bestRecent =
-    last28
-      .filter((r) => r.distanceMi >= 4)
-      .map((r) => r.paceSecPerMi)
-      .sort((a, b) => a - b)[0] ?? null;
-  const longestRecent = last28.reduce((m, r) => Math.max(m, r.distanceMi), 0);
-  return estimateHalfFromRecent(bestRecent, weeklyMi, longestRecent, {
-    month: new Date().getMonth() + 1,
-    trainingElevFtPerMi: 40,
-    raceElevFtPerMi: plan.race.elevationFtPerMi ?? 0,
-  });
+  const sigmaEff = gapMin > 0 ? sigmaMin * 0.85 : sigmaMin * 1.15;
+  const logistic = 100 / (1 + Math.exp(gapMin / sigmaEff));
+  return clamp(Math.round(logistic), 2, 97);
 }
 
 export function buildPredictionSummary(args: {
   plan: TrainingPlan;
   runs: RunActivity[];
-  pace: PaceGuidanceLive;
-  weeklyMi: number;
-  mi14: number;
+  estimatedHalfSec: number | null;
+  confidence: "low" | "medium" | "high";
+  signal: TrainingSignal;
   daysToRace: number;
+  asOf: Date;
+  tz?: string;
 }): PredictionSummary {
-  const { plan, runs, pace, weeklyMi, mi14, daysToRace } = args;
+  const { plan, runs, estimatedHalfSec, confidence, signal, daysToRace, asOf, tz } =
+    args;
   const priorHalfSec = parseTimeToSec(plan.athlete.priorHalf || "2:15:56");
-  const priorHalfLabel = formatHalfClock(priorHalfSec);
 
-  const aSec = 2 * 3600; // 2:00
-  const bSec = 2 * 3600 + 10 * 60; // 2:10
-  const cSec = 2 * 3600 + 30 * 60; // 2:30
-
-  const estimatedHalfSec = pace.estimatedHalfSec;
-  const projected = raceDayProjectionSec({
+  const { projectedSec, creditSec } = raceDayProjectionSec({
     estimatedHalfSec,
     priorHalfSec,
-    daysToRace,
-    mi14,
-    weeklyMi,
+    confidence,
+    signal,
   });
 
-  const sorted = [...runs].sort(
-    (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
-  );
-  let deltaMinVsPrevEst: number | null = null;
-  if (sorted.length >= 1 && estimatedHalfSec != null) {
-    const withoutLatest = sorted.slice(1);
-    const prevEst = estimateFromRuns(plan, withoutLatest, weeklyMi);
-    if (prevEst != null) {
-      deltaMinVsPrevEst = Math.round((estimatedHalfSec - prevEst) / 60);
+  const sigmaMin = projectionSigmaMin(daysToRace, confidence);
+
+  const goals: GoalOdds[] = GOAL_LADDER.map((g) => ({
+    ...g,
+    pct: goalPct(projectedSec, g.timeSec, sigmaMin),
+  }));
+
+  // Monotonic by construction, but guard against rounding inversions.
+  for (let i = 1; i < goals.length; i++) {
+    goals[i].pct = Math.max(goals[i].pct, goals[i - 1].pct);
+  }
+
+  // Trend: re-run the estimate as of 28 days ago, using only what was known then.
+  const cutoff = dayKeyOf(new Date(asOf.getTime() - 28 * 86_400_000), tz);
+  const priorRuns = runs.filter((r) => runDayKey(r.startDate, tz) <= cutoff);
+  let trendMin: number | null = null;
+  if (priorRuns.length >= 4 && estimatedHalfSec != null) {
+    const then = estimateHalf({
+      runs: priorRuns,
+      plan,
+      priorHalfSec,
+      asOf: new Date(asOf.getTime() - 28 * 86_400_000),
+      weeklyMi: signal.avgWeeklyMi4,
+      tz,
+    });
+    if (then.sec != null) {
+      trendMin = Math.round((estimatedHalfSec - then.sec) / 60);
     }
   }
 
@@ -142,41 +169,18 @@ export function buildPredictionSummary(args: {
       ? Math.round((estimatedHalfSec - priorHalfSec) / 60)
       : null;
 
-  const goals: GoalOdds[] = [
-    {
-      label: "A",
-      timeLabel: "2:00",
-      timeSec: aSec,
-      pct: goalPct(projected, aSec),
-    },
-    {
-      label: "B",
-      timeLabel: "2:10",
-      timeSec: bSec,
-      pct: goalPct(projected, bSec),
-    },
-    {
-      label: "C",
-      timeLabel: "2:30",
-      timeSec: cSec,
-      pct: goalPct(projected, cSec),
-    },
-  ];
-
-  // Ordering only — no optimistic floors that inflate A
-  goals[1].pct = Math.max(goals[1].pct, goals[0].pct + 8);
-  goals[2].pct = Math.max(goals[2].pct, goals[1].pct + 10);
-  goals[0].pct = clamp(goals[0].pct, 5, 70);
-  goals[1].pct = clamp(goals[1].pct, 12, 85);
-  goals[2].pct = clamp(goals[2].pct, 40, 95);
-
   return {
     goals,
     estimatedHalfSec,
-    deltaMinVsPrevEst,
+    projectedSec,
+    creditSec,
+    sigmaMin: Number(sigmaMin.toFixed(1)),
+    confidence,
+    trendMin,
+    trendWindowDays: 28,
     deltaMinVsPrior,
     priorHalfSec,
-    priorHalfLabel,
+    priorHalfLabel: formatHalfClock(priorHalfSec),
   };
 }
 
@@ -189,8 +193,9 @@ export function buildMileageNarrative(args: {
   }[];
   currentWeekId: number | null;
   asOf: Date;
+  tz?: string;
 }): { status: "ahead" | "on_track" | "behind" | "rest"; headline: string; detail: string } {
-  const today = args.asOf.toISOString().slice(0, 10);
+  const today = dayKeyOf(args.asOf, args.tz);
   const past = args.weeklyMileage.filter((w) => {
     if (args.currentWeekId != null) return w.weekId < args.currentWeekId;
     return w.start < today;
@@ -235,5 +240,40 @@ export function buildMileageNarrative(args: {
     status: "behind",
     headline: "Falling behind",
     detail: `${behindCount}/${scored.length} weeks under 85% of target. Don’t double up — nudge the next easy run back on.`,
+  };
+}
+
+/** Adherence + load signals that feed the projection. */
+export function buildTrainingSignal(args: {
+  weeklyMileage: { weekId: number; start: string; loggedMi: number; targetMi: number }[];
+  currentWeekId: number | null;
+  runs: RunActivity[];
+  daysToRace: number;
+  asOf: Date;
+  tz?: string;
+}): TrainingSignal {
+  const today = dayKeyOf(args.asOf, args.tz);
+  const finished = args.weeklyMileage.filter(
+    (w) =>
+      w.targetMi > 0 &&
+      (args.currentWeekId != null ? w.weekId < args.currentWeekId : w.start < today),
+  );
+  const adherence = finished.length
+    ? finished.reduce((s, w) => s + Math.min(1.15, w.loggedMi / w.targetMi), 0) /
+      finished.length
+    : 1;
+
+  const last28 = args.runs.filter((r) => {
+    const d = daysBetweenKeys(runDayKey(r.startDate, args.tz), today);
+    return d >= 0 && d <= 28;
+  });
+  const avgWeeklyMi4 = last28.reduce((s, r) => s + r.distanceMi, 0) / 4;
+  const longestMi28 = last28.reduce((m, r) => Math.max(m, r.distanceMi), 0);
+
+  return {
+    adherence,
+    avgWeeklyMi4,
+    longestMi28,
+    weeksRemaining: Math.max(0, args.daysToRace / 7),
   };
 }
