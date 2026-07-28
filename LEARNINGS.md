@@ -94,7 +94,6 @@ Preferences and product decisions distilled from building/iterating the Monterey
 
 ## Open / optional later
 
-- Move repo permanently to `tvnquinn/monterey-half-26-plan`
 - Health Auto Export auto-push if wanted
 - Gemini/OpenAI key for screenshot logging
 - If fitness rises post-Italy, consider a fourth weekday only if recovery stays clean — default stays 3 days

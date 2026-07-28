@@ -2,9 +2,8 @@
 
 Personal half marathon training coach for **Monterey Bay Half (Nov 8, 2026)**.
 
-**Live:** https://half-marathon-plan-kappa.vercel.app
-
-> Temporarily housed under this Coursera repo; intended later move to `tvnquinn/monterey-half-26-plan`.
+**Live:** https://half-marathon-plan-kappa.vercel.app  
+**Repo:** https://github.com/tvnquinn/monterey-half-26-plan
 
 ## iPhone: pin as a home-screen app
 
@@ -25,7 +24,7 @@ See **[LEARNINGS.md](./LEARNINGS.md)** — preferences from Quinn’s iteration 
 - Log runs via screenshots, Health JSON/GPX, or manual entry
 - Matches runs to sessions; weekly mileage + long-run tracking
 - Dynamic A/B/C goal odds + half estimate from logged runs
-- Per-session pace + HR zone guidance (collapsed under each run)
+- Per-session pace (+ HR on RP/race days) on flat session rows
 - Summary narrative (ahead / on track / behind)
 - Calendar `.ics` export
 
@@ -38,7 +37,6 @@ See **[LEARNINGS.md](./LEARNINGS.md)** — preferences from Quinn’s iteration 
 ## Local development
 
 ```bash
-cd monterey-half-26-plan
 cp .env.example .env.local   # if present
 npm install
 npm run dev
@@ -46,7 +44,7 @@ npm run dev
 
 ## Deploy
 
-Root directory on Vercel: `monterey-half-26-plan`.
+Vercel root = repo root (this project).
 
 Needed env (typical):
 
