@@ -187,6 +187,8 @@ function medianPace(runs: RunActivity[]): number | null {
  * athlete's normal running, not merely higher-HR.
  */
 const HARD_EFFORT_PACE_RATIO = 0.92;
+/** At or beyond this distance, finishing at all is the fitness demonstration. */
+const ENDURANCE_EFFORT_MI = 10;
 
 function bestHardEffortSec(
   runs: RunActivity[],
@@ -200,16 +202,22 @@ function bestHardEffortSec(
 
   const med = medianPace(runs);
   if (med == null) return null;
-  const maxPace = med * HARD_EFFORT_PACE_RATIO;
 
   const candidates = runs
     .filter((r) => {
       const days = daysBetweenKeys(runDayKey(r.startDate, tz), today);
-      if (days < 0 || days > 70) return false;
+      if (days < 0 || days > 180) return false;
       if (r.distanceMi < 3 || r.movingTimeSec <= 0) return false;
-      if (r.paceSecPerMi > maxPace) return false;
+
+      // A 10+ mile run is already most of a half. Riegel off it is informative
+      // regardless of intensity — and for an athlete whose race pace is only a
+      // few percent quicker than their jogging pace, a pure speed test would
+      // never fire. Quinn's 13.15 @ 10:20 sits 6% under his median, so the
+      // 8%-faster rule alone would have discarded his actual half.
+      if (r.distanceMi >= ENDURANCE_EFFORT_MI) return r.paceSecPerMi <= med * 1.02;
+
+      if (r.paceSecPerMi > med * HARD_EFFORT_PACE_RATIO) return false;
       const hr = r.averageHeartrate;
-      // A race or tempo without HR still counts if the pace is clearly hard.
       return hr ? hr >= hardHr : r.paceSecPerMi <= med * 0.85;
     })
     .map((r) => riegelSec(r.distanceMi, r.movingTimeSec, 13.1));
