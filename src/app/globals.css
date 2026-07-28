@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0f1714;
-  --bg-2: #16211c;
-  --ink: #eef5ef;
-  --muted: #9bb0a4;
-  --line: rgba(238, 245, 239, 0.12);
-  --accent: #c8f542;
-  --accent-2: #7dd3c0;
-  --danger: #ff7a59;
-  --warn: #ffd166;
-  --ok: #8fd694;
-  --panel: rgba(22, 33, 28, 0.82);
-  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  /* Monterey night: deep water, fog sky, soft mountain */
+  --bg: #0a1219;
+  --bg-2: #101c26;
+  --ink: #d7e2ea;
+  --muted: #8a9eae;
+  --line: rgba(167, 190, 208, 0.14);
+  --accent: #7eb6c9;
+  --accent-2: #9ab0c0;
+  --danger: #d9897a;
+  --warn: #c9b07a;
+  --ok: #7eaf9a;
+  --panel: rgba(14, 26, 36, 0.88);
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
 }
@@ -37,9 +38,10 @@ body {
   color: var(--ink);
   font-family: var(--font-body), sans-serif;
   background:
-    radial-gradient(1200px 600px at 10% -10%, rgba(200, 245, 66, 0.16), transparent 55%),
-    radial-gradient(900px 500px at 90% 0%, rgba(125, 211, 192, 0.14), transparent 50%),
-    linear-gradient(180deg, #101a16 0%, #0b110f 45%, #0f1714 100%);
+    radial-gradient(1000px 520px at 8% -8%, rgba(90, 140, 170, 0.14), transparent 55%),
+    radial-gradient(800px 480px at 92% 0%, rgba(60, 100, 130, 0.12), transparent 50%),
+    radial-gradient(700px 400px at 50% 100%, rgba(40, 70, 90, 0.18), transparent 55%),
+    linear-gradient(180deg, #0c1520 0%, #080e14 48%, #0a1219 100%);
   background-attachment: fixed;
 }
 
@@ -48,7 +50,7 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -108,7 +110,7 @@ a {
 
 .tab {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--muted);
   border-radius: 999px;
   padding: 0.45rem 0.9rem;
@@ -120,12 +122,12 @@ a {
 }
 
 .tab:hover {
-  border-color: rgba(200, 245, 66, 0.35);
+  border-color: rgba(126, 182, 201, 0.4);
   color: var(--ink);
 }
 
 .tab-active {
-  color: #111;
+  color: #0a1219;
   background: var(--accent);
   border-color: transparent;
   font-weight: 700;
@@ -141,22 +143,24 @@ a {
 
 .brand {
   margin: 0;
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-display), serif;
   font-size: clamp(4rem, 14vw, 7.5rem);
   line-height: 0.9;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   color: var(--accent);
-  text-shadow: 0 0 40px rgba(200, 245, 66, 0.15);
+  text-shadow: none;
 }
 
 .brand-title {
   font-size: clamp(1.7rem, 6.5vw, 2.6rem);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-shadow: none;
+  color: #c5d6e2;
 }
 
 .plan-label {
@@ -180,9 +184,11 @@ a {
 
 .goals-heading {
   margin: 0 0 0.15rem;
-  font-family: var(--font-display), sans-serif;
-  font-size: 1rem;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display), serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #b8cad6;
 }
 
 .goal-row {
@@ -226,7 +232,7 @@ a {
   padding: 0.85rem 0.95rem;
   border-radius: 0.9rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .narrative strong {
@@ -234,19 +240,19 @@ a {
 }
 
 .narrative-ahead {
-  border-color: rgba(143, 214, 148, 0.45);
+  border-color: rgba(126, 175, 154, 0.4);
 }
 
 .narrative-on_track {
-  border-color: rgba(125, 211, 192, 0.4);
+  border-color: rgba(126, 182, 201, 0.35);
 }
 
 .narrative-behind {
-  border-color: rgba(255, 209, 102, 0.45);
+  border-color: rgba(201, 176, 122, 0.4);
 }
 
 .narrative-rest {
-  border-color: rgba(238, 245, 239, 0.2);
+  border-color: rgba(167, 190, 208, 0.2);
 }
 
 .lede {
@@ -283,7 +289,7 @@ a {
 
 .btn.primary {
   background: var(--accent);
-  color: #111;
+  color: #0a1219;
   border-color: transparent;
 }
 
@@ -293,7 +299,7 @@ a {
 }
 
 .btn.ghost:hover {
-  border-color: rgba(200, 245, 66, 0.45);
+  border-color: rgba(126, 182, 201, 0.45);
 }
 
 .btn:disabled {
@@ -322,7 +328,7 @@ a {
 .hero-stats strong {
   display: block;
   margin-top: 0.25rem;
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-display), serif;
   font-size: 1.55rem;
   letter-spacing: -0.03em;
 }
@@ -339,7 +345,7 @@ a {
   padding: 0.95rem 1.1rem;
   border-left: 3px solid var(--accent);
   color: var(--ink);
-  background: rgba(200, 245, 66, 0.06);
+  background: rgba(126, 182, 201, 0.06);
 }
 
 .grid-2 {
@@ -366,9 +372,11 @@ a {
 
 .panel h2 {
   margin: 0 0 0.9rem;
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-display), serif;
   font-size: 1.35rem;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #c5d6e2;
 }
 
 .muted-panel {
@@ -379,7 +387,7 @@ a {
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .meter.thin {
@@ -389,7 +397,7 @@ a {
 .meter-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  background: linear-gradient(90deg, #4a7a90, var(--accent));
   transition: width 500ms ease;
 }
 
@@ -579,15 +587,15 @@ a {
 }
 
 .rec-critical {
-  border-color: rgba(255, 122, 89, 0.45);
+  border-color: rgba(217, 137, 122, 0.45);
 }
 
 .rec-high {
-  border-color: rgba(255, 209, 102, 0.4);
+  border-color: rgba(201, 176, 122, 0.4);
 }
 
 .rec-medium {
-  border-color: rgba(125, 211, 192, 0.35);
+  border-color: rgba(126, 182, 201, 0.35);
 }
 
 .run-metrics {
@@ -661,7 +669,7 @@ a {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 0.75rem;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.28);
   color: var(--ink);
   padding: 0.7rem 0.8rem;
   font: inherit;
@@ -670,8 +678,8 @@ a {
 }
 
 .log-form input:focus {
-  outline: 1px solid rgba(200, 245, 66, 0.55);
-  border-color: rgba(200, 245, 66, 0.45);
+  outline: 1px solid rgba(126, 182, 201, 0.5);
+  border-color: rgba(126, 182, 201, 0.4);
 }
 
 .log-actions {
@@ -725,7 +733,7 @@ a {
   bottom: 0.55rem;
   width: 1.5rem;
   pointer-events: none;
-  background: linear-gradient(90deg, transparent, rgba(11, 17, 15, 0.75));
+  background: linear-gradient(90deg, transparent, rgba(8, 14, 20, 0.85));
   border-radius: 0 1.25rem 1.25rem 0;
   z-index: 1;
 }
@@ -741,15 +749,14 @@ a {
 
 .weeks-scroll-head h2 {
   margin: 0;
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-display), serif;
   font-size: 1.35rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .weeks-scroll {
   display: grid;
   grid-auto-flow: column;
-  /* Nearly full width; small peek of next card signals swipe */
   grid-auto-columns: calc(100% - 0.85rem);
   gap: 0.75rem;
   overflow-x: auto;
@@ -769,13 +776,14 @@ a {
 
 .week-card h3 {
   margin: 0 0 0.35rem;
-  font-family: var(--font-display), sans-serif;
+  font-family: var(--font-display), serif;
   font-size: 1.15rem;
+  font-weight: 600;
 }
 
 .week-card-current {
-  border-color: rgba(200, 245, 66, 0.45);
-  box-shadow: 0 0 0 1px rgba(200, 245, 66, 0.18), var(--shadow);
+  border-color: rgba(126, 182, 201, 0.4);
+  box-shadow: 0 0 0 1px rgba(126, 182, 201, 0.15), var(--shadow);
 }
 
 .week-focus {
@@ -792,7 +800,7 @@ a {
 }
 
 .week-over {
-  border-color: rgba(255, 209, 102, 0.45);
+  border-color: rgba(201, 176, 122, 0.45);
 }
 
 .progression-list {
@@ -819,6 +827,10 @@ a {
 .small {
   font-size: 0.85rem;
   line-height: 1.4;
+}
+
+.muted {
+  color: var(--muted);
 }
 
 .error {
