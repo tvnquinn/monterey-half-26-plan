@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState, useTransition } from "react";
 import type { CoachReport, RunActivity, TrainingPlan } from "@/lib/types";
 import { formatDuration, paceToString } from "@/lib/format";
+import { LogRunForm } from "@/components/LogRunForm";
+import { HealthUpload } from "@/components/HealthUpload";
 
 interface CoachPayload {
   plan: TrainingPlan;
@@ -69,17 +71,17 @@ export function Dashboard() {
     load();
   }, [load]);
 
-  async function syncRuns() {
-    setSyncMsg("Syncing…");
+  async function loadSeedHistory() {
+    setSyncMsg("Loading history…");
     const res = await fetch("/api/strava/sync", { method: "POST" });
     const json = await res.json();
     if (!res.ok) {
-      setSyncMsg(json.error || "Sync failed");
+      setSyncMsg(json.error || "Load failed");
       return;
     }
     setSyncMsg(
       json.message ||
-        `Imported ${json.imported} from ${json.source} · ${json.total} total runs`,
+        `Loaded ${json.imported} from ${json.source} · ${json.total} total runs`,
     );
     load();
   }
@@ -111,16 +113,21 @@ export function Dashboard() {
           <p className="eyebrow animate-fade">Nov 8 · Half Marathon</p>
           <h1 className="brand animate-rise">SUB-2</h1>
           <p className="lede animate-fade delay-1">
-            Adaptive coach for your build — Strava stats in, pace guidance and plan
-            changes out.
+            Adaptive coach for your Monterey build — log runs from Apple Fitness,
+            get pace guidance and plan changes back.
           </p>
           <div className="cta-row animate-fade delay-2">
-            <button type="button" className="btn primary" onClick={syncRuns} disabled={pending}>
-              Sync runs
-            </button>
-            <a className="btn ghost" href="/api/strava/auth">
-              Connect Strava
+            <a className="btn primary" href="#log-run">
+              Log a run
             </a>
+            <button
+              type="button"
+              className="btn ghost"
+              onClick={loadSeedHistory}
+              disabled={pending}
+            >
+              Load seed history
+            </button>
             <a className="btn ghost" href="/api/calendar">
               Add to calendar
             </a>
@@ -146,6 +153,18 @@ export function Dashboard() {
       </header>
 
       <p className="summary">{report.summary}</p>
+
+      <section className="panel" id="log-run">
+        <h2>Import from Apple Health</h2>
+        <p className="muted log-help">
+          Upload the JSON files from <strong>iCloud Drive → AutoExport → Autosync</strong>
+          (last 90 days). Or configure Health Auto Export REST API to POST to{" "}
+          <code>/api/health/ingest</code> for automatic updates.
+        </p>
+        <HealthUpload onImported={load} />
+        <h2 className="subhead">Or log one run manually</h2>
+        <LogRunForm onLogged={load} />
+      </section>
 
       <section className="grid-2">
         <article className="panel">
@@ -281,15 +300,17 @@ export function Dashboard() {
       <section className="panel muted-panel">
         <h2>How updates work</h2>
         <ol className="howto">
-          <li>Upload runs to Strava as usual (Watch/iPhone → Strava).</li>
-          <li>Click <strong>Sync runs</strong> (or Connect Strava once for OAuth).</li>
+          <li>Finish a run on Apple Watch / Fitness.</li>
           <li>
-            Full stats are stored: distance, pace, HR, elevation, splits, calories —
-            used to retune easy pace and recommendations.
+            Enter distance, pace, and HR in <strong>Log a run</strong> (or have OpenClaw
+            POST to the ingest API).
           </li>
           <li>
-            <strong>Add to calendar</strong> downloads an .ics of all planned sessions for
-            Apple/Google Calendar reminders.
+            The coach retunes easy-pace guidance and recommendations from your logged
+            stats in Supabase.
+          </li>
+          <li>
+            <strong>Add to calendar</strong> downloads planned sessions for reminders.
           </li>
         </ol>
         <p className="muted">

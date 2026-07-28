@@ -415,6 +415,88 @@ a {
   color: var(--muted);
 }
 
+.log-help {
+  margin: -0.2rem 0 1rem;
+  line-height: 1.45;
+}
+
+.log-help code {
+  font-size: 0.85em;
+  color: var(--accent-2);
+}
+
+.log-form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.log-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 860px) {
+  .log-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.log-form label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.log-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--ink);
+  padding: 0.7rem 0.8rem;
+  font: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.log-form input:focus {
+  outline: 1px solid rgba(200, 245, 66, 0.55);
+  border-color: rgba(200, 245, 66, 0.45);
+}
+
+.log-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.subhead {
+  margin: 1.4rem 0 0.8rem;
+  font-size: 1.1rem;
+}
+
+.upload-box {
+  display: grid;
+  gap: 0.55rem;
+  margin-bottom: 0.5rem;
+}
+
+.upload-label {
+  width: fit-content;
+  cursor: pointer;
+}
+
+.upload-hint {
+  margin: 0;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
 .muted {
   color: var(--muted);
 }
