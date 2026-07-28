@@ -229,13 +229,19 @@ function bestHardEffortSec(
 /**
  * Net cost of rolling terrain, seconds per mile per ft/mi of climb.
  *
- * Fitting pace ~ elev + HR + distance on Quinn's own runs returns 0.64, but
- * that is almost certainly inflated: he chooses hilly routes on easy days, so
- * the coefficient absorbs effort as well as grade. Published grade-adjustment
- * curves put the net cost on an out-and-back (equal climb and descent) nearer
- * 0.10–0.25. We take the conservative end of the plausible range rather than
- * the flattering empirical fit — over-crediting the course is exactly how a
- * projection quietly becomes a fantasy.
+ * Two independent estimates land close together, which is why this value is
+ * trusted more than the earlier guess:
+ *
+ *   - Whole-run regression (pace ~ elev + HR + distance, 43 runs) returns 0.64,
+ *     but that is inflated: he picks hilly routes on easy days, so the
+ *     coefficient absorbs effort as well as grade.
+ *   - Within-run regression over 22 mile splits with heart rate controlled
+ *     returns 0.489 s/mi per foot of *net* change. Halved to account for the
+ *     descent refund on a loop, that is ~2.2 min over 13.1 at his 42 ft/mi.
+ *
+ * 0.20 applied to cumulative gain yields ~1.8 min — the same answer from the
+ * other direction. Kept at the conservative end deliberately: over-crediting
+ * the course is exactly how a projection quietly becomes a fantasy.
  */
 const ELEV_SEC_PER_FT_PER_MI = 0.2;
 
@@ -340,13 +346,39 @@ function builtVolumeMi(runs: RunActivity[], today: string, recentMi: number, tz?
   return Math.max(recentMi, peak4wk * 0.85);
 }
 
-function builtLongestMi(runs: RunActivity[], today: string, tz?: string): number {
-  return runs
-    .filter((r) => {
-      const age = daysBetweenKeys(runDayKey(r.startDate, tz), today);
-      return age >= 0 && age <= 56;
-    })
-    .reduce((m, r) => Math.max(m, r.distanceMi), 0);
+/**
+ * How much a long run still counts for, by age.
+ *
+ * A hard 56-day cliff threw away Quinn's 10.06-miler at 69 days and reported
+ * his longest as 5.76 — which drove both the durability penalty and the
+ * confidence gate off a run that was two weeks past an arbitrary boundary.
+ * Endurance adaptation fades gradually; the evidence that you covered the
+ * distance fades slower still. Full credit for five weeks, half credit at four
+ * months, gone by eight.
+ */
+function longRunRecencyWeight(ageDays: number): number {
+  if (ageDays < 0) return 0;
+  if (ageDays <= 35) return 1;
+  if (ageDays <= 120) return 1 - ((ageDays - 35) / 85) * 0.5;
+  if (ageDays <= 240) return 0.5 - ((ageDays - 120) / 120) * 0.5;
+  return 0;
+}
+
+/** Longest run still doing work for you, discounted by how long ago it was. */
+function builtLongest(
+  runs: RunActivity[],
+  today: string,
+  tz?: string,
+): { effectiveMi: number; sourceMi: number; ageDays: number } {
+  let best = { effectiveMi: 0, sourceMi: 0, ageDays: 0 };
+  for (const r of runs) {
+    const ageDays = daysBetweenKeys(runDayKey(r.startDate, tz), today);
+    const effectiveMi = r.distanceMi * longRunRecencyWeight(ageDays);
+    if (effectiveMi > best.effectiveMi) {
+      best = { effectiveMi, sourceMi: r.distanceMi, ageDays };
+    }
+  }
+  return best;
 }
 
 export function estimateHalf(input: EstimateInput): HalfEstimate {
@@ -355,7 +387,8 @@ export function estimateHalf(input: EstimateInput): HalfEstimate {
   const today = runDayKey(asOf.toISOString(), tz);
 
   // Look back past the taper so race week doesn't read as detraining.
-  const longestMi = builtLongestMi(runs, today, tz);
+  const longest = builtLongest(runs, today, tz);
+  const longestMi = longest.effectiveMi;
   const effectiveWeeklyMi = builtVolumeMi(runs, today, weeklyMi, tz);
 
   const efPoints = buildEfPoints(runs, plan, asOf, tz);
@@ -390,7 +423,9 @@ export function estimateHalf(input: EstimateInput): HalfEstimate {
   efBased *= durabilityFactor(longestMi);
   efBased *= volumeFactor(effectiveWeeklyMi);
   basis.push(
-    `Longest ${longestMi.toFixed(1)} mi · ~${Math.round(effectiveWeeklyMi)} mi/wk of built volume.`,
+    longest.effectiveMi < longest.sourceMi - 0.1
+      ? `Longest ${longest.sourceMi.toFixed(1)} mi (${longest.ageDays}d ago) counts as ${longest.effectiveMi.toFixed(1)} mi · ~${Math.round(effectiveWeeklyMi)} mi/wk of built volume.`
+      : `Longest ${longest.sourceMi.toFixed(1)} mi · ~${Math.round(effectiveWeeklyMi)} mi/wk of built volume.`,
   );
 
   let sec: number;

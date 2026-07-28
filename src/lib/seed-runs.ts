@@ -1,16 +1,11 @@
 import type { RunActivity } from "./types";
 
 /**
- * Real training history: 63 runs, Feb 2025 - Jul 2026.
- *
- * 52 carry measured heart rate. Sources are Health Auto Export (distance,
- * duration, elevation, HR, temperature straight off the watch), Apple
- * workout-detail screens for Mar/Apr 2026 runs outside the export window, and
- * Strava for Feb 2026 (measured distance and time, no HR).
- *
- * 5 runs carry `raw.paceImputed` - distance is exact but pace is a month
- * average and no HR exists. They keep weekly-volume history complete and are
- * excluded from model fitting and backtest scoring.
+ * Real training history: 63 runs, Feb 2025 - Jul 2026, 52 with measured heart
+ * rate and 3 with per-mile splits. Sources are Health Auto Export, Apple
+ * workout-detail screens, and Strava. Five runs carry `raw.paceImputed`
+ * (distance exact, pace from a month average, no HR) and are excluded from
+ * model fitting and backtest scoring.
  *
  * Per-minute heart-rate series live in data/history.json.
  */
@@ -706,6 +701,7 @@ export const seedRuns: RunActivity[] = [
     maxHeartrate: 166,
     averageCadence: 174,
     temperatureF: 55,
+    splits: [{"mile":1,"movingTimeSec":785,"paceSecPerMi":785,"elevationGain":-47,"averageHeartrate":142},{"mile":2,"movingTimeSec":781,"paceSecPerMi":781,"elevationGain":-136,"averageHeartrate":141},{"mile":3,"movingTimeSec":817,"paceSecPerMi":817,"elevationGain":-7,"averageHeartrate":144},{"mile":4,"movingTimeSec":805,"paceSecPerMi":805,"elevationGain":-1,"averageHeartrate":148},{"mile":5,"movingTimeSec":843,"paceSecPerMi":843,"elevationGain":5,"averageHeartrate":144},{"mile":6,"movingTimeSec":920,"paceSecPerMi":920,"elevationGain":168,"averageHeartrate":149},{"mile":7,"movingTimeSec":777,"paceSecPerMi":777,"elevationGain":-173,"averageHeartrate":139},{"mile":8,"movingTimeSec":797,"paceSecPerMi":797,"elevationGain":-1,"averageHeartrate":147},{"mile":9,"movingTimeSec":821,"paceSecPerMi":821,"elevationGain":18,"averageHeartrate":149},{"mile":10,"movingTimeSec":805,"paceSecPerMi":805,"elevationGain":75,"averageHeartrate":153}],
   },
   {
     id: "hae-2026-05-22-5.73",
@@ -721,6 +717,7 @@ export const seedRuns: RunActivity[] = [
     maxHeartrate: 157,
     averageCadence: 175,
     temperatureF: 52,
+    splits: [{"mile":1,"movingTimeSec":685,"paceSecPerMi":685,"elevationGain":-49,"averageHeartrate":144},{"mile":2,"movingTimeSec":728,"paceSecPerMi":728,"elevationGain":-133,"averageHeartrate":138},{"mile":3,"movingTimeSec":766,"paceSecPerMi":766,"elevationGain":-5,"averageHeartrate":135},{"mile":4,"movingTimeSec":813,"paceSecPerMi":813,"elevationGain":-6,"averageHeartrate":131},{"mile":5,"movingTimeSec":805,"paceSecPerMi":805,"elevationGain":6,"averageHeartrate":131},{"mile":0.7,"movingTimeSec":561,"paceSecPerMi":801,"elevationGain":23,"averageHeartrate":135}],
   },
   {
     id: "hae-2026-05-25-7.83",
@@ -736,6 +733,7 @@ export const seedRuns: RunActivity[] = [
     maxHeartrate: 167,
     averageCadence: 176,
     temperatureF: 58,
+    splits: [{"mile":1,"movingTimeSec":694,"paceSecPerMi":694,"elevationGain":-53,"averageHeartrate":152},{"mile":2,"movingTimeSec":694,"paceSecPerMi":694,"elevationGain":-131,"averageHeartrate":145},{"mile":3,"movingTimeSec":718,"paceSecPerMi":718,"elevationGain":-5,"averageHeartrate":145},{"mile":4,"movingTimeSec":725,"paceSecPerMi":725,"elevationGain":-4,"averageHeartrate":142},{"mile":5,"movingTimeSec":742,"paceSecPerMi":742,"elevationGain":3,"averageHeartrate":144},{"mile":6,"movingTimeSec":763,"paceSecPerMi":763,"elevationGain":5,"averageHeartrate":144},{"mile":7,"movingTimeSec":749,"paceSecPerMi":749,"elevationGain":-1,"averageHeartrate":142},{"mile":0.8,"movingTimeSec":590,"paceSecPerMi":738,"elevationGain":3,"averageHeartrate":150}],
   },
   {
     id: "hae-2026-06-01-5.26",
