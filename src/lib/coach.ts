@@ -154,12 +154,19 @@ export function buildCoachReport(
     sub2OddsBand = `${predictions.goals[0].pct}%`;
   }
 
-  const weeklyMileage = weekStatuses.map((w) => ({
-    weekId: w.week.id,
-    start: w.week.start,
-    loggedMi: w.loggedMi,
-    targetMi: w.targetMi,
-  }));
+  const weeklyMileage = weekStatuses.map((w) => {
+    const longSession = [...w.week.sessions]
+      .filter((s) => s.type === "long" || s.type === "race")
+      .sort((a, b) => b.targetMi - a.targetMi)[0];
+    return {
+      weekId: w.week.id,
+      start: w.week.start,
+      loggedMi: w.loggedMi,
+      targetMi: w.targetMi,
+      longMi: longSession?.targetMi ?? 0,
+      longestLoggedMi: w.longestMi,
+    };
+  });
 
   const mileageNarrative = buildMileageNarrative({
     weeklyMileage,

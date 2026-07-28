@@ -270,10 +270,18 @@
       "id": 7,
       "start": "2026-09-07",
       "end": "2026-09-13",
-      "targetMi": 5,
+      "targetMi": 9,
       "phase": "italy",
-      "focus": "Wed easy before fly (Sep 9) — then travel, no ramp panic",
+      "focus": "Two easy runs Tue/Wed before fly — then travel",
       "sessions": [
+        {
+          "id": "w7-tue",
+          "date": "2026-09-08",
+          "type": "easy",
+          "targetMi": 4,
+          "optional": false,
+          "notes": "Easy Z2 · day before pre-flight"
+        },
         {
           "id": "w7-wed",
           "date": "2026-09-09",

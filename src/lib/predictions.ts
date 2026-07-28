@@ -39,8 +39,8 @@ function clamp(n: number, lo: number, hi: number) {
 }
 
 /**
- * Race-day projection: blend fitness estimate with prior half, then give
- * credit for weeks of training still left (early-season optimism).
+ * Honest race-day projection: blend fitness with prior half, modest credit
+ * for training time left (injury + travel make big jumps unlikely).
  */
 function raceDayProjectionSec(args: {
   estimatedHalfSec: number | null;
@@ -52,21 +52,20 @@ function raceDayProjectionSec(args: {
   const { estimatedHalfSec, priorHalfSec, daysToRace, mi14, weeklyMi } = args;
   const weeksLeft = Math.max(0, daysToRace / 7);
 
-  // Fitness signal from recent runs, or fall back to prior
   const fitness = estimatedHalfSec ?? priorHalfSec;
-  // Don't let a conservative easy-pace conversion dominate early — pull toward prior
-  const blended = fitness * 0.55 + priorHalfSec * 0.45;
+  // Lean on prior half more — easy-pace conversion is noisy early
+  const blended = fitness * 0.4 + priorHalfSec * 0.6;
 
-  // ~45–55s of half-time improvement credit per training week remaining (tapers near race)
-  const weeklyCreditSec = weeksLeft > 2 ? 50 : 25;
+  // ~25–30s/week of half-time credit while building; less near race
+  const weeklyCreditSec = weeksLeft > 4 ? 28 : 18;
   let credit = weeksLeft * weeklyCreditSec;
 
-  // Volume already logged this fortnight supports the projection
-  if (mi14 >= 18) credit += 60;
-  if (mi14 >= 28) credit += 45;
-  if (weeklyMi >= 16) credit += 30;
-  // Light early weeks shouldn't nuke odds — only mild drag
-  if (mi14 < 8 && weeksLeft < 6) credit -= 45;
+  if (mi14 >= 20) credit += 40;
+  if (mi14 >= 30) credit += 30;
+  if (weeklyMi >= 18) credit += 25;
+  // Italy zero + short longs early: don't pretend fitness is surging
+  if (mi14 < 12) credit -= 60;
+  if (weeksLeft > 10 && mi14 < 20) credit -= 45;
 
   return Math.round(blended - credit);
 }
@@ -74,9 +73,9 @@ function raceDayProjectionSec(args: {
 /** Soft probability of finishing at or under goal on race day. */
 export function goalPct(projectedSec: number, goalSec: number): number {
   const gapMin = (projectedSec - goalSec) / 60;
-  // Wider curve: ~50% when projection equals goal; ~1 pt per ~0.7–1 min gap
-  const logistic = 100 / (1 + Math.exp(gapMin / 5.5));
-  return clamp(Math.round(logistic), 5, 95);
+  // Steeper than before: ~50% only when projection ≈ goal
+  const logistic = 100 / (1 + Math.exp(gapMin / 4.2));
+  return clamp(Math.round(logistic), 3, 94);
 }
 
 function estimateFromRuns(
@@ -107,11 +106,11 @@ export function buildPredictionSummary(args: {
 }): PredictionSummary {
   const { plan, runs, pace, weeklyMi, mi14, daysToRace } = args;
   const priorHalfSec = parseTimeToSec(plan.athlete.priorHalf || "2:15:56");
-  const priorHalfLabel = formatHalfClock(priorHalfSec); // 2:16
+  const priorHalfLabel = formatHalfClock(priorHalfSec);
 
   const aSec = 2 * 3600; // 2:00
   const bSec = 2 * 3600 + 10 * 60; // 2:10
-  const cSec = 2 * 3600 + 30 * 60; // 2:30 finish / C goal
+  const cSec = 2 * 3600 + 30 * 60; // 2:30
 
   const estimatedHalfSec = pace.estimatedHalfSec;
   const projected = raceDayProjectionSec({
@@ -160,12 +159,12 @@ export function buildPredictionSummary(args: {
     },
   ];
 
-  // Harder goals must not outrank easier ones
-  goals[1].pct = Math.max(goals[1].pct, goals[0].pct + 6);
-  goals[2].pct = Math.max(goals[2].pct, goals[1].pct + 8);
-  goals[0].pct = clamp(goals[0].pct, 8, 85);
-  goals[1].pct = clamp(goals[1].pct, 14, 90);
-  goals[2].pct = clamp(goals[2].pct, 35, 96);
+  // Ordering only — no optimistic floors that inflate A
+  goals[1].pct = Math.max(goals[1].pct, goals[0].pct + 8);
+  goals[2].pct = Math.max(goals[2].pct, goals[1].pct + 10);
+  goals[0].pct = clamp(goals[0].pct, 5, 70);
+  goals[1].pct = clamp(goals[1].pct, 12, 85);
+  goals[2].pct = clamp(goals[2].pct, 40, 95);
 
   return {
     goals,
@@ -178,7 +177,12 @@ export function buildPredictionSummary(args: {
 }
 
 export function buildMileageNarrative(args: {
-  weeklyMileage: { weekId: number; start: string; loggedMi: number; targetMi: number }[];
+  weeklyMileage: {
+    weekId: number;
+    start: string;
+    loggedMi: number;
+    targetMi: number;
+  }[];
   currentWeekId: number | null;
   asOf: Date;
 }): { status: "ahead" | "on_track" | "behind" | "rest"; headline: string; detail: string } {

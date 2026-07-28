@@ -183,7 +183,14 @@ export interface CoachReport {
   currentWeek: WeekStatus | null;
   upcomingWeeks: WeekStatus[];
   recentRuns: RunActivity[];
-  weeklyMileage: { weekId: number; start: string; loggedMi: number; targetMi: number }[];
+  weeklyMileage: {
+    weekId: number;
+    start: string;
+    loggedMi: number;
+    targetMi: number;
+    longMi: number;
+    longestLoggedMi: number;
+  }[];
   paceGuidance: PaceGuidanceLive;
   recommendations: Recommendation[];
   /** @deprecated use predictions.goals */

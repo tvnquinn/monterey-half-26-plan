@@ -261,6 +261,7 @@ export function Dashboard() {
                   <div className="mileage-row">
                     <span>
                       W{w.weekId} · {formatShortDate(w.start)}
+                      {w.longMi > 0 ? ` · long ${w.longMi}` : w.targetMi === 0 ? " · rest" : ""}
                     </span>
                     <span>
                       {w.loggedMi.toFixed(1)} / {w.targetMi}
@@ -318,25 +319,27 @@ export function Dashboard() {
         <section className="panel">
           <h2>Recent</h2>
           <ul className="run-list">
-            {report.recentRuns.map((run) => (
-              <li key={run.id}>
-                <div>
-                  <strong>
-                    {weekdayShort(run.startDate)} {formatShortDate(run.startDate)}
-                  </strong>
-                  <span>{run.name}</span>
-                </div>
-                <div className="run-metrics">
-                  <span>{run.distanceMi.toFixed(2)} mi</span>
-                  <span>{paceToString(run.paceSecPerMi)}/mi</span>
-                  <span>{formatDuration(run.movingTimeSec)}</span>
-                  <span>
-                    {run.averageHeartrate ? `${run.averageHeartrate} bpm` : "— bpm"}
-                  </span>
-                  <span>{run.elevationFt ? `${run.elevationFt} ft` : "— ft"}</span>
-                </div>
-              </li>
-            ))}
+            {report.recentRuns.map((run) => {
+              const bits = [
+                `${run.distanceMi.toFixed(2)} mi`,
+                `${paceToString(run.paceSecPerMi)}/mi`,
+                formatDuration(run.movingTimeSec),
+                run.averageHeartrate ? `${run.averageHeartrate} bpm` : null,
+                run.elevationFt ? `${run.elevationFt} ft` : null,
+              ].filter(Boolean);
+              return (
+                <li key={run.id}>
+                  <div>
+                    <strong>
+                      {weekdayShort(run.startDate)} {formatShortDate(run.startDate)}
+                    </strong>
+                    <span>
+                      {run.name} · {bits.join(" · ")}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </section>
       ) : null}
@@ -377,13 +380,12 @@ export function Dashboard() {
                     <strong>
                       {weekdayShort(p.date)} {formatShortDate(p.date)}
                     </strong>
-                  </div>
-                  <div className="run-metrics">
-                    <span>{paceToString(p.actualPaceSec)}</span>
-                    <span>pred {paceToString(p.predictedPaceSec)}</span>
                     <span>
-                      {p.errorSec >= 0 ? "+" : ""}
-                      {p.errorSec}s
+                      {[
+                        paceToString(p.actualPaceSec),
+                        `pred ${paceToString(p.predictedPaceSec)}`,
+                        `${p.errorSec >= 0 ? "+" : ""}${p.errorSec}s`,
+                      ].join(" · ")}
                     </span>
                   </div>
                 </li>
