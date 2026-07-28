@@ -194,6 +194,10 @@ export function Dashboard() {
                       </strong>
                       <span>
                         {s.session.targetMi} mi
+                        {s.paceRec
+                          ? ` · ${paceToString(s.paceRec.targetSecPerMi)}/mi (${paceToString(s.paceRec.minSecPerMi)}–${paceToString(s.paceRec.maxSecPerMi)})`
+                          : ""}
+                        {s.paceRec?.hrTarget ? ` · HR ~${s.paceRec.hrTarget}` : ""}
                         {s.session.notes ? ` — ${s.session.notes}` : ""}
                       </span>
                     </div>

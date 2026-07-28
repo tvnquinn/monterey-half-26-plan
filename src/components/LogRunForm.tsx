@@ -30,6 +30,7 @@ export function LogRunForm({ onLogged }: LogRunFormProps) {
   const [distanceMi, setDistanceMi] = useState("4.5");
   const [pace, setPace] = useState("12:30");
   const [avgHr, setAvgHr] = useState("150");
+  const [elevationFt, setElevationFt] = useState("");
   const [calories, setCalories] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -61,6 +62,7 @@ export function LogRunForm({ onLogged }: LogRunFormProps) {
           movingTimeSec: preview.moving,
           paceSecPerMi: preview.paceSec,
           averageHeartrate: avgHr ? Number(avgHr) : undefined,
+          elevationFt: elevationFt ? Number(elevationFt) : 0,
           calories: calories ? Number(calories) : undefined,
         }),
       });
@@ -114,6 +116,15 @@ export function LogRunForm({ onLogged }: LogRunFormProps) {
             value={avgHr}
             onChange={(e) => setAvgHr(e.target.value)}
             placeholder="150"
+          />
+        </label>
+        <label>
+          Elev gain (ft)
+          <input
+            inputMode="numeric"
+            value={elevationFt}
+            onChange={(e) => setElevationFt(e.target.value)}
+            placeholder="200"
           />
         </label>
         <label>

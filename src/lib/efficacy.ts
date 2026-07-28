@@ -6,6 +6,8 @@ export interface EfficacyPoint {
   distanceMi: number;
   paceSecPerMi: number;
   averageHeartrate?: number;
+  elevationFt: number;
+  elevFtPerMi: number;
   daysSincePrev: number | null;
   miles7d: number;
   miles14d: number;
@@ -84,6 +86,7 @@ export function buildEfficacyPoints(runs: RunActivity[]): {
       r.averageHeartrate && r.averageHeartrate > 0
         ? 3600 / r.paceSecPerMi / r.averageHeartrate
         : undefined;
+    const elevationFt = Math.max(0, r.elevationFt || 0);
 
     return {
       id: r.id,
@@ -91,6 +94,8 @@ export function buildEfficacyPoints(runs: RunActivity[]): {
       distanceMi: r.distanceMi,
       paceSecPerMi: r.paceSecPerMi,
       averageHeartrate: r.averageHeartrate,
+      elevationFt,
+      elevFtPerMi: elevationFt / Math.max(r.distanceMi, 0.1),
       daysSincePrev: prev ? daysBetween(prev.startDate, r.startDate) : null,
       miles7d,
       miles14d,
@@ -155,23 +160,85 @@ function fitOLS(X: number[][], y: number[]): number[] {
   return A.map((row) => row[p]);
 }
 
-function features(p: EfficacyPoint, includeHr: boolean): number[] {
-  const base = [
+function features(
+  p: EfficacyPoint,
+  opts: { includeHr: boolean; hrImpute: number },
+): number[] {
+  return [
     1,
     p.distanceMi,
     p.miles7d,
     p.miles14d,
     p.daysSincePrev ?? 3,
+    p.elevFtPerMi,
+    opts.includeHr ? p.averageHeartrate || opts.hrImpute : 0,
   ];
-  if (includeHr) base.push(p.averageHeartrate || 0);
-  return base;
 }
 
-function predictPace(beta: number[], p: EfficacyPoint, includeHr: boolean): number {
-  const x = features(p, includeHr);
+function predictPace(
+  beta: number[],
+  p: EfficacyPoint,
+  opts: { includeHr: boolean; hrImpute: number },
+): number {
+  const x = features(p, opts);
   let y = 0;
   for (let i = 0; i < beta.length; i++) y += beta[i] * x[i];
   return y;
+}
+
+export interface PaceModel {
+  usesHr: boolean;
+  usesElev: boolean;
+  hrImpute: number;
+  beta: number[];
+  predict: (input: {
+    distanceMi: number;
+    elevationFt?: number;
+    averageHeartrate?: number;
+    daysSincePrev?: number;
+    miles7d?: number;
+    miles14d?: number;
+  }) => number | null;
+}
+
+export function fitPaceModel(points: EfficacyPoint[]): PaceModel | null {
+  if (points.length < 4) return null;
+  const hrVals = points
+    .map((p) => p.averageHeartrate)
+    .filter((v): v is number => typeof v === "number" && v > 0);
+  const usesHr = hrVals.length >= 3;
+  const hrImpute = hrVals.length ? mean(hrVals) : 150;
+  const beta = fitOLS(
+    points.map((p) => features(p, { includeHr: usesHr, hrImpute })),
+    points.map((p) => p.paceSecPerMi),
+  );
+  const paces = points.map((p) => p.paceSecPerMi);
+  const lo = Math.min(...paces) - 45;
+  const hi = Math.max(...paces) + 45;
+
+  return {
+    usesHr,
+    usesElev: true,
+    hrImpute,
+    beta,
+    predict: (input) => {
+      const elev = input.elevationFt ?? 0;
+      const proxy: EfficacyPoint = {
+        id: "proxy",
+        date: "2099-01-01",
+        distanceMi: input.distanceMi,
+        paceSecPerMi: 0,
+        averageHeartrate: input.averageHeartrate,
+        elevationFt: elev,
+        elevFtPerMi: elev / Math.max(input.distanceMi, 0.1),
+        daysSincePrev: input.daysSincePrev ?? 2,
+        miles7d: input.miles7d ?? 0,
+        miles14d: input.miles14d ?? 0,
+      };
+      const raw = predictPace(beta, proxy, { includeHr: usesHr, hrImpute });
+      return Math.min(hi, Math.max(lo, raw));
+    },
+  };
 }
 
 export function backtestEfficacy(runs: RunActivity[]): EfficacyBacktest {
@@ -196,11 +263,13 @@ export function backtestEfficacy(runs: RunActivity[]): EfficacyBacktest {
     };
   }
 
-  const includeHr = hrTaggedRuns >= 5;
+  const includeHr = hrTaggedRuns >= 3;
   if (!includeHr) {
     limitations.push(
-      "Most runs are missing average HR, so this backtest predicts pace from mileage/recency/distance only. Add HR via screenshots or Health exports to unlock true HR→pace efficacy.",
+      "Fewer than 3 HR-tagged runs, so HR has limited weight. Elevation is included. Add avg HR on easy runs to unlock stronger HR→pace predictions.",
     );
+  } else {
+    limitations.push("Model uses distance, recent mileage, elevation ft/mi, and HR (imputed when missing).");
   }
 
   const hrPts = points.filter((p) => p.averageHeartrate);
@@ -208,6 +277,10 @@ export function backtestEfficacy(runs: RunActivity[]): EfficacyBacktest {
     hrPts.map((p) => p.averageHeartrate as number),
     hrPts.map((p) => p.paceSecPerMi),
   );
+  const hrImpute =
+    hrPts.length > 0
+      ? mean(hrPts.map((p) => p.averageHeartrate as number))
+      : 150;
 
   // Walk-forward: train on all prior points, predict next
   const minTrain = Math.max(4, Math.floor(points.length * 0.4));
@@ -216,16 +289,16 @@ export function backtestEfficacy(runs: RunActivity[]): EfficacyBacktest {
   for (let i = minTrain; i < points.length; i++) {
     const train = points.slice(0, i);
     const test = points[i];
-    const useHr = includeHr && Boolean(test.averageHeartrate);
-    const trainX = train
-      .filter((p) => !useHr || p.averageHeartrate)
-      .map((p) => features(p, useHr));
-    const trainY = train
-      .filter((p) => !useHr || p.averageHeartrate)
-      .map((p) => p.paceSecPerMi);
+    const trainHr = train
+      .map((p) => p.averageHeartrate)
+      .filter((v): v is number => typeof v === "number");
+    const useHr = includeHr && trainHr.length >= 3;
+    const impute = trainHr.length ? mean(trainHr) : hrImpute;
+    const trainX = train.map((p) => features(p, { includeHr: useHr, hrImpute: impute }));
+    const trainY = train.map((p) => p.paceSecPerMi);
     if (trainX.length < 4) continue;
     const beta = fitOLS(trainX, trainY);
-    let predictedPace = predictPace(beta, test, useHr);
+    let predictedPace = predictPace(beta, test, { includeHr: useHr, hrImpute: impute });
     // Clamp to observed training pace band to avoid wild extrapolation
     const trainMin = Math.min(...trainY);
     const trainMax = Math.max(...trainY);
@@ -238,7 +311,7 @@ export function backtestEfficacy(runs: RunActivity[]): EfficacyBacktest {
       predictedPace,
       errorSec: predictedPace - test.paceSecPerMi,
       actualHr: test.averageHeartrate,
-      predictedPaceAtHr: useHr ? predictedPace : undefined,
+      predictedPaceAtHr: useHr && test.averageHeartrate ? predictedPace : undefined,
     });
   }
 
@@ -297,28 +370,21 @@ export function backtestEfficacy(runs: RunActivity[]): EfficacyBacktest {
   }
 
   // Fit full model for next-run hint
-  const fullTrain = includeHr ? points.filter((p) => p.averageHeartrate) : points;
-  const hintTrain = fullTrain.length >= 4 ? fullTrain : points;
-  const beta = fitOLS(
-    hintTrain.map((p) => features(p, includeHr && Boolean(p.averageHeartrate))),
-    hintTrain.map((p) => p.paceSecPerMi),
-  );
+  const model = fitPaceModel(points);
   const last = points[points.length - 1];
-  const nextProxy: EfficacyPoint = {
-    ...last,
-    distanceMi: Math.min(6, Math.max(4, last.distanceMi)),
-    daysSincePrev: 2,
-    miles7d: last.miles7d + last.distanceMi * 0.3,
-    miles14d: last.miles14d + last.distanceMi * 0.3,
-  };
-  const predicted = predictPace(
-    beta,
-    nextProxy,
-    includeHr && Boolean(last.averageHeartrate),
-  );
-  const nextRunHint = includeHr && last.averageHeartrate
-    ? `If your next ~${nextProxy.distanceMi.toFixed(1)} mi easy run sits near ${Math.round(last.averageHeartrate)} bpm, expect ~${Math.floor(predicted / 60)}:${String(Math.round(predicted % 60)).padStart(2, "0")}/mi (±${Math.round(maeSec)}s).`
-    : `Based on recent load, a similar easy run should land near ~${Math.floor(predicted / 60)}:${String(Math.round(predicted % 60)).padStart(2, "0")}/mi (±${Math.round(maeSec)}s). Add HR to sharpen this.`;
+  const predicted =
+    model?.predict({
+      distanceMi: Math.min(6, Math.max(4, last.distanceMi)),
+      elevationFt: last.elevFtPerMi * Math.min(6, Math.max(4, last.distanceMi)),
+      averageHeartrate: last.averageHeartrate || hrImpute,
+      daysSincePrev: 2,
+      miles7d: last.miles7d + last.distanceMi * 0.3,
+      miles14d: last.miles14d + last.distanceMi * 0.3,
+    }) ?? last.paceSecPerMi;
+  const nextRunHint =
+    model?.usesHr
+      ? `If your next ~${Math.min(6, Math.max(4, last.distanceMi)).toFixed(1)} mi easy run sits near ${Math.round(last.averageHeartrate || hrImpute)} bpm with similar hills, expect ~${Math.floor(predicted / 60)}:${String(Math.round(predicted % 60)).padStart(2, "0")}/mi (±${Math.round(maeSec)}s).`
+      : `Based on recent load + elevation, a similar easy run should land near ~${Math.floor(predicted / 60)}:${String(Math.round(predicted % 60)).padStart(2, "0")}/mi (±${Math.round(maeSec)}s). Add HR to sharpen this.`;
 
   if (excludedOutliers) {
     limitations.push(`Excluded ${excludedOutliers} outlier pace file(s) outside 9:00–16:00/mi.`);

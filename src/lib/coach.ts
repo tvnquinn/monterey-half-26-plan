@@ -2,6 +2,7 @@ import { differenceInCalendarDays, parseISO } from "date-fns";
 import { estimateHalfFromRecent } from "./format";
 import { buildWeekStatus, runsInRange } from "./matching";
 import { backtestEfficacy } from "./efficacy";
+import { attachPaceRecsToWeek } from "./pace-recs";
 import type {
   CoachReport,
   PaceGuidanceLive,
@@ -108,6 +109,30 @@ export function buildCoachReport(
 
   const paceGuidance = buildPaceGuidance(plan, runs, recentWeeklyMi);
   const recommendations = buildRecommendations(plan, runs, current, paceGuidance, asOf);
+
+  if (current) {
+    current.sessions = attachPaceRecsToWeek({
+      sessions: current.sessions,
+      plan,
+      guidance: paceGuidance,
+      runs,
+      asOf,
+    });
+  }
+
+  // Also attach pace recs onto recommendations as concrete per-run lines
+  if (current) {
+    for (const s of current.sessions) {
+      if (!s.paceRec) continue;
+      recommendations.unshift({
+        id: `pace-${s.session.id}`,
+        priority: s.session.type === "quality" || s.session.type === "race" ? "high" : "medium",
+        title: `${s.session.date.slice(5)} ${s.session.type.replace("_", " ")} · ${s.paceRec.label}`,
+        detail: `Target ${Math.floor(s.paceRec.targetSecPerMi / 60)}:${String(s.paceRec.targetSecPerMi % 60).padStart(2, "0")}/mi (${Math.floor(s.paceRec.minSecPerMi / 60)}:${String(s.paceRec.minSecPerMi % 60).padStart(2, "0")}–${Math.floor(s.paceRec.maxSecPerMi / 60)}:${String(s.paceRec.maxSecPerMi % 60).padStart(2, "0")})${s.paceRec.hrTarget ? ` · HR ~${s.paceRec.hrTarget}` : ""}`,
+        action: s.paceRec.rationale,
+      });
+    }
+  }
 
   const last14 = runs.filter((r) => {
     const d = differenceInCalendarDays(asOf, parseISO(r.startDate));

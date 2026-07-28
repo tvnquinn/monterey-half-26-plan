@@ -92,11 +92,21 @@ export interface RunActivity {
   raw?: Record<string, unknown>;
 }
 
+export interface SessionPaceRec {
+  targetSecPerMi: number;
+  minSecPerMi: number;
+  maxSecPerMi: number;
+  label: string;
+  hrTarget?: number;
+  rationale: string;
+}
+
 export interface SessionStatus {
   session: PlannedSession;
   status: "done" | "partial" | "missed" | "upcoming" | "optional_skipped";
   matchedRun?: RunActivity;
   distanceDeltaMi?: number;
+  paceRec?: SessionPaceRec;
 }
 
 export interface WeekStatus {
