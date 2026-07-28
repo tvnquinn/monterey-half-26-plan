@@ -59,6 +59,8 @@ export interface TrainingPlan {
     distanceMi: number;
     /** Course elev; Monterey ~0 flat coastal. */
     elevationFtPerMi?: number;
+    /** Typical race-morning temperature (°F). */
+    expectedTempF?: number;
   };
   constraints: {
     chicago: { start: string; end: string; maxRuns: number };
@@ -107,6 +109,8 @@ export interface RunActivity {
   averageHeartrate?: number;
   maxHeartrate?: number;
   averageCadence?: number;
+  /** Ambient temperature at run time (°F), when the watch recorded it. */
+  temperatureF?: number;
   calories?: number;
   sufferScore?: number;
   splits?: RunSplit[];

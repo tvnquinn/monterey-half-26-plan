@@ -17,7 +17,7 @@
  * off easy running.
  */
 
-import { daysBetweenKeys, monthOf, runDayKey } from "./dates";
+import { daysBetweenKeys, runDayKey } from "./dates";
 import type { RunActivity, TrainingPlan } from "./types";
 
 /** Riegel's endurance exponent. 1.06 is the standard road-running value. */
@@ -227,23 +227,78 @@ function bestHardEffortSec(
 }
 
 /**
- * Conditions adjustment, in seconds of half-marathon time.
- * Positive = race day should be faster than training suggests.
+ * Net cost of rolling terrain, seconds per mile per ft/mi of climb.
+ *
+ * Fitting pace ~ elev + HR + distance on Quinn's own runs returns 0.64, but
+ * that is almost certainly inflated: he chooses hilly routes on easy days, so
+ * the coefficient absorbs effort as well as grade. Published grade-adjustment
+ * curves put the net cost on an out-and-back (equal climb and descent) nearer
+ * 0.10–0.25. We take the conservative end of the plausible range rather than
+ * the flattering empirical fit — over-crediting the course is exactly how a
+ * projection quietly becomes a fantasy.
  */
-function conditionsCreditSec(plan: TrainingPlan, asOf: Date, tz?: string): number {
-  let credit = 0;
+const ELEV_SEC_PER_FT_PER_MI = 0.2;
 
-  // Summer training understates cool-race fitness (~2s/mi per °F over 60).
-  const month = monthOf(asOf, tz);
-  if (month >= 7 && month <= 9) credit += 18 * 13.1;
-  else if (month === 10) credit += 8 * 13.1;
+/** Above roughly this, heat starts costing measurable time. */
+const HEAT_NEUTRAL_F = 60;
+const HEAT_SEC_PER_F = 1.5;
 
-  // Flat coastal course vs hilly training.
-  const trainElev = plan.paceGuidance.trainingElevFtPerMi ?? 40;
+function median(vals: number[]): number | null {
+  if (!vals.length) return null;
+  const s = [...vals].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+
+/**
+ * Conditions adjustment, in seconds of half-marathon time.
+ * Positive = race day should be faster than training conditions imply.
+ *
+ * Measured from the athlete's own runs, not from the calendar. The previous
+ * version handed out ~4 minutes for "summer training" on the assumption that
+ * July means heat. Quinn trains in San Francisco: median run temperature is
+ * 62°F and only one run in the whole history was above 70°F. There is no heat
+ * penalty to refund, and the prior-half anchor was itself run at 56°F — so the
+ * only honest conditions credit is terrain.
+ */
+function conditionsCreditSec(
+  runs: RunActivity[],
+  plan: TrainingPlan,
+  asOf: Date,
+  tz?: string,
+): { sec: number; note: string | null } {
+  void asOf;
+  void tz;
   const raceElev = plan.race.elevationFtPerMi ?? 0;
-  credit += Math.max(0, trainElev - raceElev) * 0.25 * 13.1;
+  const raceTemp = plan.race.expectedTempF ?? null;
 
-  return Math.round(credit);
+  const trainElev =
+    median(
+      runs.filter((r) => r.distanceMi >= 2).map((r) => r.elevationFt / r.distanceMi),
+    ) ??
+    plan.paceGuidance.trainingElevFtPerMi ??
+    40;
+
+  const elevCredit =
+    Math.max(0, trainElev - raceElev) * ELEV_SEC_PER_FT_PER_MI * 13.1;
+
+  // Heat only counts when training was actually hotter than race day.
+  const trainTemp = median(
+    runs.filter((r) => r.temperatureF != null).map((r) => r.temperatureF as number),
+  );
+  let heatCredit = 0;
+  if (trainTemp != null && raceTemp != null) {
+    const trainPenalty = Math.max(0, trainTemp - HEAT_NEUTRAL_F);
+    const racePenalty = Math.max(0, raceTemp - HEAT_NEUTRAL_F);
+    heatCredit = Math.max(0, trainPenalty - racePenalty) * HEAT_SEC_PER_F * 13.1;
+  }
+
+  const sec = Math.round(elevCredit + heatCredit);
+  if (sec <= 0) return { sec: 0, note: null };
+
+  const parts = [`${Math.round(trainElev)} ft/mi training vs flat course`];
+  if (heatCredit > 0) parts.push(`${Math.round(trainTemp!)}°F vs ${raceTemp}°F`);
+  return { sec, note: `${parts.join(" · ")}: −${(sec / 60).toFixed(1)} min.` };
 }
 
 /** Durability: a half is only as good as your longest run supports. */
@@ -360,10 +415,10 @@ export function estimateHalf(input: EstimateInput): HalfEstimate {
     method = "prior_only";
   }
 
-  const credit = conditionsCreditSec(plan, asOf, tz);
-  if (credit > 0) {
-    sec -= credit;
-    basis.push(`Cool flat race vs summer hills: −${Math.round(credit / 60)} min.`);
+  const credit = conditionsCreditSec(runs, plan, asOf, tz);
+  if (credit.sec > 0) {
+    sec -= credit.sec;
+    if (credit.note) basis.push(credit.note);
   }
 
   let confidence: HalfEstimate["confidence"] = "low";

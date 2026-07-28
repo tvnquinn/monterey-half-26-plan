@@ -1,16 +1,16 @@
 import type { RunActivity } from "./types";
 
 /**
- * Real training history.
+ * Real training history: 63 runs, Feb 2025 - Jul 2026.
  *
- * 44 runs have measured pace and heart rate — from Health Auto Export, or
- * transcribed from Apple workout-detail screens for the Apr 16–24 2026 runs
- * that fall before the export window. Covers the May–Jun 2025 block that
- * produced his 2:15:51 half and Apr–Jul 2026 leading into this plan.
+ * 52 carry measured heart rate. Sources are Health Auto Export (distance,
+ * duration, elevation, HR, temperature straight off the watch), Apple
+ * workout-detail screens for Mar/Apr 2026 runs outside the export window, and
+ * Strava for Feb 2026 (measured distance and time, no HR).
  *
- * 5 runs (Oct 2025, Apr 3/7/21 2026) carry `raw.paceImputed` — distance is
- * exact but pace is the month average and no HR exists. They keep weekly-volume
- * history complete and are excluded from model fitting and backtest scoring.
+ * 5 runs carry `raw.paceImputed` - distance is exact but pace is a month
+ * average and no HR exists. They keep weekly-volume history complete and are
+ * excluded from model fitting and backtest scoring.
  *
  * Per-minute heart-rate series live in data/history.json.
  */
@@ -28,6 +28,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 169,
     maxHeartrate: 179,
     averageCadence: 170,
+    temperatureF: 60,
   },
   {
     id: "hae-2025-05-04-0.32",
@@ -42,6 +43,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 157,
     maxHeartrate: 165,
     averageCadence: 165,
+    temperatureF: 66,
   },
   {
     id: "hae-2025-05-06-6.22",
@@ -56,6 +58,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 170,
     maxHeartrate: 182,
     averageCadence: 168,
+    temperatureF: 59,
   },
   {
     id: "hae-2025-05-09-1.63",
@@ -70,6 +73,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 158,
     maxHeartrate: 171,
     averageCadence: 123,
+    temperatureF: 54,
   },
   {
     id: "hae-2025-05-09-1.60",
@@ -84,6 +88,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 166,
     maxHeartrate: 177,
     averageCadence: 119,
+    temperatureF: 57,
   },
   {
     id: "hae-2025-05-10-2.24",
@@ -98,6 +103,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 156,
     maxHeartrate: 175,
     averageCadence: 125,
+    temperatureF: 62,
   },
   {
     id: "hae-2025-05-23-1.52",
@@ -112,6 +118,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 148,
     maxHeartrate: 172,
     averageCadence: 169,
+    temperatureF: 60,
   },
   {
     id: "hae-2025-05-23-1.75",
@@ -126,6 +133,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 162,
     maxHeartrate: 176,
     averageCadence: 168,
+    temperatureF: 63,
   },
   {
     id: "hae-2025-05-25-6.25",
@@ -140,6 +148,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 166,
     maxHeartrate: 177,
     averageCadence: 193,
+    temperatureF: 57,
   },
   {
     id: "hae-2025-05-28-1.08",
@@ -154,6 +163,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 171,
     maxHeartrate: 182,
     averageCadence: 183,
+    temperatureF: 54,
   },
   {
     id: "hae-2025-05-28-3.57",
@@ -168,6 +178,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 172,
     maxHeartrate: 181,
     averageCadence: 160,
+    temperatureF: 56,
   },
   {
     id: "hae-2025-05-30-10.55",
@@ -182,6 +193,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 157,
     maxHeartrate: 163,
     averageCadence: 164,
+    temperatureF: 69,
   },
   {
     id: "hae-2025-06-01-0.79",
@@ -196,6 +208,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 159,
     maxHeartrate: 172,
     averageCadence: 68,
+    temperatureF: 60,
   },
   {
     id: "hae-2025-06-01-0.30",
@@ -210,6 +223,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 121,
     maxHeartrate: 123,
     averageCadence: 185,
+    temperatureF: 64,
   },
   {
     id: "hae-2025-06-03-4.09",
@@ -224,6 +238,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 164,
     maxHeartrate: 176,
     averageCadence: 175,
+    temperatureF: 63,
   },
   {
     id: "hae-2025-06-06-2.54",
@@ -238,6 +253,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 162,
     maxHeartrate: 170,
     averageCadence: 179,
+    temperatureF: 65,
   },
   {
     id: "hae-2025-06-08-13.16",
@@ -252,6 +268,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 171,
     maxHeartrate: 189,
     averageCadence: 174,
+    temperatureF: 58,
   },
   {
     id: "hae-2025-06-13-3.18",
@@ -266,6 +283,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 160,
     maxHeartrate: 168,
     averageCadence: 182,
+    temperatureF: 62,
   },
   {
     id: "hae-2025-06-15-6.37",
@@ -280,6 +298,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 168,
     maxHeartrate: 179,
     averageCadence: 184,
+    temperatureF: 56,
   },
   {
     id: "hae-2025-06-17-0.88",
@@ -294,6 +313,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 167,
     maxHeartrate: 177,
     averageCadence: 59,
+    temperatureF: 68,
   },
   {
     id: "hae-2025-06-18-1.02",
@@ -308,6 +328,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 135,
     maxHeartrate: 152,
     averageCadence: 84,
+    temperatureF: 68,
   },
   {
     id: "hae-2025-06-18-4.62",
@@ -322,6 +343,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 134,
     maxHeartrate: 177,
     averageCadence: 216,
+    temperatureF: 67,
   },
   {
     id: "hae-2025-06-22-13.16",
@@ -336,6 +358,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 174,
     maxHeartrate: 188,
     averageCadence: 178,
+    temperatureF: 56,
   },
   {
     id: "shot-2025-10-27-1.12",
@@ -360,6 +383,168 @@ export const seedRuns: RunActivity[] = [
     paceSecPerMi: 690,
     elevationFt: 29,
     raw: { paceImputed: true },
+  },
+  {
+    id: "hist-2026-02-21-4.21",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-02-21T09:00:00-07:00",
+    distanceMi: 4.21,
+    movingTimeSec: 2812,
+    elapsedTimeSec: 2812,
+    paceSecPerMi: 668,
+    elevationFt: 193,
+  },
+  {
+    id: "hist-2026-02-21-0.5",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-02-21T09:00:00-07:00",
+    distanceMi: 0.5,
+    movingTimeSec: 340,
+    elapsedTimeSec: 340,
+    paceSecPerMi: 680,
+    elevationFt: 9,
+  },
+  {
+    id: "hist-2026-02-22-1.96",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-02-22T09:00:00-07:00",
+    distanceMi: 1.96,
+    movingTimeSec: 1227,
+    elapsedTimeSec: 1227,
+    paceSecPerMi: 626,
+    elevationFt: 80,
+  },
+  {
+    id: "hist-2026-02-28-1.66",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-02-28T09:00:00-07:00",
+    distanceMi: 1.66,
+    movingTimeSec: 1061,
+    elapsedTimeSec: 1061,
+    paceSecPerMi: 639,
+    elevationFt: 67,
+  },
+  {
+    id: "hist-2026-02-28-0.64",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-02-28T09:00:00-07:00",
+    distanceMi: 0.64,
+    movingTimeSec: 457,
+    elapsedTimeSec: 457,
+    paceSecPerMi: 714,
+    elevationFt: 23,
+  },
+  {
+    id: "hist-2026-03-06-2.9",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-03-06T09:00:00-07:00",
+    distanceMi: 2.9,
+    movingTimeSec: 2071,
+    elapsedTimeSec: 2071,
+    paceSecPerMi: 714,
+    elevationFt: 49,
+    averageHeartrate: 151,
+  },
+  {
+    id: "hist-2026-03-07-7",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-03-07T09:00:00-07:00",
+    distanceMi: 7,
+    movingTimeSec: 4683,
+    elapsedTimeSec: 4683,
+    paceSecPerMi: 669,
+    elevationFt: 190,
+    averageHeartrate: 162,
+  },
+  {
+    id: "hist-2026-03-14-2.72",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-03-14T09:00:00-07:00",
+    distanceMi: 2.72,
+    movingTimeSec: 1776,
+    elapsedTimeSec: 1776,
+    paceSecPerMi: 653,
+    elevationFt: 184,
+    averageHeartrate: 164,
+  },
+  {
+    id: "hist-2026-03-15-8.02",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-03-15T09:00:00-07:00",
+    distanceMi: 8.02,
+    movingTimeSec: 5718,
+    elapsedTimeSec: 5718,
+    paceSecPerMi: 713,
+    elevationFt: 125,
+    averageHeartrate: 152,
+  },
+  {
+    id: "hist-2026-03-20-2.17",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-03-20T09:00:00-07:00",
+    distanceMi: 2.17,
+    movingTimeSec: 1259,
+    elapsedTimeSec: 1259,
+    paceSecPerMi: 580,
+    elevationFt: 12,
+    averageHeartrate: 162,
+  },
+  {
+    id: "hist-2026-03-20-0.42",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-03-20T09:00:00-07:00",
+    distanceMi: 0.42,
+    movingTimeSec: 265,
+    elapsedTimeSec: 265,
+    paceSecPerMi: 631,
+    elevationFt: 13,
+  },
+  {
+    id: "hist-2026-03-24-4.6",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-03-24T09:00:00-07:00",
+    distanceMi: 4.6,
+    movingTimeSec: 2788,
+    elapsedTimeSec: 2788,
+    paceSecPerMi: 606,
+    elevationFt: 109,
+    averageHeartrate: 163,
+  },
+  {
+    id: "hist-2026-03-27-5.62",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-03-27T09:00:00-07:00",
+    distanceMi: 5.62,
+    movingTimeSec: 4170,
+    elapsedTimeSec: 4170,
+    paceSecPerMi: 742,
+    elevationFt: 419,
+    averageHeartrate: 155,
+  },
+  {
+    id: "hist-2026-03-29-4.42",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-03-29T09:00:00-07:00",
+    distanceMi: 4.42,
+    movingTimeSec: 2732,
+    elapsedTimeSec: 2732,
+    paceSecPerMi: 618,
+    elevationFt: 124,
+    averageHeartrate: 163,
   },
   {
     id: "shot-2026-04-03-5.71",
@@ -475,6 +660,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 141,
     maxHeartrate: 158,
     averageCadence: 172,
+    temperatureF: 64,
   },
   {
     id: "hae-2026-04-29-2.43",
@@ -489,6 +675,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 142,
     maxHeartrate: 164,
     averageCadence: 168,
+    temperatureF: 64,
   },
   {
     id: "hae-2026-04-29-0.60",
@@ -503,6 +690,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 122,
     maxHeartrate: 171,
     averageCadence: 236,
+    temperatureF: 58,
   },
   {
     id: "hae-2026-05-20-10.06",
@@ -517,6 +705,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 145,
     maxHeartrate: 166,
     averageCadence: 174,
+    temperatureF: 55,
   },
   {
     id: "hae-2026-05-22-5.73",
@@ -531,6 +720,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 136,
     maxHeartrate: 157,
     averageCadence: 175,
+    temperatureF: 52,
   },
   {
     id: "hae-2026-05-25-7.83",
@@ -545,6 +735,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 145,
     maxHeartrate: 167,
     averageCadence: 176,
+    temperatureF: 58,
   },
   {
     id: "hae-2026-06-01-5.26",
@@ -559,6 +750,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 157,
     maxHeartrate: 177,
     averageCadence: 176,
+    temperatureF: 64,
   },
   {
     id: "hae-2026-06-22-4.01",
@@ -573,6 +765,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 168,
     maxHeartrate: 185,
     averageCadence: 172,
+    temperatureF: 57,
   },
   {
     id: "hae-2026-06-28-4.50",
@@ -587,6 +780,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 166,
     maxHeartrate: 178,
     averageCadence: 180,
+    temperatureF: 66,
   },
   {
     id: "hae-2026-07-03-2.57",
@@ -601,6 +795,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 149,
     maxHeartrate: 170,
     averageCadence: 198,
+    temperatureF: 77,
   },
   {
     id: "hae-2026-07-05-4.50",
@@ -615,6 +810,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 163,
     maxHeartrate: 178,
     averageCadence: 181,
+    temperatureF: 64,
   },
   {
     id: "hae-2026-07-08-5.76",
@@ -629,6 +825,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 146,
     maxHeartrate: 163,
     averageCadence: 173,
+    temperatureF: 59,
   },
   {
     id: "hae-2026-07-17-1.71",
@@ -643,6 +840,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 160,
     maxHeartrate: 174,
     averageCadence: 173,
+    temperatureF: 59,
   },
   {
     id: "hae-2026-07-20-5.63",
@@ -657,6 +855,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 150,
     maxHeartrate: 179,
     averageCadence: 178,
+    temperatureF: 67,
   },
   {
     id: "hae-2026-07-23-4.64",
@@ -671,6 +870,7 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 150,
     maxHeartrate: 165,
     averageCadence: 175,
+    temperatureF: 69,
   },
   {
     id: "hae-2026-07-27-4.50",

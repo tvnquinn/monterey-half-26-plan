@@ -155,7 +155,8 @@
           "avg": 174.54237288135593
         }
       ]
-    }
+    },
+    "temperatureF": 60
   },
   {
     "id": "hae-2025-05-04-0.32",
@@ -189,7 +190,8 @@
           "avg": 162.3125
         }
       ]
-    }
+    },
+    "temperatureF": 66
   },
   {
     "id": "hae-2025-05-06-6.22",
@@ -503,7 +505,8 @@
           "avg": 173
         }
       ]
-    }
+    },
+    "temperatureF": 59
   },
   {
     "id": "hae-2025-05-09-1.63",
@@ -593,7 +596,8 @@
           "avg": 160.6
         }
       ]
-    }
+    },
+    "temperatureF": 54
   },
   {
     "id": "hae-2025-05-09-1.60",
@@ -675,7 +679,8 @@
           "avg": 171.1282702195629
         }
       ]
-    }
+    },
+    "temperatureF": 57
   },
   {
     "id": "hae-2025-05-10-2.24",
@@ -793,7 +798,8 @@
           "avg": 140
         }
       ]
-    }
+    },
+    "temperatureF": 62
   },
   {
     "id": "hae-2025-05-23-1.52",
@@ -907,7 +913,8 @@
           "avg": 127
         }
       ]
-    }
+    },
+    "temperatureF": 60
   },
   {
     "id": "hae-2025-05-23-1.75",
@@ -1005,7 +1012,8 @@
           "avg": 165.5375
         }
       ]
-    }
+    },
+    "temperatureF": 63
   },
   {
     "id": "hae-2025-05-25-6.25",
@@ -1339,7 +1347,8 @@
           "avg": 173.54861111111111
         }
       ]
-    }
+    },
+    "temperatureF": 57
   },
   {
     "id": "hae-2025-05-28-1.08",
@@ -1397,7 +1406,8 @@
           "avg": 180.694742820387
         }
       ]
-    }
+    },
+    "temperatureF": 54
   },
   {
     "id": "hae-2025-05-28-3.57",
@@ -1563,7 +1573,8 @@
           "avg": 179.32894736842107
         }
       ]
-    }
+    },
+    "temperatureF": 56
   },
   {
     "id": "hae-2025-05-30-10.55",
@@ -2109,7 +2120,8 @@
           "avg": 162.04376220158258
         }
       ]
-    }
+    },
+    "temperatureF": 69
   },
   {
     "id": "hae-2025-06-01-0.79",
@@ -2147,7 +2159,8 @@
           "avg": 171.05120281547642
         }
       ]
-    }
+    },
+    "temperatureF": 60
   },
   {
     "id": "hae-2025-06-01-0.30",
@@ -2169,7 +2182,8 @@
           "avg": 120.5
         }
       ]
-    }
+    },
+    "temperatureF": 64
   },
   {
     "id": "hae-2025-06-03-4.09",
@@ -2355,7 +2369,8 @@
           "avg": 170.4394088047279
         }
       ]
-    }
+    },
+    "temperatureF": 63
   },
   {
     "id": "hae-2025-06-06-2.54",
@@ -2481,7 +2496,8 @@
           "avg": 168.12900540311657
         }
       ]
-    }
+    },
+    "temperatureF": 65
   },
   {
     "id": "hae-2025-06-08-13.16",
@@ -3051,7 +3067,8 @@
           "avg": 178.94615050027448
         }
       ]
-    }
+    },
+    "temperatureF": 58
   },
   {
     "id": "hae-2025-06-13-3.18",
@@ -3201,7 +3218,8 @@
           "avg": 166.9375
         }
       ]
-    }
+    },
+    "temperatureF": 62
   },
   {
     "id": "hae-2025-06-15-6.37",
@@ -3491,7 +3509,8 @@
           "avg": 177.68359852880522
         }
       ]
-    }
+    },
+    "temperatureF": 56
   },
   {
     "id": "hae-2025-06-17-0.88",
@@ -3525,7 +3544,8 @@
           "avg": 176.06480238780574
         }
       ]
-    }
+    },
+    "temperatureF": 68
   },
   {
     "id": "hae-2025-06-18-1.02",
@@ -3595,7 +3615,8 @@
           "avg": 151.54514283922418
         }
       ]
-    }
+    },
+    "temperatureF": 68
   },
   {
     "id": "hae-2025-06-18-4.62",
@@ -3949,7 +3970,8 @@
           "avg": 169.6201923076923
         }
       ]
-    }
+    },
+    "temperatureF": 67
   },
   {
     "id": "hae-2025-06-22-13.16",
@@ -4507,7 +4529,8 @@
           "avg": 185.2688172043011
         }
       ]
-    }
+    },
+    "temperatureF": 56
   },
   {
     "id": "shot-2025-10-27-1.12",
@@ -4536,6 +4559,168 @@
     "raw": {
       "paceImputed": true
     }
+  },
+  {
+    "id": "hist-2026-02-21-4.21",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-02-21T09:00:00-07:00",
+    "distanceMi": 4.21,
+    "movingTimeSec": 2812,
+    "elapsedTimeSec": 2812,
+    "paceSecPerMi": 668,
+    "elevationFt": 193
+  },
+  {
+    "id": "hist-2026-02-21-0.5",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-02-21T09:00:00-07:00",
+    "distanceMi": 0.5,
+    "movingTimeSec": 340,
+    "elapsedTimeSec": 340,
+    "paceSecPerMi": 680,
+    "elevationFt": 9
+  },
+  {
+    "id": "hist-2026-02-22-1.96",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-02-22T09:00:00-07:00",
+    "distanceMi": 1.96,
+    "movingTimeSec": 1227,
+    "elapsedTimeSec": 1227,
+    "paceSecPerMi": 626,
+    "elevationFt": 80
+  },
+  {
+    "id": "hist-2026-02-28-1.66",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-02-28T09:00:00-07:00",
+    "distanceMi": 1.66,
+    "movingTimeSec": 1061,
+    "elapsedTimeSec": 1061,
+    "paceSecPerMi": 639,
+    "elevationFt": 67
+  },
+  {
+    "id": "hist-2026-02-28-0.64",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-02-28T09:00:00-07:00",
+    "distanceMi": 0.64,
+    "movingTimeSec": 457,
+    "elapsedTimeSec": 457,
+    "paceSecPerMi": 714,
+    "elevationFt": 23
+  },
+  {
+    "id": "hist-2026-03-06-2.9",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-03-06T09:00:00-07:00",
+    "distanceMi": 2.9,
+    "movingTimeSec": 2071,
+    "elapsedTimeSec": 2071,
+    "paceSecPerMi": 714,
+    "elevationFt": 49,
+    "averageHeartrate": 151
+  },
+  {
+    "id": "hist-2026-03-07-7",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-03-07T09:00:00-07:00",
+    "distanceMi": 7,
+    "movingTimeSec": 4683,
+    "elapsedTimeSec": 4683,
+    "paceSecPerMi": 669,
+    "elevationFt": 190,
+    "averageHeartrate": 162
+  },
+  {
+    "id": "hist-2026-03-14-2.72",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-03-14T09:00:00-07:00",
+    "distanceMi": 2.72,
+    "movingTimeSec": 1776,
+    "elapsedTimeSec": 1776,
+    "paceSecPerMi": 653,
+    "elevationFt": 184,
+    "averageHeartrate": 164
+  },
+  {
+    "id": "hist-2026-03-15-8.02",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-03-15T09:00:00-07:00",
+    "distanceMi": 8.02,
+    "movingTimeSec": 5718,
+    "elapsedTimeSec": 5718,
+    "paceSecPerMi": 713,
+    "elevationFt": 125,
+    "averageHeartrate": 152
+  },
+  {
+    "id": "hist-2026-03-20-2.17",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-03-20T09:00:00-07:00",
+    "distanceMi": 2.17,
+    "movingTimeSec": 1259,
+    "elapsedTimeSec": 1259,
+    "paceSecPerMi": 580,
+    "elevationFt": 12,
+    "averageHeartrate": 162
+  },
+  {
+    "id": "hist-2026-03-20-0.42",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-03-20T09:00:00-07:00",
+    "distanceMi": 0.42,
+    "movingTimeSec": 265,
+    "elapsedTimeSec": 265,
+    "paceSecPerMi": 631,
+    "elevationFt": 13
+  },
+  {
+    "id": "hist-2026-03-24-4.6",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-03-24T09:00:00-07:00",
+    "distanceMi": 4.6,
+    "movingTimeSec": 2788,
+    "elapsedTimeSec": 2788,
+    "paceSecPerMi": 606,
+    "elevationFt": 109,
+    "averageHeartrate": 163
+  },
+  {
+    "id": "hist-2026-03-27-5.62",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-03-27T09:00:00-07:00",
+    "distanceMi": 5.62,
+    "movingTimeSec": 4170,
+    "elapsedTimeSec": 4170,
+    "paceSecPerMi": 742,
+    "elevationFt": 419,
+    "averageHeartrate": 155
+  },
+  {
+    "id": "hist-2026-03-29-4.42",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-03-29T09:00:00-07:00",
+    "distanceMi": 4.42,
+    "movingTimeSec": 2732,
+    "elapsedTimeSec": 2732,
+    "paceSecPerMi": 618,
+    "elevationFt": 124,
+    "averageHeartrate": 163
   },
   {
     "id": "shot-2026-04-03-5.71",
@@ -4720,7 +4905,8 @@
           "avg": 153.69871794871796
         }
       ]
-    }
+    },
+    "temperatureF": 64
   },
   {
     "id": "hae-2026-04-29-2.43",
@@ -4866,7 +5052,8 @@
           "avg": 159.12637362637363
         }
       ]
-    }
+    },
+    "temperatureF": 64
   },
   {
     "id": "hae-2026-04-29-0.60",
@@ -4968,7 +5155,8 @@
           "avg": 168.35064935064935
         }
       ]
-    }
+    },
+    "temperatureF": 58
   },
   {
     "id": "hae-2026-05-20-10.06",
@@ -5546,7 +5734,8 @@
           "avg": 145.3298969072165
         }
       ]
-    }
+    },
+    "temperatureF": 55
   },
   {
     "id": "hae-2026-05-22-5.73",
@@ -5868,7 +6057,8 @@
           "avg": 146.5
         }
       ]
-    }
+    },
+    "temperatureF": 52
   },
   {
     "id": "hae-2026-05-25-7.83",
@@ -6274,7 +6464,8 @@
           "avg": 132.84677419354838
         }
       ]
-    }
+    },
+    "temperatureF": 58
   },
   {
     "id": "hae-2026-06-01-5.26",
@@ -6556,7 +6747,8 @@
           "avg": 158.4671052631579
         }
       ]
-    }
+    },
+    "temperatureF": 64
   },
   {
     "id": "hae-2026-06-22-4.01",
@@ -6774,7 +6966,8 @@
           "avg": 183.09375
         }
       ]
-    }
+    },
+    "temperatureF": 57
   },
   {
     "id": "hae-2026-06-28-4.50",
@@ -7008,7 +7201,8 @@
           "avg": 177.24289821907132
         }
       ]
-    }
+    },
+    "temperatureF": 66
   },
   {
     "id": "hae-2026-07-03-2.57",
@@ -7186,7 +7380,8 @@
           "avg": 168.5806451612903
         }
       ]
-    }
+    },
+    "temperatureF": 77
   },
   {
     "id": "hae-2026-07-05-4.50",
@@ -7412,7 +7607,8 @@
           "avg": 176.0408163265306
         }
       ]
-    }
+    },
+    "temperatureF": 64
   },
   {
     "id": "hae-2026-07-08-5.76",
@@ -7734,7 +7930,8 @@
           "avg": 156.51470588235293
         }
       ]
-    }
+    },
+    "temperatureF": 59
   },
   {
     "id": "hae-2026-07-17-1.71",
@@ -7820,7 +8017,8 @@
           "avg": 166.2126436781609
         }
       ]
-    }
+    },
+    "temperatureF": 59
   },
   {
     "id": "hae-2026-07-20-5.63",
@@ -8142,7 +8340,8 @@
           "avg": 173.36363636363637
         }
       ]
-    }
+    },
+    "temperatureF": 67
   },
   {
     "id": "hae-2026-07-23-4.64",
@@ -8392,7 +8591,8 @@
           "avg": 163.9404761904762
         }
       ]
-    }
+    },
+    "temperatureF": 69
   },
   {
     "id": "hae-2026-07-27-4.50",

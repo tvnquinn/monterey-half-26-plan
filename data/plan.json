@@ -13,7 +13,8 @@
     "name": "Monterey Bay Half",
     "date": "2026-11-08",
     "distanceMi": 13.1,
-    "elevationFtPerMi": 0
+    "elevationFtPerMi": 3,
+    "expectedTempF": 58
   },
   "constraints": {
     "chicago": {
@@ -62,8 +63,8 @@
         "label": "Z5"
       }
     },
-    "notes": "Easy Z2 (139–152) ~true easy 143. Quality anchors to B-pace ~9:55, not A 9:09. Fri = long. Sat = never. Strength Mon (heavy) + Thu (light). Race is flat coastal Nov — summer heat slows training paces.",
-    "trainingElevFtPerMi": 40
+    "notes": "Easy Z2 (139-152) ~true easy 143. Quality anchors to B-pace ~9:55, not A 9:09. Fri = long. Sat = never. Strength Mon (heavy) + Thu (light). SF training is cool (median 62F) and hilly (median 42 ft/mi); Monterey is flat and ~58F, so the course is worth time but the weather is not.",
+    "trainingElevFtPerMi": 42
   },
   "weeks": [
     {
