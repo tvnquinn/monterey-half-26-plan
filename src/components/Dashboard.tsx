@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import type { CoachReport, RunActivity, TrainingPlan } from "@/lib/types";
-import { formatDuration, paceToString } from "@/lib/format";
+import { formatDuration, paceToString, weekdayShort } from "@/lib/format";
 import { LogRunForm } from "@/components/LogRunForm";
 import { HealthUpload } from "@/components/HealthUpload";
 import { ScreenshotRunUpload } from "@/components/ScreenshotRunUpload";
@@ -189,7 +189,8 @@ export function Dashboard() {
                   <li key={s.session.id} className={`session ${s.status}`}>
                     <div>
                       <strong>
-                        {s.session.date.slice(5)} · {s.session.type.replace("_", " ")}
+                        {weekdayShort(s.session.date)} {s.session.date.slice(5)} ·{" "}
+                        {s.session.type.replace("_", " ")}
                       </strong>
                       <span>
                         {s.session.targetMi} mi
@@ -254,6 +255,57 @@ export function Dashboard() {
         </div>
       </section>
 
+      <section className="panel">
+        <h2>Model backtest</h2>
+        <p className="muted log-help">{report.efficacy.verdict}</p>
+        <div className="pace-grid">
+          <div>
+            <span className="stat-label">MAE</span>
+            <strong>{Math.round(report.efficacy.maeSec)}s/mi</strong>
+          </div>
+          <div>
+            <span className="stat-label">Skill vs avg</span>
+            <strong>{(report.efficacy.skillScore * 100).toFixed(0)}%</strong>
+          </div>
+          <div>
+            <span className="stat-label">HR-tagged</span>
+            <strong>
+              {report.efficacy.hrTaggedRuns}/{report.efficacy.usableRuns}
+            </strong>
+          </div>
+        </div>
+        <p className="action">{report.efficacy.nextRunHint}</p>
+        {report.efficacy.limitations.length ? (
+          <ul className="rationale">
+            {report.efficacy.limitations.map((l) => (
+              <li key={l}>{l}</li>
+            ))}
+          </ul>
+        ) : null}
+        {report.efficacy.samplePredictions.length ? (
+          <ul className="run-list">
+            {report.efficacy.samplePredictions.map((p) => (
+              <li key={`${p.date}-${p.actualPaceSec}`}>
+                <div>
+                  <strong>
+                    {weekdayShort(p.date)} {p.date.slice(5)}
+                  </strong>
+                  <span>held-out prediction</span>
+                </div>
+                <div className="run-metrics">
+                  <span>actual {paceToString(p.actualPaceSec)}</span>
+                  <span>pred {paceToString(p.predictedPaceSec)}</span>
+                  <span>
+                    {p.errorSec >= 0 ? "+" : ""}
+                    {p.errorSec}s
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </section>
+
       <section className="grid-2">
         <article className="panel">
           <h2>Recent runs</h2>
@@ -261,7 +313,9 @@ export function Dashboard() {
             {report.recentRuns.map((run) => (
               <li key={run.id}>
                 <div>
-                  <strong>{run.startDate.slice(0, 10)}</strong>
+                  <strong>
+                    {weekdayShort(run.startDate)} {run.startDate.slice(0, 10)}
+                  </strong>
                   <span>{run.name}</span>
                 </div>
                 <div className="run-metrics">

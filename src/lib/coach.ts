@@ -1,6 +1,7 @@
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { estimateHalfFromRecent } from "./format";
 import { buildWeekStatus, runsInRange } from "./matching";
+import { backtestEfficacy } from "./efficacy";
 import type {
   CoachReport,
   PaceGuidanceLive,
@@ -125,6 +126,26 @@ export function buildCoachReport(
     ? `Week ${current.week.id} (${current.week.phase}): ${current.loggedMi.toFixed(1)} / ${current.targetLow}–${current.targetHigh} mi. ${current.week.focus}`
     : "Outside planned weeks — sync runs and check race date.";
 
+  const efficacyRaw = backtestEfficacy(runs);
+  const efficacy = {
+    usableRuns: efficacyRaw.usableRuns,
+    hrTaggedRuns: efficacyRaw.hrTaggedRuns,
+    maeSec: efficacyRaw.maeSec,
+    baselineMaeSec: efficacyRaw.baselineMaeSec,
+    skillScore: efficacyRaw.skillScore,
+    meanAbsPctError: efficacyRaw.meanAbsPctError,
+    hrPaceCorrelation: efficacyRaw.hrPaceCorrelation,
+    verdict: efficacyRaw.verdict,
+    limitations: efficacyRaw.limitations,
+    nextRunHint: efficacyRaw.nextRunHint,
+    samplePredictions: efficacyRaw.predictions.slice(-5).map((p) => ({
+      date: p.date,
+      actualPaceSec: Math.round(p.actualPace),
+      predictedPaceSec: Math.round(p.predictedPace),
+      errorSec: Math.round(p.errorSec),
+    })),
+  };
+
   return {
     asOf: asOf.toISOString(),
     daysToRace,
@@ -141,6 +162,7 @@ export function buildCoachReport(
     recommendations,
     sub2OddsBand,
     summary,
+    efficacy,
   };
 }
 

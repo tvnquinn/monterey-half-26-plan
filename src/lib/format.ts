@@ -6,6 +6,18 @@ export function paceToString(secPerMi: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+export function weekdayShort(iso: string): string {
+  const d = new Date(iso.includes("T") ? iso : `${iso}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", { weekday: "short" });
+}
+
+export function weekdayLong(iso: string): string {
+  const d = new Date(iso.includes("T") ? iso : `${iso}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", { weekday: "long" });
+}
+
 export function stringToPace(pace: string): number {
   const [m, s] = pace.split(":").map(Number);
   return m * 60 + (s || 0);

@@ -144,4 +144,24 @@ export interface CoachReport {
   recommendations: Recommendation[];
   sub2OddsBand: string;
   summary: string;
+  efficacy: EfficacyBacktestSummary;
+}
+
+export interface EfficacyBacktestSummary {
+  usableRuns: number;
+  hrTaggedRuns: number;
+  maeSec: number;
+  baselineMaeSec: number;
+  skillScore: number;
+  meanAbsPctError: number;
+  hrPaceCorrelation: number | null;
+  verdict: string;
+  limitations: string[];
+  nextRunHint: string;
+  samplePredictions: Array<{
+    date: string;
+    actualPaceSec: number;
+    predictedPaceSec: number;
+    errorSec: number;
+  }>;
 }
