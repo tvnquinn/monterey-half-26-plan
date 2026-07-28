@@ -43,26 +43,69 @@ function formatDeltaMin(delta: number | null): string {
   return `${delta > 0 ? "+" : ""}${delta} min`;
 }
 
+function sessionTypeLabel(type: string) {
+  switch (type) {
+    case "easy_strides":
+      return "strides";
+    case "quality":
+      return "RP";
+    default:
+      return type.replaceAll("_", " ");
+  }
+}
+
+/** Drop note text that only restates type / Z2 / distance already on the row. */
+function usefulNote(type: string, notes?: string): string | null {
+  if (!notes) return null;
+  const t = notes
+    .replace(/\b(easy|long|short|Z2|Z3|Z4)\b/gi, " ")
+    .replace(/[·•|,]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!t) return null;
+  // Strides / RP / race notes are the prescription — keep original when still useful
+  if (type === "quality" || type === "race" || type === "easy_strides") return notes;
+  // If stripping left almost nothing meaningful vs original, keep trimmed original without Z2 boilerplate
+  const cleaned = notes
+    .replace(/\s*[·•]\s*easy\s*Z2\b/gi, "")
+    .replace(/\bEasy\s*Z2\s*[·•]?\s*/gi, "")
+    .replace(/\bLong\s*[·•]\s*/gi, "")
+    .replace(/\bShort\s+easy\s*[·•]?\s*/gi, "")
+    .replace(/\s*[·•]\s*Z2\b/gi, "")
+    .replace(/\s*Z2\s*$/i, "")
+    .replace(/\s*[·•]\s*easy\b/gi, "")
+    .replace(/^Race\s*[·•]\s*/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return cleaned || null;
+}
+
 function SessionRow({ s }: { s: SessionStatus }) {
   const pace = s.paceRec;
-  const typeLabel = s.session.type.replace("easy_strides", "strides").replaceAll("_", " ");
-  const bits = [
-    `${s.session.targetMi} mi`,
-    pace ? `${paceToString(pace.minSecPerMi)}–${paceToString(pace.maxSecPerMi)}` : null,
-    pace?.hrZoneRange ? `${pace.hrZoneLabel} ${pace.hrZoneRange}` : null,
-  ].filter(Boolean);
+  const type = s.session.type;
+  const typeLabel = sessionTypeLabel(type);
+  const showPace = type === "easy" || type === "easy_strides" || type === "long";
+  const showHr = type === "quality" || type === "race";
+  const note = usefulNote(type, s.session.notes);
+  const line = [
+    `${weekdayShort(s.session.date)} ${formatShortDate(s.session.date)}`,
+    typeLabel,
+    `${s.session.targetMi}mi`,
+    showPace && pace ? `${paceToString(pace.minSecPerMi)}–${paceToString(pace.maxSecPerMi)}` : null,
+    showHr && pace?.hrZoneRange ? `${pace.hrZoneLabel} ${pace.hrZoneRange}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  const showStatus = s.status !== "upcoming";
 
   return (
     <li className={`session ${s.status}`}>
       <div className="session-row">
         <div className="session-main">
-          <strong>
-            {weekdayShort(s.session.date)} {formatShortDate(s.session.date)} · {typeLabel}
-          </strong>
-          <span>{bits.join(" · ")}</span>
-          {s.session.notes ? <span className="session-note">{s.session.notes}</span> : null}
+          <strong>{line}</strong>
+          {note ? <span className="session-note">{note}</span> : null}
         </div>
-        <em>{statusLabel(s.status)}</em>
+        {showStatus ? <em>{statusLabel(s.status)}</em> : null}
       </div>
     </li>
   );

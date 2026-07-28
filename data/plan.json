@@ -82,7 +82,7 @@
           "type": "easy",
           "targetMi": 2.5,
           "optional": true,
-          "notes": "Optional short / travel"
+          "notes": "Travel"
         },
         {
           "id": "w1-fri",
@@ -90,7 +90,7 @@
           "type": "easy",
           "targetMi": 4.5,
           "optional": false,
-          "notes": "Chicago easy"
+          "notes": "Chicago"
         }
       ]
     },
@@ -114,8 +114,7 @@
           "date": "2026-08-07",
           "type": "long",
           "targetMi": 6,
-          "optional": false,
-          "notes": "Long · easy Z2"
+          "optional": false
         },
         {
           "id": "w2-sun",
@@ -123,7 +122,7 @@
           "type": "easy",
           "targetMi": 3.5,
           "optional": false,
-          "notes": "Short easy · open cadence"
+          "notes": "Open cadence"
         }
       ]
     },
@@ -252,7 +251,7 @@
           "type": "easy_strides",
           "targetMi": 4,
           "optional": false,
-          "notes": "Strides only · keep legs awake"
+          "notes": "Keep legs awake"
         }
       ]
     },
@@ -270,7 +269,7 @@
           "type": "easy",
           "targetMi": 4,
           "optional": false,
-          "notes": "Easy Z2 · day before pre-flight"
+          "notes": "Day before pre-flight"
         },
         {
           "id": "w7-wed",
@@ -278,7 +277,7 @@
           "type": "easy",
           "targetMi": 5,
           "optional": false,
-          "notes": "Last run before Italy · Wed before fly · Z2"
+          "notes": "Wed fly · last before Italy"
         }
       ]
     },
@@ -305,15 +304,14 @@
           "type": "easy",
           "targetMi": 3,
           "optional": false,
-          "notes": "First run back · Z2"
+          "notes": "First back"
         },
         {
           "id": "w9-fri",
           "date": "2026-09-25",
           "type": "long",
           "targetMi": 4.5,
-          "optional": false,
-          "notes": "Short long · easy"
+          "optional": false
         },
         {
           "id": "w9-sun",
@@ -352,7 +350,7 @@
           "type": "quality",
           "targetMi": 4,
           "optional": false,
-          "notes": "RP practice: 6 × 1 min @ ~9:15–9:25 w/ 1–2 min jog · rest easy"
+          "notes": "6 × 1 min @ ~9:15–9:25 · jog recover"
         }
       ]
     },
@@ -384,7 +382,7 @@
           "type": "quality",
           "targetMi": 5,
           "optional": false,
-          "notes": "RP practice: 4 × 3 min @ ~9:10–9:20 w/ equal jog"
+          "notes": "4 × 3 min @ ~9:10–9:20 · equal jog"
         }
       ]
     },
@@ -416,7 +414,7 @@
           "type": "quality",
           "targetMi": 5.5,
           "optional": false,
-          "notes": "RP practice: 2 mi continuous @ ~9:10–9:20 · easy jog warm/cool"
+          "notes": "2 mi continuous @ ~9:10–9:20"
         }
       ]
     },
@@ -441,7 +439,7 @@
           "type": "long",
           "targetMi": 10,
           "optional": false,
-          "notes": "Peak long · mostly easy, last 1–2 mi @ ~9:20 feel OK"
+          "notes": "Last 1–2 mi @ ~9:20 OK"
         },
         {
           "id": "w13-sun",
@@ -449,7 +447,7 @@
           "type": "quality",
           "targetMi": 6,
           "optional": false,
-          "notes": "RP practice: 3 mi continuous @ ~9:05–9:15"
+          "notes": "3 mi continuous @ ~9:05–9:15"
         }
       ]
     },
@@ -474,7 +472,7 @@
           "type": "long",
           "targetMi": 6,
           "optional": false,
-          "notes": "Last long · easy"
+          "notes": "Last long"
         },
         {
           "id": "w14-sun",
@@ -482,7 +480,7 @@
           "type": "quality",
           "targetMi": 3.5,
           "optional": false,
-          "notes": "RP touch: 4 × 90s @ race-pace feel · short"
+          "notes": "4 × 90s @ race-pace feel"
         }
       ]
     },
@@ -508,7 +506,7 @@
           "type": "easy_strides",
           "targetMi": 2,
           "optional": false,
-          "notes": "Shakeout · 4×20s strides · NOT a long"
+          "notes": "Shakeout · 4×20s · not a long"
         },
         {
           "id": "w15-race",
@@ -516,7 +514,7 @@
           "type": "race",
           "targetMi": 13.1,
           "optional": false,
-          "notes": "Race · open controlled toward goal pace"
+          "notes": "Open controlled"
         }
       ]
     }
