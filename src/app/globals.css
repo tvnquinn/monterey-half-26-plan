@@ -93,9 +93,17 @@ a {
 
 .tabs {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.4rem;
   margin-bottom: 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 0.15rem;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
@@ -107,6 +115,8 @@ a {
   font: inherit;
   font-size: 0.9rem;
   cursor: pointer;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .tab:hover {
@@ -391,11 +401,17 @@ a {
 }
 
 .session-list li,
-.run-list li,
 .mileage-list li {
   display: flex;
   justify-content: space-between;
   gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.run-list li {
+  display: grid;
+  gap: 0.4rem;
   padding: 0.7rem 0;
   border-top: 1px solid var(--line);
 }
@@ -567,9 +583,9 @@ a {
 
 .run-metrics {
   display: grid;
-  grid-template-columns: repeat(2, auto);
-  gap: 0.2rem 0.8rem;
-  text-align: right;
+  grid-template-columns: 1fr;
+  gap: 0.15rem;
+  text-align: left;
   color: var(--muted);
   font-size: 0.82rem;
 }

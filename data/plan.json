@@ -270,25 +270,17 @@
       "id": 7,
       "start": "2026-09-07",
       "end": "2026-09-13",
-      "targetMi": 4,
+      "targetMi": 5,
       "phase": "italy",
-      "focus": "Step-down into Italy — one easy run pre-travel, then rest",
+      "focus": "Wed easy before fly (Sep 9) — then travel, no ramp panic",
       "sessions": [
         {
-          "id": "w7-mon",
-          "date": "2026-09-07",
+          "id": "w7-wed",
+          "date": "2026-09-09",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 5,
           "optional": false,
-          "notes": "Pre-travel easy · last run before stop"
-        },
-        {
-          "id": "w7-fri",
-          "date": "2026-09-11",
-          "type": "easy",
-          "targetMi": 2,
-          "optional": true,
-          "notes": "Skip unless legs feel great"
+          "notes": "Last run before Italy · Wed before fly · Z2"
         }
       ]
     },

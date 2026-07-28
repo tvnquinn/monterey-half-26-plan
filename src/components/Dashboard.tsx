@@ -161,7 +161,6 @@ export function Dashboard() {
   }
 
   const { plan, report } = data;
-  const pg = report.paceGuidance;
   const pred = report.predictions;
   const week = report.currentWeek;
   const weeks = report.upcomingWeeks.length
@@ -169,7 +168,6 @@ export function Dashboard() {
     : week
       ? [week]
       : [];
-  const zones = plan.paceGuidance.hrZones;
   const estDelta =
     pred.deltaMinVsPrevEst != null ? pred.deltaMinVsPrevEst : pred.deltaMinVsPrior;
 
@@ -238,50 +236,6 @@ export function Dashboard() {
                 <WeekCard key={w.week.id} w={w} current={w.week.id === week?.week.id} />
               ))}
             </div>
-          </section>
-
-          <section className="panel">
-            <h2>Pace</h2>
-            <div className="pace-grid">
-              <div>
-                <span className="stat-label">Easy</span>
-                <strong>
-                  {paceToString(pg.easyMinSecPerMi)}–{paceToString(pg.easyMaxSecPerMi)}
-                </strong>
-              </div>
-              <div>
-                <span className="stat-label">Goal</span>
-                <strong>{paceToString(plan.athlete.goalPaceSecPerMi)}</strong>
-              </div>
-              <div>
-                <span className="stat-label">Conf</span>
-                <strong>{pg.confidence}</strong>
-              </div>
-            </div>
-            {zones ? (
-              <p className="muted small">
-                Z1 ≤{zones.z1.max} · Z2 {zones.z2.min}–{zones.z2.max} · Z3 {zones.z3.min}–
-                {zones.z3.max} · Z4 {zones.z4.min}–{zones.z4.max} · Z5 {zones.z5.min}+
-              </p>
-            ) : null}
-            <ul className="progression-list">
-              {plan.weeks.map((w) => {
-                const long = [...w.sessions]
-                  .filter((s) => s.type === "long" || s.type === "race")
-                  .sort((a, b) => b.targetMi - a.targetMi)[0];
-                return (
-                  <li key={w.id}>
-                    <span>
-                      W{w.id} · {w.phase}
-                    </span>
-                    <span>
-                      {w.targetMi} mi
-                      {long ? ` · long ${long.targetMi}` : w.targetMi === 0 ? " · rest" : ""}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
           </section>
         </>
       ) : null}

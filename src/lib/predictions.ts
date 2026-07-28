@@ -38,41 +38,45 @@ function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
 }
 
-function volumeBoost(mi14: number, weeklyMi: number): number {
-  let b = 0;
-  if (mi14 >= 20) b += 4;
-  if (mi14 >= 28) b += 3;
-  if (weeklyMi >= 18) b += 3;
-  if (weeklyMi < 10) b -= 6;
-  if (mi14 < 12) b -= 8;
-  return b;
+/**
+ * Race-day projection: blend fitness estimate with prior half, then give
+ * credit for weeks of training still left (early-season optimism).
+ */
+function raceDayProjectionSec(args: {
+  estimatedHalfSec: number | null;
+  priorHalfSec: number;
+  daysToRace: number;
+  mi14: number;
+  weeklyMi: number;
+}): number {
+  const { estimatedHalfSec, priorHalfSec, daysToRace, mi14, weeklyMi } = args;
+  const weeksLeft = Math.max(0, daysToRace / 7);
+
+  // Fitness signal from recent runs, or fall back to prior
+  const fitness = estimatedHalfSec ?? priorHalfSec;
+  // Don't let a conservative easy-pace conversion dominate early — pull toward prior
+  const blended = fitness * 0.55 + priorHalfSec * 0.45;
+
+  // ~45–55s of half-time improvement credit per training week remaining (tapers near race)
+  const weeklyCreditSec = weeksLeft > 2 ? 50 : 25;
+  let credit = weeksLeft * weeklyCreditSec;
+
+  // Volume already logged this fortnight supports the projection
+  if (mi14 >= 18) credit += 60;
+  if (mi14 >= 28) credit += 45;
+  if (weeklyMi >= 16) credit += 30;
+  // Light early weeks shouldn't nuke odds — only mild drag
+  if (mi14 < 8 && weeksLeft < 6) credit -= 45;
+
+  return Math.round(blended - credit);
 }
 
-function confBoost(confidence: PaceGuidanceLive["confidence"]): number {
-  if (confidence === "high") return 5;
-  if (confidence === "medium") return 2;
-  return -3;
-}
-
-/** Soft probability that race day finishes at or under goal given current estimate. */
-export function goalPct(
-  estimatedHalfSec: number | null,
-  goalSec: number,
-  confidence: PaceGuidanceLive["confidence"],
-  mi14: number,
-  weeklyMi: number,
-): number {
-  if (!estimatedHalfSec) {
-    // No estimate yet — prior half anchors C, A/B stay low
-    const gap = (8156 - goalSec) / 60;
-    return clamp(Math.round(38 - gap * 2.2 + volumeBoost(mi14, weeklyMi)), 3, 55);
-  }
-
-  const gapMin = (estimatedHalfSec - goalSec) / 60;
-  // ~50% when estimate equals goal; drops ~8 pts per minute slow
-  const logistic = 100 / (1 + Math.exp(gapMin / 2.8));
-  const raw = logistic + volumeBoost(mi14, weeklyMi) + confBoost(confidence);
-  return clamp(Math.round(raw), 2, 92);
+/** Soft probability of finishing at or under goal on race day. */
+export function goalPct(projectedSec: number, goalSec: number): number {
+  const gapMin = (projectedSec - goalSec) / 60;
+  // Wider curve: ~50% when projection equals goal; ~1 pt per ~0.7–1 min gap
+  const logistic = 100 / (1 + Math.exp(gapMin / 5.5));
+  return clamp(Math.round(logistic), 5, 95);
 }
 
 function estimateFromRuns(
@@ -99,16 +103,24 @@ export function buildPredictionSummary(args: {
   pace: PaceGuidanceLive;
   weeklyMi: number;
   mi14: number;
+  daysToRace: number;
 }): PredictionSummary {
-  const { plan, runs, pace, weeklyMi, mi14 } = args;
+  const { plan, runs, pace, weeklyMi, mi14, daysToRace } = args;
   const priorHalfSec = parseTimeToSec(plan.athlete.priorHalf || "2:15:56");
   const priorHalfLabel = formatHalfClock(priorHalfSec); // 2:16
 
   const aSec = 2 * 3600; // 2:00
   const bSec = 2 * 3600 + 10 * 60; // 2:10
-  const cSec = priorHalfSec; // beat / match prior ≈ 2:16
+  const cSec = 2 * 3600 + 30 * 60; // 2:30 finish / C goal
 
   const estimatedHalfSec = pace.estimatedHalfSec;
+  const projected = raceDayProjectionSec({
+    estimatedHalfSec,
+    priorHalfSec,
+    daysToRace,
+    mi14,
+    weeklyMi,
+  });
 
   const sorted = [...runs].sort(
     (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
@@ -132,28 +144,28 @@ export function buildPredictionSummary(args: {
       label: "A",
       timeLabel: "2:00",
       timeSec: aSec,
-      pct: goalPct(estimatedHalfSec, aSec, pace.confidence, mi14, weeklyMi),
+      pct: goalPct(projected, aSec),
     },
     {
       label: "B",
       timeLabel: "2:10",
       timeSec: bSec,
-      pct: goalPct(estimatedHalfSec, bSec, pace.confidence, mi14, weeklyMi),
+      pct: goalPct(projected, bSec),
     },
     {
       label: "C",
-      timeLabel: priorHalfLabel,
+      timeLabel: "2:30",
       timeSec: cSec,
-      pct: goalPct(estimatedHalfSec, cSec, pace.confidence, mi14, weeklyMi),
+      pct: goalPct(projected, cSec),
     },
   ];
 
-  // Ensure A < B < C roughly (harder goals shouldn't outrank easier)
-  goals[1].pct = Math.max(goals[1].pct, goals[0].pct + 4);
-  goals[2].pct = Math.max(goals[2].pct, goals[1].pct + 4);
-  goals[0].pct = clamp(goals[0].pct, 2, 88);
-  goals[1].pct = clamp(goals[1].pct, 4, 90);
-  goals[2].pct = clamp(goals[2].pct, 6, 94);
+  // Harder goals must not outrank easier ones
+  goals[1].pct = Math.max(goals[1].pct, goals[0].pct + 6);
+  goals[2].pct = Math.max(goals[2].pct, goals[1].pct + 8);
+  goals[0].pct = clamp(goals[0].pct, 8, 85);
+  goals[1].pct = clamp(goals[1].pct, 14, 90);
+  goals[2].pct = clamp(goals[2].pct, 35, 96);
 
   return {
     goals,
@@ -172,7 +184,6 @@ export function buildMileageNarrative(args: {
 }): { status: "ahead" | "on_track" | "behind" | "rest"; headline: string; detail: string } {
   const today = args.asOf.toISOString().slice(0, 10);
   const past = args.weeklyMileage.filter((w) => {
-    // week start already passed and not current unfinished only — use weeks before current
     if (args.currentWeekId != null) return w.weekId < args.currentWeekId;
     return w.start < today;
   });

@@ -148,6 +148,7 @@ export function buildCoachReport(
     pace: paceGuidance,
     weeklyMi: recentWeeklyMi,
     mi14,
+    daysToRace,
   });
   if (predictions.goals[0]) {
     sub2OddsBand = `${predictions.goals[0].pct}%`;
