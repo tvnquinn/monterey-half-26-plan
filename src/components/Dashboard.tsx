@@ -227,6 +227,7 @@ function SessionGuide() {
 function GoalsCard({
   goals,
   estLabel,
+  projLabel,
   trendMin,
   daysToRace,
   sigmaMin,
@@ -234,6 +235,7 @@ function GoalsCard({
 }: {
   goals: CoachReport["predictions"]["goals"];
   estLabel: string;
+  projLabel: string;
   trendMin: number | null;
   daysToRace: number;
   sigmaMin: number;
@@ -244,16 +246,28 @@ function GoalsCard({
       <div className="goals-head">
         <h2 className="goals-heading">Goals</h2>
         <span className="muted small">
-          Est {estLabel}
           {trendMin != null && trendMin !== 0 ? (
             <span className={trendMin < 0 ? "delta-good" : "delta-bad"}>
-              {" "}
               {trendMin > 0 ? "+" : ""}
               {trendMin} min / 4wk
             </span>
           ) : null}
         </span>
       </div>
+      {/* The odds below are race-day, so show the number they come from. */}
+      <p className="proj-line">
+        <span>
+          <span className="proj-label">if you raced today</span>
+          <strong>{estLabel}</strong>
+        </span>
+        <span aria-hidden="true" className="proj-arrow">
+          →
+        </span>
+        <span>
+          <span className="proj-label">race day, on plan</span>
+          <strong className="proj-race">{projLabel}</strong>
+        </span>
+      </p>
       <ul className="goal-rows">
         {goals.map((g) => (
           <li key={g.label} className="goal-row">
@@ -268,7 +282,7 @@ function GoalsCard({
         ))}
       </ul>
       <p className="muted small goal-footnote">
-        {daysToRace}d out · ±{sigmaMin} min spread · {confidence} confidence
+        {daysToRace}d out · odds are race-day · ±{sigmaMin} min · {confidence} confidence
       </p>
     </section>
   );
@@ -355,6 +369,7 @@ export function Dashboard() {
       <GoalsCard
         goals={pred.goals}
         estLabel={estLabel}
+        projLabel={formatHalfShort(pred.projectedSec)}
         trendMin={pred.trendMin}
         daysToRace={report.daysToRace}
         sigmaMin={pred.sigmaMin}

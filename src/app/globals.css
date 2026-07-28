@@ -1154,3 +1154,44 @@ a {
 .week-card .session-list {
   margin-top: 0.85rem;
 }
+
+/* Current fitness -> race-day projection. The odds come from the right-hand
+   number, so both are shown rather than leaving the reader to infer it. */
+.proj-line {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0 0 0.85rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.proj-line > span {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.proj-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.proj-line strong {
+  font-family: var(--font-display), serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #c5d6e2;
+  line-height: 1.1;
+}
+
+.proj-race {
+  color: var(--accent) !important;
+}
+
+.proj-arrow {
+  color: var(--accent-2);
+  font-size: 1.1rem;
+  padding-top: 0.7rem;
+}
