@@ -1,0 +1,231 @@
+{
+  "athlete": {
+    "name": "Quinn",
+    "goalTime": "1:59:59",
+    "goalPaceSecPerMi": 549,
+    "priorHalf": "2:15:00",
+    "notes": "Knee/calf history. Prefer consistency over aggressive pace early. Easy running intentionally slow."
+  },
+  "race": {
+    "name": "Half Marathon",
+    "date": "2026-11-08",
+    "distanceMi": 13.1
+  },
+  "constraints": {
+    "chicago": { "start": "2026-07-29", "end": "2026-08-04", "maxRuns": 2 },
+    "italy": { "start": "2026-09-10", "end": "2026-09-22", "mode": "maintenance" },
+    "injuryFlags": ["knee", "calf"]
+  },
+  "paceGuidance": {
+    "easyMinSecPerMi": 690,
+    "easyMaxSecPerMi": 780,
+    "racePaceSecPerMi": 549,
+    "hrEasyCap": 150,
+    "notes": "Easy 11:30–13:00 until quality block. Race pace 9:05–9:15 only from week 10+."
+  },
+  "weeks": [
+    {
+      "id": 1,
+      "start": "2026-07-28",
+      "end": "2026-08-03",
+      "targetMi": [8, 12],
+      "phase": "chicago",
+      "focus": "Travel week — 2 easy Chicago runs + already logged Tue",
+      "sessions": [
+        { "id": "w1-tue", "date": "2026-07-28", "type": "easy", "targetMi": 4.5, "optional": false, "notes": "Already completed" },
+        { "id": "w1-wed", "date": "2026-07-29", "type": "easy", "targetMi": 2.5, "optional": true, "notes": "Optional short morning only" },
+        { "id": "w1-chi-a", "date": "2026-07-31", "type": "easy", "targetMi": 4.5, "optional": false, "notes": "Chicago easy run" },
+        { "id": "w1-chi-b", "date": "2026-08-03", "type": "easy", "targetMi": 3.5, "optional": false, "notes": "Chicago easy run before leaving" }
+      ]
+    },
+    {
+      "id": 2,
+      "start": "2026-08-04",
+      "end": "2026-08-10",
+      "targetMi": [11, 13],
+      "phase": "base",
+      "focus": "Re-entry — easy only",
+      "sessions": [
+        { "id": "w2-1", "date": "2026-08-05", "type": "easy", "targetMi": 4, "optional": false },
+        { "id": "w2-2", "date": "2026-08-07", "type": "easy", "targetMi": 3.5, "optional": false },
+        { "id": "w2-long", "date": "2026-08-09", "type": "long", "targetMi": 5, "optional": false }
+      ]
+    },
+    {
+      "id": 3,
+      "start": "2026-08-11",
+      "end": "2026-08-17",
+      "targetMi": [13, 15],
+      "phase": "base",
+      "focus": "Build + introduce strides",
+      "sessions": [
+        { "id": "w3-1", "date": "2026-08-11", "type": "easy", "targetMi": 4, "optional": false },
+        { "id": "w3-2", "date": "2026-08-13", "type": "easy_strides", "targetMi": 4.5, "optional": false, "notes": "4–6 × 20s strides" },
+        { "id": "w3-long", "date": "2026-08-16", "type": "long", "targetMi": 6, "optional": false }
+      ]
+    },
+    {
+      "id": 4,
+      "start": "2026-08-18",
+      "end": "2026-08-24",
+      "targetMi": [15, 17],
+      "phase": "build",
+      "focus": "Long run to 7",
+      "sessions": [
+        { "id": "w4-1", "date": "2026-08-18", "type": "easy", "targetMi": 4.5, "optional": false },
+        { "id": "w4-2", "date": "2026-08-20", "type": "easy_strides", "targetMi": 5, "optional": false },
+        { "id": "w4-long", "date": "2026-08-23", "type": "long", "targetMi": 7, "optional": false }
+      ]
+    },
+    {
+      "id": 5,
+      "start": "2026-08-25",
+      "end": "2026-08-31",
+      "targetMi": [17, 19],
+      "phase": "build",
+      "focus": "Long run to 8",
+      "sessions": [
+        { "id": "w5-1", "date": "2026-08-25", "type": "easy", "targetMi": 5, "optional": false },
+        { "id": "w5-2", "date": "2026-08-27", "type": "easy_strides", "targetMi": 5, "optional": false },
+        { "id": "w5-3", "date": "2026-08-29", "type": "easy", "targetMi": 3.5, "optional": true },
+        { "id": "w5-long", "date": "2026-08-30", "type": "long", "targetMi": 8, "optional": false }
+      ]
+    },
+    {
+      "id": 6,
+      "start": "2026-09-01",
+      "end": "2026-09-07",
+      "targetMi": [20, 22],
+      "phase": "build",
+      "focus": "Pre-Italy peak",
+      "sessions": [
+        { "id": "w6-1", "date": "2026-09-01", "type": "easy", "targetMi": 5, "optional": false },
+        { "id": "w6-2", "date": "2026-09-03", "type": "easy_strides", "targetMi": 5.5, "optional": false },
+        { "id": "w6-3", "date": "2026-09-05", "type": "easy", "targetMi": 4, "optional": false },
+        { "id": "w6-long", "date": "2026-09-06", "type": "long", "targetMi": 9.5, "optional": false }
+      ]
+    },
+    {
+      "id": 7,
+      "start": "2026-09-08",
+      "end": "2026-09-14",
+      "targetMi": [8, 12],
+      "phase": "italy",
+      "focus": "Italy starts Sep 10 — cut volume",
+      "sessions": [
+        { "id": "w7-1", "date": "2026-09-08", "type": "easy", "targetMi": 4, "optional": false },
+        { "id": "w7-2", "date": "2026-09-12", "type": "easy", "targetMi": 3, "optional": true, "notes": "Optional maintain" },
+        { "id": "w7-3", "date": "2026-09-14", "type": "easy", "targetMi": 3.5, "optional": true }
+      ]
+    },
+    {
+      "id": 8,
+      "start": "2026-09-15",
+      "end": "2026-09-21",
+      "targetMi": [6, 10],
+      "phase": "italy",
+      "focus": "Italy maintenance only",
+      "sessions": [
+        { "id": "w8-1", "date": "2026-09-16", "type": "easy", "targetMi": 3.5, "optional": true },
+        { "id": "w8-2", "date": "2026-09-19", "type": "easy", "targetMi": 4, "optional": true }
+      ]
+    },
+    {
+      "id": 9,
+      "start": "2026-09-22",
+      "end": "2026-09-28",
+      "targetMi": [12, 14],
+      "phase": "rebuild",
+      "focus": "Return easy — no hard workouts",
+      "sessions": [
+        { "id": "w9-1", "date": "2026-09-23", "type": "easy", "targetMi": 3.5, "optional": false },
+        { "id": "w9-2", "date": "2026-09-25", "type": "easy", "targetMi": 4, "optional": false },
+        { "id": "w9-long", "date": "2026-09-27", "type": "long", "targetMi": 6, "optional": false }
+      ]
+    },
+    {
+      "id": 10,
+      "start": "2026-09-29",
+      "end": "2026-10-05",
+      "targetMi": [16, 18],
+      "phase": "quality",
+      "focus": "Restart quality lightly",
+      "sessions": [
+        { "id": "w10-1", "date": "2026-09-29", "type": "easy", "targetMi": 4, "optional": false },
+        { "id": "w10-q", "date": "2026-10-01", "type": "quality", "targetMi": 5, "optional": false, "notes": "4 × 3 min @ ~9:20 w/ equal jog" },
+        { "id": "w10-3", "date": "2026-10-03", "type": "easy", "targetMi": 3.5, "optional": false },
+        { "id": "w10-long", "date": "2026-10-05", "type": "long", "targetMi": 8, "optional": false }
+      ]
+    },
+    {
+      "id": 11,
+      "start": "2026-10-06",
+      "end": "2026-10-12",
+      "targetMi": [20, 22],
+      "phase": "quality",
+      "focus": "Race-pace intro",
+      "sessions": [
+        { "id": "w11-1", "date": "2026-10-07", "type": "easy", "targetMi": 5, "optional": false },
+        { "id": "w11-q", "date": "2026-10-09", "type": "quality", "targetMi": 6, "optional": false, "notes": "3 mi continuous @ ~9:10–9:20" },
+        { "id": "w11-3", "date": "2026-10-10", "type": "easy", "targetMi": 4, "optional": false },
+        { "id": "w11-long", "date": "2026-10-11", "type": "long", "targetMi": 10, "optional": false }
+      ]
+    },
+    {
+      "id": 12,
+      "start": "2026-10-13",
+      "end": "2026-10-19",
+      "targetMi": [24, 27],
+      "phase": "peak",
+      "focus": "Peak week",
+      "sessions": [
+        { "id": "w12-1", "date": "2026-10-13", "type": "easy", "targetMi": 5, "optional": false },
+        { "id": "w12-q", "date": "2026-10-15", "type": "quality", "targetMi": 7, "optional": false, "notes": "4–5 mi @ ~9:10" },
+        { "id": "w12-3", "date": "2026-10-17", "type": "easy", "targetMi": 4.5, "optional": false },
+        { "id": "w12-long", "date": "2026-10-18", "type": "long", "targetMi": 11, "optional": false }
+      ]
+    },
+    {
+      "id": 13,
+      "start": "2026-10-20",
+      "end": "2026-10-26",
+      "targetMi": [22, 24],
+      "phase": "peak",
+      "focus": "Hold peak, slight cut",
+      "sessions": [
+        { "id": "w13-1", "date": "2026-10-20", "type": "easy", "targetMi": 5, "optional": false },
+        { "id": "w13-q", "date": "2026-10-22", "type": "quality", "targetMi": 6, "optional": false, "notes": "3 mi @ race pace" },
+        { "id": "w13-3", "date": "2026-10-24", "type": "easy", "targetMi": 4, "optional": false },
+        { "id": "w13-long", "date": "2026-10-25", "type": "long", "targetMi": 10, "optional": false }
+      ]
+    },
+    {
+      "id": 14,
+      "start": "2026-10-27",
+      "end": "2026-11-02",
+      "targetMi": [14, 16],
+      "phase": "taper",
+      "focus": "Taper",
+      "sessions": [
+        { "id": "w14-1", "date": "2026-10-27", "type": "easy", "targetMi": 4, "optional": false },
+        { "id": "w14-q", "date": "2026-10-29", "type": "quality", "targetMi": 4, "optional": false, "notes": "2 mi @ race pace feel" },
+        { "id": "w14-3", "date": "2026-10-31", "type": "easy", "targetMi": 3, "optional": false },
+        { "id": "w14-long", "date": "2026-11-01", "type": "long", "targetMi": 6, "optional": false }
+      ]
+    },
+    {
+      "id": 15,
+      "start": "2026-11-03",
+      "end": "2026-11-08",
+      "targetMi": [8, 10],
+      "phase": "race",
+      "focus": "Race week",
+      "sessions": [
+        { "id": "w15-1", "date": "2026-11-03", "type": "easy", "targetMi": 3, "optional": false },
+        { "id": "w15-2", "date": "2026-11-05", "type": "easy_strides", "targetMi": 2.5, "optional": false },
+        { "id": "w15-3", "date": "2026-11-07", "type": "easy", "targetMi": 2, "optional": false, "notes": "Shakeout" },
+        { "id": "w15-race", "date": "2026-11-08", "type": "race", "targetMi": 13.1, "optional": false, "notes": "Goal sub-2 / A-stretch" }
+      ]
+    }
+  ]
+}

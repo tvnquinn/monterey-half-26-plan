@@ -1,0 +1,476 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0f1714;
+  --bg-2: #16211c;
+  --ink: #eef5ef;
+  --muted: #9bb0a4;
+  --line: rgba(238, 245, 239, 0.12);
+  --accent: #c8f542;
+  --accent-2: #7dd3c0;
+  --danger: #ff7a59;
+  --warn: #ffd166;
+  --ok: #8fd694;
+  --panel: rgba(22, 33, 28, 0.82);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-body);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-body), sans-serif;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(200, 245, 66, 0.16), transparent 55%),
+    radial-gradient(900px 500px at 90% 0%, rgba(125, 211, 192, 0.14), transparent 50%),
+    linear-gradient(180deg, #101a16 0%, #0b110f 45%, #0f1714 100%);
+  background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.shell {
+  width: min(1100px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.hero {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem 0 0.5rem;
+}
+
+@media (min-width: 860px) {
+  .hero {
+    grid-template-columns: 1.4fr 0.8fr;
+    align-items: end;
+  }
+}
+
+.eyebrow {
+  margin: 0 0 0.4rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  font-size: 0.78rem;
+}
+
+.brand {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(4rem, 14vw, 7.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  text-shadow: 0 0 40px rgba(200, 245, 66, 0.15);
+}
+
+.lede {
+  max-width: 34rem;
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.25rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.7rem 1.1rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: #111;
+  border-color: transparent;
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn.ghost:hover {
+  border-color: rgba(200, 245, 66, 0.45);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.sync-msg {
+  margin: 0.8rem 0 0;
+  color: var(--accent-2);
+  font-size: 0.9rem;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.hero-stats strong {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.summary {
+  margin: 1.5rem 0;
+  padding: 0.95rem 1.1rem;
+  border-left: 3px solid var(--accent);
+  color: var(--ink);
+  background: rgba(200, 245, 66, 0.06);
+}
+
+.grid-2 {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 860px) {
+  .grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.panel {
+  margin-bottom: 1rem;
+  padding: 1.15rem 1.2rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+}
+
+.panel h2 {
+  margin: 0 0 0.9rem;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.muted-panel {
+  opacity: 0.95;
+}
+
+.meter {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.meter.thin {
+  height: 6px;
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  transition: width 500ms ease;
+}
+
+.meter-label {
+  margin: 0.55rem 0 0.9rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.session-list,
+.run-list,
+.mileage-list,
+.rationale,
+.howto {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.session-list li,
+.run-list li,
+.mileage-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.session-list li:first-child,
+.run-list li:first-child,
+.mileage-list li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.session span,
+.run-list span,
+.rationale li,
+.howto li {
+  display: block;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.session em {
+  font-style: normal;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.session.done em {
+  color: var(--ok);
+}
+
+.session.partial em {
+  color: var(--warn);
+}
+
+.session.missed em {
+  color: var(--danger);
+}
+
+.pace-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.pace-grid strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 1.15rem;
+}
+
+.rationale li {
+  position: relative;
+  padding-left: 0.9rem;
+  margin-bottom: 0.45rem;
+}
+
+.rationale li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 50%;
+  background: var(--accent-2);
+}
+
+.recs {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.rec {
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.rec-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.rec-top span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.rec p {
+  margin: 0.25rem 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.rec .action {
+  color: var(--ink);
+}
+
+.rec .plan-change {
+  color: var(--accent-2);
+  font-size: 0.85rem;
+}
+
+.rec-critical {
+  border-color: rgba(255, 122, 89, 0.45);
+}
+
+.rec-high {
+  border-color: rgba(255, 209, 102, 0.4);
+}
+
+.rec-medium {
+  border-color: rgba(125, 211, 192, 0.35);
+}
+
+.run-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 0.2rem 0.8rem;
+  text-align: right;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.mileage-list li {
+  display: block;
+}
+
+.mileage-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.howto {
+  list-style: decimal;
+  padding-left: 1.2rem;
+}
+
+.howto li {
+  display: list-item;
+  margin-bottom: 0.45rem;
+  color: var(--muted);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.error {
+  color: var(--danger);
+}
+
+.animate-fade {
+  animation: fade 700ms ease both;
+}
+
+.animate-rise {
+  animation: rise 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-1 {
+  animation-delay: 120ms;
+}
+
+.delay-2 {
+  animation-delay: 220ms;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-stats,
+  .pace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .run-metrics {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+
+  .brand {
+    font-size: clamp(3.4rem, 22vw, 5rem);
+  }
+}
