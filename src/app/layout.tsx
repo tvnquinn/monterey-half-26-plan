@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   description:
     "Monterey Bay Half training plan with adaptive A/B/C goal odds and weekly mileage tracking.",
   applicationName: "Monterey Half",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     title: "Monterey Half",
