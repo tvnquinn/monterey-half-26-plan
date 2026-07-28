@@ -688,7 +688,21 @@ a {
 }
 
 .weeks-scroll-wrap {
+  position: relative;
   margin-bottom: 1rem;
+}
+
+.weeks-scroll-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0.55rem;
+  width: 1.5rem;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(11, 17, 15, 0.75));
+  border-radius: 0 1.25rem 1.25rem 0;
+  z-index: 1;
 }
 
 .weeks-scroll-head {
@@ -710,18 +724,22 @@ a {
 .weeks-scroll {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(280px, 85%);
-  gap: 0.85rem;
+  /* Nearly full width; small peek of next card signals swipe */
+  grid-auto-columns: calc(100% - 0.85rem);
+  gap: 0.75rem;
   overflow-x: auto;
   padding-bottom: 0.55rem;
   scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 
 .week-card {
   scroll-snap-align: start;
   margin-bottom: 0;
   min-height: 100%;
+  width: 100%;
 }
 
 .week-card h3 {
@@ -738,12 +756,6 @@ a {
 .week-focus {
   margin: 0 0 0.6rem;
   font-size: 0.88rem;
-}
-
-@media (min-width: 860px) {
-  .weeks-scroll {
-    grid-auto-columns: minmax(340px, 42%);
-  }
 }
 
 .shot-grid {
