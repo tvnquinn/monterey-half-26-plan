@@ -31,21 +31,52 @@ function typicalEasyHr(runs: RunActivity[], fallback: number): number {
   return median(vals) ?? fallback;
 }
 
-function sessionMultiplier(type: SessionType): { paceFactor: number; label: string; hrOffset: number } {
+function sessionMultiplier(type: SessionType): { paceFactor: number; label: string } {
   switch (type) {
     case "easy":
-      return { paceFactor: 1.0, label: "easy", hrOffset: 0 };
+      return { paceFactor: 1.0, label: "easy" };
     case "easy_strides":
-      return { paceFactor: 1.0, label: "easy + strides", hrOffset: 0 };
+      return { paceFactor: 1.0, label: "easy + strides" };
     case "long":
-      return { paceFactor: 1.03, label: "long easy", hrOffset: -2 };
+      return { paceFactor: 1.03, label: "long easy" };
     case "quality":
-      return { paceFactor: 0.78, label: "quality / race-pace work", hrOffset: 18 };
+      return { paceFactor: 0.78, label: "quality" };
     case "race":
-      return { paceFactor: 0.74, label: "race", hrOffset: 25 };
+      return { paceFactor: 0.74, label: "race" };
     default:
-      return { paceFactor: 1.0, label: "easy", hrOffset: 0 };
+      return { paceFactor: 1.0, label: "easy" };
   }
+}
+
+function hrZoneForSession(
+  type: SessionType,
+  plan: TrainingPlan,
+): { label: string; range: string; hrTarget: number } {
+  const z = plan.paceGuidance.hrZones;
+  if (!z) {
+    const cap = plan.paceGuidance.hrEasyCap;
+    return { label: "easy", range: `≤${cap}`, hrTarget: cap };
+  }
+  if (type === "race") {
+    return {
+      label: z.z4.label,
+      range: `${z.z4.min}–${z.z4.max}`,
+      hrTarget: z.z4.max,
+    };
+  }
+  if (type === "quality") {
+    return {
+      label: `${z.z3.label}–${z.z4.label}`,
+      range: `${z.z3.min}–${z.z4.max}`,
+      hrTarget: z.z3.max,
+    };
+  }
+  // Easy / long / strides: Z2, true easy ~143
+  return {
+    label: z.z2.label,
+    range: `${z.z2.min}–${z.z2.max}`,
+    hrTarget: plan.paceGuidance.hrEasyCap,
+  };
 }
 
 export function buildSessionPaceRec(args: {
@@ -61,10 +92,9 @@ export function buildSessionPaceRec(args: {
   const elevPerMi = typicalElevPerMi(runs);
   const expectedElev = elevPerMi * session.targetMi;
   const easyHr = typicalEasyHr(runs, plan.paceGuidance.hrEasyCap);
+  const zone = hrZoneForSession(session.type, plan);
 
   let easyExpected = (guidance.easyMinSecPerMi + guidance.easyMaxSecPerMi) / 2;
-  let usedHr = false;
-  let usedElev = false;
 
   if (model) {
     const predicted = model.predict({
@@ -72,7 +102,6 @@ export function buildSessionPaceRec(args: {
       elevationFt: expectedElev,
       averageHeartrate: easyHr,
       daysSincePrev: 2,
-      // approximate current load from last 14d
       miles7d: runs
         .filter((r) => {
           const d = (Date.now() - new Date(r.startDate).getTime()) / 86400000;
@@ -86,52 +115,35 @@ export function buildSessionPaceRec(args: {
         })
         .reduce((s, r) => s + r.distanceMi, 0),
     });
-    if (predicted) {
-      easyExpected = predicted;
-      usedElev = true;
-      usedHr = model.usesHr;
-    }
+    if (predicted) easyExpected = predicted;
   }
 
   let target: number;
   if (session.type === "race") {
     target = plan.athlete.goalPaceSecPerMi;
   } else if (session.type === "quality") {
-    // Controlled race-pace work; keep near goal pace unless confidence is low
     target =
       guidance.confidence === "low"
         ? Math.round((easyExpected + plan.athlete.goalPaceSecPerMi) / 2)
         : Math.round(plan.athlete.goalPaceSecPerMi + 8);
   } else {
     target = Math.round(easyExpected * mult.paceFactor);
-    // Elevation penalty: ~2–4 sec/mi per 10 ft/mi gain above flat
-    const elevPenalty = Math.round(Math.max(0, elevPerMi - 20) * 0.25);
-    target += elevPenalty;
-    usedElev = usedElev || elevPenalty > 0;
+    target += Math.round(Math.max(0, elevPerMi - 20) * 0.25);
   }
 
   const spread = session.type === "quality" || session.type === "race" ? 12 : 35;
   const minSec = target - (session.type === "easy" || session.type === "long" ? 15 : 8);
   const maxSec = target + spread;
 
-  const hrTarget =
-    session.type === "quality" || session.type === "race"
-      ? easyHr + mult.hrOffset
-      : Math.min(plan.paceGuidance.hrEasyCap, easyHr + mult.hrOffset);
-
-  const bits = [
-    `${mult.label} target ${paceToString(target)}/mi`,
-    usedHr ? `anchored to ~${Math.round(easyHr)} bpm easy HR` : "HR sparse — using recent easy pace band",
-    usedElev ? `includes ~${Math.round(elevPerMi)} ft/mi elev context` : null,
-  ].filter(Boolean);
-
   return {
     targetSecPerMi: target,
     minSecPerMi: minSec,
     maxSecPerMi: maxSec,
     label: mult.label,
-    hrTarget: Math.round(hrTarget),
-    rationale: bits.join(" · "),
+    hrTarget: zone.hrTarget,
+    hrZoneLabel: zone.label,
+    hrZoneRange: zone.range,
+    rationale: `${zone.label} ${zone.range} bpm`,
   };
 }
 

@@ -24,7 +24,7 @@ export async function GET() {
         week.focus,
         session.notes || "",
         `Phase: ${week.phase}`,
-        `Week target: ${week.targetMi[0]}-${week.targetMi[1]} mi`,
+        `Week target: ${week.targetMi} mi`,
       ]
         .filter(Boolean)
         .join("\\n");

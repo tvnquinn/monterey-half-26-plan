@@ -51,22 +51,28 @@ function SessionRow({ s }: { s: SessionStatus }) {
             <span>
               {s.session.targetMi} mi
               {pace ? ` · ${paceToString(pace.targetSecPerMi)}/mi` : ""}
-              {pace?.hrTarget ? ` · ≤${pace.hrTarget} bpm` : ""}
+              {pace?.hrZoneLabel
+                ? ` · ${pace.hrZoneLabel}`
+                : pace?.hrTarget
+                  ? ` · ≤${pace.hrTarget}`
+                  : ""}
             </span>
           </div>
           <em>{statusLabel(s.status)}</em>
         </summary>
         <div className="session-guidance">
           {pace ? (
-            <>
-              <p>
-                <strong>
-                  {paceToString(pace.minSecPerMi)}–{paceToString(pace.maxSecPerMi)}/mi
-                </strong>{" "}
-                ({pace.label})
-              </p>
-              <p className="muted">{pace.rationale}</p>
-            </>
+            <p>
+              <strong>
+                {paceToString(pace.minSecPerMi)}–{paceToString(pace.maxSecPerMi)}/mi
+              </strong>
+              {pace.hrZoneRange ? (
+                <>
+                  {" "}
+                  · {pace.hrZoneLabel} {pace.hrZoneRange} bpm
+                </>
+              ) : null}
+            </p>
           ) : null}
           {s.session.notes ? <p className="muted">{s.session.notes}</p> : null}
         </div>
@@ -76,24 +82,34 @@ function SessionRow({ s }: { s: SessionStatus }) {
 }
 
 function WeekCard({ w, current }: { w: WeekStatus; current?: boolean }) {
+  const over = w.overTarget;
+  const fill = Math.min(w.progressPct, over ? 100 : 100);
   return (
-    <article className={`panel week-card ${current ? "week-card-current" : ""}`}>
+    <article
+      className={`panel week-card ${current ? "week-card-current" : ""} ${over ? "week-over" : ""}`}
+    >
       <h3>
         Week {w.week.id}
         {current ? " · this week" : ""}
+        {w.targetMi === 0 ? " · rest" : ""}
       </h3>
       <p className="meter-label">
         {w.week.start.slice(5)}–{w.week.end.slice(5)} · {w.loggedMi.toFixed(1)} /{" "}
-        {w.targetLow}–{w.targetHigh} mi
+        {w.targetMi} mi
+        {over ? " · over" : ""}
       </p>
-      <div className="meter">
-        <div className="meter-fill" style={{ width: `${Math.min(w.progressPct, 100)}%` }} />
+      <div className={`meter ${over ? "meter-over" : ""}`}>
+        <div className="meter-fill" style={{ width: `${Math.min(fill, 100)}%` }} />
       </div>
-      <ul className="session-list">
-        {w.sessions.map((s) => (
-          <SessionRow key={s.session.id} s={s} />
-        ))}
-      </ul>
+      {w.sessions.length === 0 ? (
+        <p className="muted week-focus">No runs planned</p>
+      ) : (
+        <ul className="session-list">
+          {w.sessions.map((s) => (
+            <SessionRow key={s.session.id} s={s} />
+          ))}
+        </ul>
+      )}
     </article>
   );
 }
@@ -146,6 +162,7 @@ export function Dashboard() {
     : week
       ? [week]
       : [];
+  const zones = plan.paceGuidance.hrZones;
 
   return (
     <div className="shell">
@@ -203,10 +220,60 @@ export function Dashboard() {
           </section>
 
           <section className="panel">
+            <h2>Pace</h2>
+            <div className="pace-grid">
+              <div>
+                <span className="stat-label">Easy</span>
+                <strong>
+                  {paceToString(pg.easyMinSecPerMi)}–{paceToString(pg.easyMaxSecPerMi)}
+                </strong>
+              </div>
+              <div>
+                <span className="stat-label">Goal</span>
+                <strong>{paceToString(plan.athlete.goalPaceSecPerMi)}</strong>
+              </div>
+              <div>
+                <span className="stat-label">Conf</span>
+                <strong>{pg.confidence}</strong>
+              </div>
+            </div>
+            {zones ? (
+              <p className="muted small">
+                Z1 ≤{zones.z1.max} · Z2 {zones.z2.min}–{zones.z2.max} · Z3 {zones.z3.min}–
+                {zones.z3.max} · Z4 {zones.z4.min}–{zones.z4.max} · Z5 {zones.z5.min}+
+              </p>
+            ) : null}
+            <ul className="progression-list">
+              {plan.weeks.map((w) => {
+                const long = [...w.sessions]
+                  .filter((s) => s.type === "long" || s.type === "race")
+                  .sort((a, b) => b.targetMi - a.targetMi)[0];
+                return (
+                  <li key={w.id}>
+                    <span>
+                      W{w.id} · {w.phase}
+                    </span>
+                    <span>
+                      {w.targetMi} mi
+                      {long ? ` · long ${long.targetMi}` : w.targetMi === 0 ? " · rest" : ""}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+
+          <section className="panel">
             <h2>Mileage</h2>
             <ul className="mileage-list">
               {report.weeklyMileage.map((w) => {
-                const pct = Math.min(100, (w.loggedMi / w.targetLow) * 100);
+                const pct =
+                  w.targetMi <= 0
+                    ? w.loggedMi > 0
+                      ? 100
+                      : 0
+                    : Math.min(140, (w.loggedMi / w.targetMi) * 100);
+                const over = w.targetMi > 0 && w.loggedMi > w.targetMi;
                 return (
                   <li key={w.weekId}>
                     <div className="mileage-row">
@@ -214,11 +281,15 @@ export function Dashboard() {
                         W{w.weekId} · {w.start.slice(5)}
                       </span>
                       <span>
-                        {w.loggedMi.toFixed(1)} / {w.targetLow}–{w.targetHigh}
+                        {w.loggedMi.toFixed(1)} / {w.targetMi}
+                        {over ? " · over" : ""}
                       </span>
                     </div>
-                    <div className="meter thin">
-                      <div className="meter-fill" style={{ width: `${pct}%` }} />
+                    <div className={`meter thin ${over ? "meter-over" : ""}`}>
+                      <div
+                        className="meter-fill"
+                        style={{ width: `${Math.min(pct, 100)}%` }}
+                      />
                     </div>
                   </li>
                 );
@@ -234,7 +305,7 @@ export function Dashboard() {
           <ol className="howto">
             <li>Finish the run (Watch / Strava / Fitness).</li>
             <li>Add it here via screenshot, Health file, or manual entry.</li>
-            <li>Pace & HR targets on This week update from what’s logged.</li>
+            <li>Odds, pace, and weekly progress update from what’s logged.</li>
           </ol>
 
           <h2 className="subhead">Screenshots</h2>
@@ -257,7 +328,7 @@ export function Dashboard() {
             </a>
           </div>
           <p className="muted">
-            {data.runs.length} runs · easy ≤{plan.paceGuidance.hrEasyCap} bpm
+            {data.runs.length} runs · easy ≤{plan.paceGuidance.hrEasyCap} bpm (Z2)
           </p>
         </section>
       ) : null}

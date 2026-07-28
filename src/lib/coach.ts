@@ -3,6 +3,7 @@ import { estimateHalfFromRecent } from "./format";
 import { buildWeekStatus, runsInRange } from "./matching";
 import { backtestEfficacy } from "./efficacy";
 import { attachPaceRecsToWeek } from "./pace-recs";
+import { dedupeRuns } from "./dedupe-runs";
 import type {
   CoachReport,
   PaceGuidanceLive,
@@ -40,20 +41,18 @@ function buildPaceGuidance(
   const rationale: string[] = [];
 
   if (medEasy) {
-    // Keep easy truly easy: center band around recent easy median ±45s
     easyMin = Math.round(medEasy - 30);
     easyMax = Math.round(medEasy + 60);
-    rationale.push(
-      `Recent easy median is ${Math.floor(medEasy / 60)}:${String(Math.round(medEasy % 60)).padStart(2, "0")}/mi — keep easy in that neighborhood for injury control.`,
-    );
+    rationale.push("Easy band from recent median.");
   } else {
-    rationale.push("Not enough recent runs to retune easy pace; using plan defaults.");
+    rationale.push("Using plan easy defaults.");
   }
 
-  const bestRecent = last28
-    .filter((r) => r.distanceMi >= 4)
-    .map((r) => r.paceSecPerMi)
-    .sort((a, b) => a - b)[0] ?? null;
+  const bestRecent =
+    last28
+      .filter((r) => r.distanceMi >= 4)
+      .map((r) => r.paceSecPerMi)
+      .sort((a, b) => a - b)[0] ?? null;
 
   const estimatedHalfSec = estimateHalfFromRecent(
     bestRecent,
@@ -70,12 +69,10 @@ function buildPaceGuidance(
   if (estimatedHalfSec) {
     const goal = plan.athlete.goalPaceSecPerMi * 13.1;
     if (estimatedHalfSec <= goal) {
-      rationale.push("Current projection is inside sub-2 range — protect consistency.");
+      rationale.push("Projection inside sub-2.");
     } else {
       const gapMin = Math.round((estimatedHalfSec - goal) / 60);
-      rationale.push(
-        `Projection is ~${gapMin} min slower than sub-2. Volume + late race-pace work matter more than forcing speed now.`,
-      );
+      rationale.push(`~${gapMin} min off sub-2 — volume first.`);
     }
   }
 
@@ -91,28 +88,26 @@ function buildPaceGuidance(
 
 export function buildCoachReport(
   plan: TrainingPlan,
-  runs: RunActivity[],
+  runsInput: RunActivity[],
   asOf = new Date(),
 ): CoachReport {
+  const runs = dedupeRuns(runsInput);
   const daysToRace = differenceInCalendarDays(parseISO(plan.race.date), asOf);
   const weekStatuses = plan.weeks.map((w) => buildWeekStatus(w, runs, asOf));
-  const current = weekStatuses.find(
-    (w) =>
-      dateIn(asOf, w.week.start, w.week.end),
-  ) ?? null;
+  const current = weekStatuses.find((w) => dateIn(asOf, w.week.start, w.week.end)) ?? null;
 
-  const recentWeeklyMi = current?.loggedMi
-    ?? weekStatuses
-      .filter((w) => w.week.end < asOf.toISOString().slice(0, 10))
-      .slice(-1)[0]?.loggedMi
-    ?? 0;
+  const recentWeeklyMi =
+    current?.loggedMi ??
+    weekStatuses.filter((w) => w.week.end < asOf.toISOString().slice(0, 10)).slice(-1)[0]
+      ?.loggedMi ??
+    0;
 
   const paceGuidance = buildPaceGuidance(plan, runs, recentWeeklyMi);
   let recommendations = buildRecommendations(plan, runs, current, paceGuidance, asOf);
 
   const upcomingSource = current
-    ? weekStatuses.filter((w) => w.week.id >= current.week.id).slice(0, 6)
-    : weekStatuses.slice(0, 6);
+    ? weekStatuses.filter((w) => w.week.id >= current.week.id)
+    : weekStatuses;
 
   const upcomingWeeks = upcomingSource.map((w) => ({
     ...w,
@@ -130,23 +125,6 @@ export function buildCoachReport(
     if (withRecs) current.sessions = withRecs.sessions;
   }
 
-  // Concrete per-run pace lines for the current week only (avoid flooding)
-  if (current) {
-    const paceCards = current.sessions
-      .filter((s) => s.paceRec)
-      .map((s) => ({
-        id: `pace-${s.session.id}`,
-        priority:
-          s.session.type === "quality" || s.session.type === "race"
-            ? ("high" as const)
-            : ("medium" as const),
-        title: `${s.session.date.slice(5)} ${s.session.type.replace("_", " ")} · ${s.paceRec!.label}`,
-        detail: `Target ${Math.floor(s.paceRec!.targetSecPerMi / 60)}:${String(s.paceRec!.targetSecPerMi % 60).padStart(2, "0")}/mi (${Math.floor(s.paceRec!.minSecPerMi / 60)}:${String(s.paceRec!.minSecPerMi % 60).padStart(2, "0")}–${Math.floor(s.paceRec!.maxSecPerMi / 60)}:${String(s.paceRec!.maxSecPerMi % 60).padStart(2, "0")})${s.paceRec!.hrTarget ? ` · HR ~${s.paceRec!.hrTarget}` : ""}`,
-        action: s.paceRec!.rationale,
-      }));
-    recommendations = [...paceCards, ...recommendations];
-  }
-
   const last14 = runs.filter((r) => {
     const d = differenceInCalendarDays(asOf, parseISO(r.startDate));
     return d >= 0 && d <= 14;
@@ -155,14 +133,17 @@ export function buildCoachReport(
 
   let sub2OddsBand = "20–30%";
   if (mi14 >= 20 && recentWeeklyMi >= 18) sub2OddsBand = "30–40%";
-  if (paceGuidance.confidence === "high" && (paceGuidance.estimatedHalfSec ?? 99999) <= 7200) {
+  if (
+    paceGuidance.confidence === "high" &&
+    (paceGuidance.estimatedHalfSec ?? 99999) <= 7200
+  ) {
     sub2OddsBand = "40–50%";
   }
   if (mi14 < 12) sub2OddsBand = "15–25%";
 
   const summary = current
-    ? `Week ${current.week.id} (${current.week.phase}): ${current.loggedMi.toFixed(1)} / ${current.targetLow}–${current.targetHigh} mi. ${current.week.focus}`
-    : "Outside planned weeks — sync runs and check race date.";
+    ? `Week ${current.week.id}: ${current.loggedMi.toFixed(1)} / ${current.targetMi} mi. ${current.week.focus}`
+    : "Outside planned weeks.";
 
   const efficacyRaw = backtestEfficacy(runs);
   const efficacy = {
@@ -194,8 +175,7 @@ export function buildCoachReport(
       weekId: w.week.id,
       start: w.week.start,
       loggedMi: w.loggedMi,
-      targetLow: w.targetLow,
-      targetHigh: w.targetHigh,
+      targetMi: w.targetMi,
     })),
     paceGuidance,
     recommendations,
@@ -225,35 +205,49 @@ function buildRecommendations(
       id: "chicago",
       priority: "high",
       title: "Chicago travel week",
-      detail: "Cap at 2 easy runs. No strides, no pace work. Protect the calf/knee.",
-      action: "Keep remaining Chicago runs easy and short if travel is stressful.",
+      detail: "Cap at 2 easy runs. No strides, no pace work.",
+      action: "Keep remaining Chicago runs easy and short.",
       planChange: { type: "hold_mileage", weekId: 1 },
     });
   }
 
-  if (key >= plan.constraints.italy.start && key <= plan.constraints.italy.end) {
+  if (key >= "2026-09-14" && key <= "2026-09-20") {
+    recs.push({
+      id: "italy-zero",
+      priority: "critical",
+      title: "No running this week",
+      detail: "Full Italy stop — planned zero miles.",
+      action: "Walk / rest only. Rebuild starts Sep 22.",
+      planChange: { type: "hold_mileage", weekId: 8 },
+    });
+  } else if (key >= plan.constraints.italy.start && key <= plan.constraints.italy.end) {
     recs.push({
       id: "italy",
       priority: "high",
-      title: "Italy maintenance mode",
-      detail: "Do not chase the pre-Italy peak. 2 short easy runs/week is a win.",
-      action: "Skip optional sessions freely; resume rebuild on Sep 22.",
+      title: "Italy — minimize running",
+      detail: "Do not chase volume before/during travel.",
+      action: "Skip optional sessions freely.",
       planChange: { type: "cut_session" },
     });
   }
 
-  if (current && current.loggedMi > current.targetHigh * 1.1) {
+  if (current && current.targetMi > 0 && current.loggedMi > current.targetMi * 1.1) {
     recs.push({
       id: "over-mileage",
       priority: "critical",
-      title: "Over weekly mileage band",
-      detail: `Logged ${current.loggedMi.toFixed(1)} mi vs ${current.targetHigh} mi cap.`,
-      action: "Convert remaining runs to rest or 20–30 min walks.",
+      title: "Over weekly target",
+      detail: `Logged ${current.loggedMi.toFixed(1)} vs ${current.targetMi} mi.`,
+      action: "Rest or walk remaining days.",
       planChange: { type: "hold_mileage", weekId: current.week.id },
     });
   }
 
-  if (current && current.progressPct < 50 && current.week.phase !== "italy") {
+  if (
+    current &&
+    current.targetMi > 0 &&
+    current.progressPct < 50 &&
+    current.week.phase !== "italy"
+  ) {
     const requiredLeft = current.sessions.filter(
       (s) => s.status === "upcoming" && !s.session.optional,
     );
@@ -262,8 +256,8 @@ function buildRecommendations(
         id: "behind-week",
         priority: "medium",
         title: "Behind this week's volume",
-        detail: "You are under the weekly floor with few sessions left.",
-        action: "Do not double tomorrow. Slide one easy run ±1 day if needed.",
+        detail: "Under target with few sessions left.",
+        action: "Slide one easy run ±1 day if needed — don't double.",
         planChange: { type: "hold_mileage", weekId: current.week.id },
       });
     }
@@ -284,9 +278,9 @@ function buildRecommendations(
     recs.push({
       id: "hr-drift",
       priority: "high",
-      title: "Easy runs look physiologically hard",
-      detail: "Recent easy efforts are averaging above your easy HR cap.",
-      action: "Slow another 15–30 sec/mi for 3–4 runs. Delay quality if this continues.",
+      title: "Easy runs looking hard",
+      detail: "Recent easy efforts above Z2.",
+      action: "Slow 15–30 sec/mi for a few runs.",
       planChange: { type: "ease_pace" },
     });
   }
@@ -297,8 +291,8 @@ function buildRecommendations(
       id: "no-early-quality",
       priority: "medium",
       title: "No race-pace workouts yet",
-      detail: "Your injury history makes early time trials the main failure mode.",
-      action: "Strides only until the quality block after Italy.",
+      detail: "Injury history — early time trials are the failure mode.",
+      action: "Strides only until post-Italy rebuild.",
       planChange: { type: "shift_quality" },
     });
   }
@@ -307,9 +301,9 @@ function buildRecommendations(
     recs.push({
       id: "post-italy",
       priority: "high",
-      title: "Rebuild week — patience",
-      detail: "Fitness returns faster than tissue tolerance after travel.",
-      action: "Keep all runs easy this week even if you feel good.",
+      title: "Rebuild — patience",
+      detail: "Fitness returns faster than tissue tolerance.",
+      action: "All easy this week even if you feel good.",
       planChange: { type: "hold_mileage", weekId: current?.week.id },
     });
   }
@@ -319,35 +313,44 @@ function buildRecommendations(
       recs.push({
         id: "quality-ok",
         priority: "medium",
-        title: "Quality block is appropriate",
-        detail: "Volume base is sufficient to introduce controlled race-pace work.",
-        action: "Keep quality segments honest but stop if calf/knee complains.",
+        title: "Quality block OK",
+        detail: "Volume base supports controlled race-pace work.",
+        action: "Stop if calf/knee complains.",
         planChange: { type: "advance_quality", weekId: current?.week.id },
       });
     } else {
       recs.push({
         id: "quality-delay",
         priority: "high",
-        title: "Delay aggressive race-pace work",
-        detail: "Consistency/longest-run confidence is still low.",
-        action: "Replace continuous RP with short 2–3 min snippets only.",
+        title: "Keep quality light",
+        detail: "Consistency/longest-run confidence still low.",
+        action: "Short 2–3 min snippets only.",
         planChange: { type: "shift_quality", weekId: current?.week.id },
       });
     }
+  }
+
+  if (phase === "taper" || phase === "race") {
+    recs.push({
+      id: "taper",
+      priority: "high",
+      title: "Taper — trust the work",
+      detail: "Short easy only. Freshness > fitness this week.",
+      action: "No bonus miles. Sleep and carbs.",
+      planChange: { type: "hold_mileage", weekId: current?.week.id },
+    });
   }
 
   if (pace.estimatedHalfSec && pace.estimatedHalfSec > 7800) {
     recs.push({
       id: "goal-reframe",
       priority: "low",
-      title: "Keep sub-2:10 as the success line",
-      detail: "Sub-2 remains the stretch A-goal; judge again after week 12.",
-      action: "Do not add mystery miles to force the projection down.",
+      title: "Keep sub-2:10 as success line",
+      detail: "Sub-2 is stretch A-goal; reassess after peak week.",
+      action: "Don't add mystery miles to force the projection.",
     });
   }
 
   const priorityRank = { critical: 0, high: 1, medium: 2, low: 3 };
-  return recs.sort(
-    (a, b) => priorityRank[a.priority] - priorityRank[b.priority],
-  );
+  return recs.sort((a, b) => priorityRank[a.priority] - priorityRank[b.priority]);
 }

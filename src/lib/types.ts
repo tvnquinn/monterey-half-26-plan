@@ -30,7 +30,8 @@ export interface PlanWeek {
   id: number;
   start: string;
   end: string;
-  targetMi: [number, number];
+  /** Single weekly mileage target (mi). */
+  targetMi: number;
   phase: Phase;
   focus: string;
   sessions: PlannedSession[];
@@ -59,6 +60,13 @@ export interface TrainingPlan {
     easyMaxSecPerMi: number;
     racePaceSecPerMi: number;
     hrEasyCap: number;
+    hrZones?: {
+      z1: { max: number; label: string };
+      z2: { min: number; max: number; label: string };
+      z3: { min: number; max: number; label: string };
+      z4: { min: number; max: number; label: string };
+      z5: { min: number; label: string };
+    };
     notes: string;
   };
   weeks: PlanWeek[];
@@ -98,6 +106,8 @@ export interface SessionPaceRec {
   maxSecPerMi: number;
   label: string;
   hrTarget?: number;
+  hrZoneLabel?: string;
+  hrZoneRange?: string;
   rationale: string;
 }
 
@@ -112,9 +122,10 @@ export interface SessionStatus {
 export interface WeekStatus {
   week: PlanWeek;
   loggedMi: number;
-  targetLow: number;
-  targetHigh: number;
+  targetMi: number;
+  /** Progress vs weekly target (can exceed 100). */
   progressPct: number;
+  overTarget: boolean;
   sessions: SessionStatus[];
   longestMi: number;
   avgPaceSecPerMi: number | null;
@@ -150,7 +161,7 @@ export interface CoachReport {
   currentWeek: WeekStatus | null;
   upcomingWeeks: WeekStatus[];
   recentRuns: RunActivity[];
-  weeklyMileage: { weekId: number; start: string; loggedMi: number; targetLow: number; targetHigh: number }[];
+  weeklyMileage: { weekId: number; start: string; loggedMi: number; targetMi: number }[];
   paceGuidance: PaceGuidanceLive;
   recommendations: Recommendation[];
   sub2OddsBand: string;

@@ -9,14 +9,13 @@ import type {
 } from "./types";
 
 export function dateKey(iso: string): string {
+  if (/^\d{4}-\d{2}-\d{2}/.test(iso)) return iso.slice(0, 10);
   return formatISO(startOfDay(parseISO(iso)), { representation: "date" });
 }
 
 export function getWeekForDate(plan: TrainingPlan, date: string): PlanWeek | null {
   const key = dateKey(date);
-  return (
-    plan.weeks.find((w) => key >= w.start && key <= w.end) ?? null
-  );
+  return plan.weeks.find((w) => key >= w.start && key <= w.end) ?? null;
 }
 
 export function getCurrentWeek(plan: TrainingPlan, asOf = new Date()): PlanWeek | null {
@@ -41,7 +40,6 @@ function matchRunToSession(
 
   if (sameDay.length) return sameDay[0];
 
-  // Allow ±1 day flex for travel weeks
   const flex = runs
     .filter((r) => {
       if (used.has(r.id)) return false;
@@ -68,7 +66,7 @@ export function buildWeekStatus(
     const matched = matchRunToSession(session, weekRuns, used);
     if (matched) {
       used.add(matched.id);
-      const ratio = matched.distanceMi / session.targetMi;
+      const ratio = matched.distanceMi / Math.max(session.targetMi, 0.1);
       const status = ratio >= 0.85 ? "done" : "partial";
       return {
         session,
@@ -81,7 +79,7 @@ export function buildWeekStatus(
     if (session.date > today) {
       return { session, status: "upcoming" };
     }
-    if (session.optional) {
+    if (session.optional || session.targetMi <= 0) {
       return { session, status: "optional_skipped" };
     }
     return { session, status: "missed" };
@@ -100,16 +98,17 @@ export function buildWeekStatus(
     ? hrRuns.reduce((s, r) => s + (r.averageHeartrate || 0), 0) / hrRuns.length
     : null;
 
-  const targetLow = week.targetMi[0];
-  const targetHigh = week.targetMi[1];
-  const progressPct = Math.min(100, Math.round((loggedMi / targetLow) * 100));
+  const targetMi = week.targetMi;
+  const overTarget = targetMi > 0 && loggedMi > targetMi;
+  const progressPct =
+    targetMi <= 0 ? (loggedMi > 0 ? 100 : 0) : Math.round((loggedMi / targetMi) * 100);
 
   return {
     week,
     loggedMi,
-    targetLow,
-    targetHigh,
+    targetMi,
     progressPct,
+    overTarget,
     sessions,
     longestMi,
     avgPaceSecPerMi,
