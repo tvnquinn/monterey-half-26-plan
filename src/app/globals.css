@@ -506,6 +506,69 @@ a {
   margin-top: 0.35rem;
 }
 
+.weeks-scroll-wrap {
+  margin-bottom: 1rem;
+}
+
+.weeks-scroll-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  align-items: baseline;
+  margin-bottom: 0.7rem;
+}
+
+.weeks-scroll-head h2 {
+  margin: 0;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.weeks-scroll {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(280px, 85%);
+  gap: 0.85rem;
+  overflow-x: auto;
+  padding-bottom: 0.55rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.week-card {
+  scroll-snap-align: start;
+  margin-bottom: 0;
+  min-height: 100%;
+}
+
+.week-card h3 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.15rem;
+}
+
+.week-card-current {
+  border-color: rgba(200, 245, 66, 0.45);
+  box-shadow: 0 0 0 1px rgba(200, 245, 66, 0.18), var(--shadow);
+}
+
+.week-focus {
+  margin: 0 0 0.6rem;
+  font-size: 0.88rem;
+}
+
+@media (min-width: 860px) {
+  .weeks-scroll {
+    grid-auto-columns: minmax(340px, 42%);
+  }
+}
+
+.shot-grid {
+  margin-top: 0.35rem;
+}
+
 .muted {
   color: var(--muted);
 }

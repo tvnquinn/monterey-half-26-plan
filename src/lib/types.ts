@@ -148,6 +148,7 @@ export interface CoachReport {
   asOf: string;
   daysToRace: number;
   currentWeek: WeekStatus | null;
+  upcomingWeeks: WeekStatus[];
   recentRuns: RunActivity[];
   weeklyMileage: { weekId: number; start: string; loggedMi: number; targetLow: number; targetHigh: number }[];
   paceGuidance: PaceGuidanceLive;

@@ -108,30 +108,43 @@ export function buildCoachReport(
     ?? 0;
 
   const paceGuidance = buildPaceGuidance(plan, runs, recentWeeklyMi);
-  const recommendations = buildRecommendations(plan, runs, current, paceGuidance, asOf);
+  let recommendations = buildRecommendations(plan, runs, current, paceGuidance, asOf);
 
-  if (current) {
-    current.sessions = attachPaceRecsToWeek({
-      sessions: current.sessions,
+  const upcomingSource = current
+    ? weekStatuses.filter((w) => w.week.id >= current.week.id).slice(0, 6)
+    : weekStatuses.slice(0, 6);
+
+  const upcomingWeeks = upcomingSource.map((w) => ({
+    ...w,
+    sessions: attachPaceRecsToWeek({
+      sessions: w.sessions,
       plan,
       guidance: paceGuidance,
       runs,
       asOf,
-    });
+    }),
+  }));
+
+  if (current) {
+    const withRecs = upcomingWeeks.find((w) => w.week.id === current.week.id);
+    if (withRecs) current.sessions = withRecs.sessions;
   }
 
-  // Also attach pace recs onto recommendations as concrete per-run lines
+  // Concrete per-run pace lines for the current week only (avoid flooding)
   if (current) {
-    for (const s of current.sessions) {
-      if (!s.paceRec) continue;
-      recommendations.unshift({
+    const paceCards = current.sessions
+      .filter((s) => s.paceRec)
+      .map((s) => ({
         id: `pace-${s.session.id}`,
-        priority: s.session.type === "quality" || s.session.type === "race" ? "high" : "medium",
-        title: `${s.session.date.slice(5)} ${s.session.type.replace("_", " ")} · ${s.paceRec.label}`,
-        detail: `Target ${Math.floor(s.paceRec.targetSecPerMi / 60)}:${String(s.paceRec.targetSecPerMi % 60).padStart(2, "0")}/mi (${Math.floor(s.paceRec.minSecPerMi / 60)}:${String(s.paceRec.minSecPerMi % 60).padStart(2, "0")}–${Math.floor(s.paceRec.maxSecPerMi / 60)}:${String(s.paceRec.maxSecPerMi % 60).padStart(2, "0")})${s.paceRec.hrTarget ? ` · HR ~${s.paceRec.hrTarget}` : ""}`,
-        action: s.paceRec.rationale,
-      });
-    }
+        priority:
+          s.session.type === "quality" || s.session.type === "race"
+            ? ("high" as const)
+            : ("medium" as const),
+        title: `${s.session.date.slice(5)} ${s.session.type.replace("_", " ")} · ${s.paceRec!.label}`,
+        detail: `Target ${Math.floor(s.paceRec!.targetSecPerMi / 60)}:${String(s.paceRec!.targetSecPerMi % 60).padStart(2, "0")}/mi (${Math.floor(s.paceRec!.minSecPerMi / 60)}:${String(s.paceRec!.minSecPerMi % 60).padStart(2, "0")}–${Math.floor(s.paceRec!.maxSecPerMi / 60)}:${String(s.paceRec!.maxSecPerMi % 60).padStart(2, "0")})${s.paceRec!.hrTarget ? ` · HR ~${s.paceRec!.hrTarget}` : ""}`,
+        action: s.paceRec!.rationale,
+      }));
+    recommendations = [...paceCards, ...recommendations];
   }
 
   const last14 = runs.filter((r) => {
@@ -175,6 +188,7 @@ export function buildCoachReport(
     asOf: asOf.toISOString(),
     daysToRace,
     currentWeek: current,
+    upcomingWeeks,
     recentRuns: runs.slice(0, 12),
     weeklyMileage: weekStatuses.map((w) => ({
       weekId: w.week.id,
@@ -263,7 +277,7 @@ function buildRecommendations(
   const highHrEasy = last7.filter(
     (r) =>
       r.averageHeartrate &&
-      r.averageHeartrate > plan.paceGuidance.hrEasyCap + 8 &&
+      r.averageHeartrate > plan.paceGuidance.hrEasyCap + 5 &&
       r.paceSecPerMi >= pace.easyMinSecPerMi,
   );
   if (highHrEasy.length >= 2) {

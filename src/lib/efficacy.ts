@@ -207,7 +207,7 @@ export function fitPaceModel(points: EfficacyPoint[]): PaceModel | null {
     .map((p) => p.averageHeartrate)
     .filter((v): v is number => typeof v === "number" && v > 0);
   const usesHr = hrVals.length >= 3;
-  const hrImpute = hrVals.length ? mean(hrVals) : 150;
+  const hrImpute = hrVals.length ? mean(hrVals) : 143;
   const beta = fitOLS(
     points.map((p) => features(p, { includeHr: usesHr, hrImpute })),
     points.map((p) => p.paceSecPerMi),
@@ -280,7 +280,7 @@ export function backtestEfficacy(runs: RunActivity[]): EfficacyBacktest {
   const hrImpute =
     hrPts.length > 0
       ? mean(hrPts.map((p) => p.averageHeartrate as number))
-      : 150;
+      : 143;
 
   // Walk-forward: train on all prior points, predict next
   const minTrain = Math.max(4, Math.floor(points.length * 0.4));

@@ -29,7 +29,7 @@ export function LogRunForm({ onLogged }: LogRunFormProps) {
   const [name, setName] = useState("Easy outdoor run");
   const [distanceMi, setDistanceMi] = useState("4.5");
   const [pace, setPace] = useState("12:30");
-  const [avgHr, setAvgHr] = useState("150");
+  const [avgHr, setAvgHr] = useState("143");
   const [elevationFt, setElevationFt] = useState("");
   const [calories, setCalories] = useState("");
   const [status, setStatus] = useState<string | null>(null);
@@ -115,7 +115,7 @@ export function LogRunForm({ onLogged }: LogRunFormProps) {
             inputMode="numeric"
             value={avgHr}
             onChange={(e) => setAvgHr(e.target.value)}
-            placeholder="150"
+            placeholder="143"
           />
         </label>
         <label>

@@ -169,49 +169,64 @@ export function Dashboard() {
         <LogRunForm onLogged={load} />
       </section>
 
-      <section className="grid-2">
-        <article className="panel">
-          <h2>This week</h2>
-          {week ? (
-            <>
-              <div className="meter">
-                <div
-                  className="meter-fill"
-                  style={{ width: `${Math.min(week.progressPct, 100)}%` }}
-                />
-              </div>
-              <p className="meter-label">
-                {week.loggedMi.toFixed(1)} mi · target {week.targetLow}–{week.targetHigh} ·{" "}
-                {week.progressPct}%
-              </p>
-              <ul className="session-list">
-                {week.sessions.map((s) => (
-                  <li key={s.session.id} className={`session ${s.status}`}>
-                    <div>
-                      <strong>
-                        {weekdayShort(s.session.date)} {s.session.date.slice(5)} ·{" "}
-                        {s.session.type.replace("_", " ")}
-                      </strong>
-                      <span>
-                        {s.session.targetMi} mi
-                        {s.paceRec
-                          ? ` · ${paceToString(s.paceRec.targetSecPerMi)}/mi (${paceToString(s.paceRec.minSecPerMi)}–${paceToString(s.paceRec.maxSecPerMi)})`
-                          : ""}
-                        {s.paceRec?.hrTarget ? ` · HR ~${s.paceRec.hrTarget}` : ""}
-                        {s.session.notes ? ` — ${s.session.notes}` : ""}
-                      </span>
-                    </div>
-                    <em>{statusLabel(s.status)}</em>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <p className="muted">No active plan week for today.</p>
+      <section className="weeks-scroll-wrap">
+        <div className="weeks-scroll-head">
+          <h2>Training weeks</h2>
+          <p className="muted">Swipe / scroll sideways for upcoming weeks (Mon–Sun)</p>
+        </div>
+        <div className="weeks-scroll">
+          {(report.upcomingWeeks.length ? report.upcomingWeeks : week ? [week] : []).map(
+            (w) => (
+              <article
+                key={w.week.id}
+                className={`panel week-card ${w.week.id === week?.week.id ? "week-card-current" : ""}`}
+              >
+                <h3>
+                  Week {w.week.id}
+                  {w.week.id === week?.week.id ? " · now" : ""}
+                </h3>
+                <p className="meter-label">
+                  {weekdayShort(w.week.start)} {w.week.start.slice(5)} → {weekdayShort(w.week.end)}{" "}
+                  {w.week.end.slice(5)} · {w.week.phase}
+                </p>
+                <div className="meter">
+                  <div
+                    className="meter-fill"
+                    style={{ width: `${Math.min(w.progressPct, 100)}%` }}
+                  />
+                </div>
+                <p className="meter-label">
+                  {w.loggedMi.toFixed(1)} mi · target {w.targetLow}–{w.targetHigh} · {w.progressPct}%
+                </p>
+                <p className="muted week-focus">{w.week.focus}</p>
+                <ul className="session-list">
+                  {w.sessions.map((s) => (
+                    <li key={s.session.id} className={`session ${s.status}`}>
+                      <div>
+                        <strong>
+                          {weekdayShort(s.session.date)} {s.session.date.slice(5)} ·{" "}
+                          {s.session.type.replace("_", " ")}
+                        </strong>
+                        <span>
+                          {s.session.targetMi} mi
+                          {s.paceRec
+                            ? ` · ${paceToString(s.paceRec.targetSecPerMi)}/mi (${paceToString(s.paceRec.minSecPerMi)}–${paceToString(s.paceRec.maxSecPerMi)})`
+                            : ""}
+                          {s.paceRec?.hrTarget ? ` · HR ~${s.paceRec.hrTarget}` : ""}
+                          {s.session.notes ? ` — ${s.session.notes}` : ""}
+                        </span>
+                      </div>
+                      <em>{statusLabel(s.status)}</em>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ),
           )}
-        </article>
+        </div>
+      </section>
 
-        <article className="panel">
+      <section className="panel">
           <h2>Pace guidance</h2>
           <div className="pace-grid">
             <div>
@@ -221,20 +236,20 @@ export function Dashboard() {
               </strong>
             </div>
             <div>
-              <span className="stat-label">Race pace</span>
-              <strong>{paceToString(pg.racePaceSecPerMi)}</strong>
+              <span className="stat-label">Easy HR</span>
+              <strong>~{plan.paceGuidance.hrEasyCap} bpm</strong>
             </div>
             <div>
-              <span className="stat-label">Confidence</span>
-              <strong>{pg.confidence}</strong>
+              <span className="stat-label">Race pace</span>
+              <strong>{paceToString(pg.racePaceSecPerMi)}</strong>
             </div>
           </div>
           <ul className="rationale">
             {pg.rationale.map((r) => (
               <li key={r}>{r}</li>
             ))}
+            <li>True easy HR target is ~{plan.paceGuidance.hrEasyCap} bpm; 150+ usually means surge or end-run drift.</li>
           </ul>
-        </article>
       </section>
 
       <section className="panel">
