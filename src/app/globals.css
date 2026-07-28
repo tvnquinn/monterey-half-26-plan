@@ -183,12 +183,12 @@ a {
 }
 
 .goals-heading {
-  margin: 0 0 0.15rem;
+  margin: 0 0 0.2rem;
   font-family: var(--font-display), serif;
-  font-size: 1.05rem;
+  font-size: 1.35rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #b8cad6;
+  color: #c5d6e2;
 }
 
 .goal-row {
