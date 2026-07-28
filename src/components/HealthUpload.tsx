@@ -44,7 +44,7 @@ export function HealthUpload({ onImported }: HealthUploadProps) {
   return (
     <div className="upload-box">
       <label className="btn ghost upload-label">
-        {busy ? "Uploading…" : "Upload Health JSON / GPX"}
+        {busy ? "Uploading…" : "Choose JSON / GPX"}
         <input
           type="file"
           accept="application/json,.json,application/gpx+xml,.gpx,text/xml"
@@ -54,10 +54,6 @@ export function HealthUpload({ onImported }: HealthUploadProps) {
           hidden
         />
       </label>
-      <p className="muted upload-hint">
-        From iPhone Files → iCloud Drive → AutoExport / Autosync. Upload workout
-        <strong> JSON or GPX</strong> files (Outdoor Run routes work).
-      </p>
       {status ? <p className="sync-msg">{status}</p> : null}
     </div>
   );

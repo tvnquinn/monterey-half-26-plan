@@ -142,9 +142,7 @@ export function LogRunForm({ onLogged }: LogRunFormProps) {
           Log run
         </button>
         {preview ? (
-          <span className="muted">
-            ≈ {(preview.moving / 60).toFixed(0)} min moving @ from Apple Fitness / watch stats
-          </span>
+          <span className="muted">≈ {(preview.moving / 60).toFixed(0)} min</span>
         ) : null}
       </div>
       {status ? <p className="sync-msg">{status}</p> : null}

@@ -126,20 +126,14 @@ export function ScreenshotRunUpload({ onSaved }: Props) {
 
   return (
     <div className="shot-box">
-      <p className="muted log-help">
-        Upload screenshots from <strong>one Strava run</strong> (overview + pace/HR pages are fine).
-        Only runs count toward this plan — rides, walks, pickleball, gym, etc. are ignored for mileage.
-      </p>
-
       {visionReady === false ? (
         <p className="sync-msg">
-          Screenshot reading needs a free Gemini key (or OpenAI). Add{" "}
-          <code>GEMINI_API_KEY</code> in Vercel env, then redeploy.
+          Needs <code>GEMINI_API_KEY</code> (or OpenAI) in env.
         </p>
       ) : null}
 
       <label className="btn ghost upload-label">
-        {files.length ? `${files.length} screenshot(s) selected` : "Choose Strava screenshots"}
+        {files.length ? `${files.length} selected` : "Choose screenshots"}
         <input
           type="file"
           accept="image/*"
@@ -157,11 +151,11 @@ export function ScreenshotRunUpload({ onSaved }: Props) {
           disabled={busy || !files.length || visionReady === false}
           onClick={parseScreenshots}
         >
-          Extract this run
+          Extract
         </button>
         {draft?.isRun ? (
           <button type="button" className="btn ghost" disabled={busy} onClick={saveDraft}>
-            Save run
+            Save
           </button>
         ) : null}
       </div>

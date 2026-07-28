@@ -69,11 +69,56 @@ a {
   padding: 1.5rem 0 0.5rem;
 }
 
+.hero-compact {
+  gap: 1rem;
+  padding: 0.75rem 0 0.25rem;
+  margin-bottom: 1rem;
+}
+
 @media (min-width: 860px) {
   .hero {
     grid-template-columns: 1.4fr 0.8fr;
     align-items: end;
   }
+
+  .hero-compact {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+
+  .hero-compact .brand {
+    font-size: clamp(3rem, 8vw, 4.5rem);
+  }
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.tab {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.tab:hover {
+  border-color: rgba(200, 245, 66, 0.35);
+  color: var(--ink);
+}
+
+.tab-active {
+  color: #111;
+  background: var(--accent);
+  border-color: transparent;
+  font-weight: 700;
 }
 
 .eyebrow {
@@ -264,11 +309,55 @@ a {
   border-top: 1px solid var(--line);
 }
 
+.session-list li.session {
+  display: block;
+}
+
 .session-list li:first-child,
 .run-list li:first-child,
 .mileage-list li:first-child {
   border-top: 0;
   padding-top: 0;
+}
+
+.session-details {
+  width: 100%;
+}
+
+.session-details > summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.session-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.session-summary-main {
+  min-width: 0;
+}
+
+.session-summary-main strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.session-guidance {
+  margin-top: 0.55rem;
+  padding-top: 0.55rem;
+  border-top: 1px dashed var(--line);
+  display: grid;
+  gap: 0.3rem;
+}
+
+.session-guidance p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
 }
 
 .session span,
@@ -287,6 +376,7 @@ a {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
+  flex-shrink: 0;
 }
 
 .session.done em {
