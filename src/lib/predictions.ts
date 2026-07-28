@@ -97,18 +97,59 @@ export function projectionSigmaMin(
 }
 
 /**
+ * How much the downside tail shrinks because the athlete has already completed
+ * the distance.
+ *
+ * The dominant failure mode in half-marathon prediction is not "slightly slower
+ * than projected" — it is blowing up: going out too hard, walking from mile 10,
+ * losing fifteen minutes. That risk is far lower for someone who has covered
+ * the distance and paced it without collapsing. Quinn has done it twice, and
+ * both times heart rate drifted under 5% from first quarter to last.
+ *
+ * Pacing judgement does not expire the way fitness does, so this decays slowly:
+ * full credit for a year, gone after three.
+ */
+export function raceExperienceFactor(args: {
+  runs: RunActivity[];
+  raceDistanceMi: number;
+  asOf: Date;
+  tz?: string;
+}): number {
+  const today = dayKeyOf(args.asOf, args.tz);
+  const threshold = args.raceDistanceMi * 0.9;
+
+  let best = 0;
+  for (const r of args.runs) {
+    if (r.distanceMi < threshold) continue;
+    const ageDays = daysBetweenKeys(runDayKey(r.startDate, args.tz), today);
+    if (ageDays < 0) continue;
+    const weight =
+      ageDays <= 365 ? 1 : ageDays >= 1095 ? 0 : 1 - (ageDays - 365) / 730;
+    best = Math.max(best, weight);
+  }
+  // No experience keeps the full 15% downside inflation; a proven finisher
+  // keeps only ~3%.
+  return 1.15 - best * 0.12;
+}
+
+/**
  * Probability of finishing at or under `goalSec`.
  *
  * Mildly skewed: beating a projection is harder than missing it, so the upside
  * tail is tighter than the downside. Keeps C off 99% without inflating A.
+ *
+ * `downsideMult` lets demonstrated race experience collapse the blow-up tail
+ * without making the athlete any faster — it raises the soft goals, barely
+ * touches the stretch ones, which is exactly the right shape.
  */
 export function goalPct(
   projectedSec: number,
   goalSec: number,
   sigmaMin: number,
+  downsideMult = 1.15,
 ): number {
   const gapMin = (projectedSec - goalSec) / 60;
-  const sigmaEff = gapMin > 0 ? sigmaMin * 0.85 : sigmaMin * 1.15;
+  const sigmaEff = gapMin > 0 ? sigmaMin * 0.85 : sigmaMin * downsideMult;
   const logistic = 100 / (1 + Math.exp(gapMin / sigmaEff));
   return clamp(Math.round(logistic), 2, 97);
 }
@@ -135,10 +176,16 @@ export function buildPredictionSummary(args: {
   });
 
   const sigmaMin = projectionSigmaMin(daysToRace, confidence);
+  const downsideMult = raceExperienceFactor({
+    runs,
+    raceDistanceMi: plan.race.distanceMi,
+    asOf,
+    tz,
+  });
 
   const goals: GoalOdds[] = GOAL_LADDER.map((g) => ({
     ...g,
-    pct: goalPct(projectedSec, g.timeSec, sigmaMin),
+    pct: goalPct(projectedSec, g.timeSec, sigmaMin, downsideMult),
   }));
 
   // Monotonic by construction, but guard against rounding inversions.
