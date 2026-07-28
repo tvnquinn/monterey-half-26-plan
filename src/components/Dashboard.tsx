@@ -7,7 +7,7 @@ import { LogRunForm } from "@/components/LogRunForm";
 import { HealthUpload } from "@/components/HealthUpload";
 import { ScreenshotRunUpload } from "@/components/ScreenshotRunUpload";
 
-type Tab = "plan" | "summary" | "log" | "recent" | "backtest";
+type Tab = "plan" | "summary" | "log" | "recent";
 
 interface CoachPayload {
   plan: TrainingPlan;
@@ -28,6 +28,8 @@ function statusLabel(status: string) {
       return "Partial";
     case "missed":
       return "Missed";
+    case "today":
+      return "Today";
     case "upcoming":
       return "Up next";
     case "optional_skipped":
@@ -37,35 +39,26 @@ function statusLabel(status: string) {
   }
 }
 
-function formatDeltaMin(delta: number | null): string {
-  if (delta == null) return "—";
-  if (delta === 0) return "±0 min";
-  return `${delta > 0 ? "+" : ""}${delta} min`;
-}
-
 function sessionTypeLabel(type: string) {
   switch (type) {
     case "easy_strides":
       return "strides";
     case "quality":
-      return "RP";
+      return "B-pace";
+    case "threshold":
+      return "threshold";
+    case "strength":
+      return "strength";
     default:
       return type.replaceAll("_", " ");
   }
 }
 
-/** Drop note text that only restates type / Z2 / distance already on the row. */
 function usefulNote(type: string, notes?: string): string | null {
   if (!notes) return null;
-  const t = notes
-    .replace(/\b(easy|long|short|Z2|Z3|Z4)\b/gi, " ")
-    .replace(/[·•|,]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  if (!t) return null;
-  // Strides / RP / race notes are the prescription — keep original when still useful
-  if (type === "quality" || type === "race" || type === "easy_strides") return notes;
-  // If stripping left almost nothing meaningful vs original, keep trimmed original without Z2 boilerplate
+  if (type === "quality" || type === "threshold" || type === "race" || type === "easy_strides" || type === "strength") {
+    return notes;
+  }
   const cleaned = notes
     .replace(/\s*[·•]\s*easy\s*Z2\b/gi, "")
     .replace(/\bEasy\s*Z2\s*[·•]?\s*/gi, "")
@@ -84,28 +77,43 @@ function SessionRow({ s }: { s: SessionStatus }) {
   const pace = s.paceRec;
   const type = s.session.type;
   const typeLabel = sessionTypeLabel(type);
-  const showPace = type === "easy" || type === "easy_strides" || type === "long";
-  const showHr = type === "quality" || type === "race";
+  const isRace = type === "race";
+  const isStrength = type === "strength";
+  const showPace =
+    !isStrength &&
+    (type === "easy" || type === "easy_strides" || type === "long" || type === "quality" || type === "threshold");
   const note = usefulNote(type, s.session.notes);
   const line = [
     `${weekdayShort(s.session.date)} ${formatShortDate(s.session.date)}`,
     typeLabel,
-    `${s.session.targetMi}mi`,
-    showPace && pace ? `${paceToString(pace.minSecPerMi)}–${paceToString(pace.maxSecPerMi)}` : null,
-    showHr && pace?.hrZoneRange ? `${pace.hrZoneLabel} ${pace.hrZoneRange}` : null,
+    isStrength ? null : `${s.session.targetMi}mi`,
+    showPace && pace && pace.minSecPerMi > 0
+      ? `${paceToString(pace.minSecPerMi)}–${paceToString(pace.maxSecPerMi)}`
+      : null,
   ]
     .filter(Boolean)
     .join(" · ");
-  const showStatus = s.status !== "upcoming";
+
+  let badge: string | null = null;
+  if (s.status === "today") badge = "Today";
+  else if (s.isNext) badge = "Up next";
+  else if (
+    s.status === "done" ||
+    s.status === "partial" ||
+    s.status === "missed" ||
+    s.status === "optional_skipped"
+  ) {
+    badge = statusLabel(s.status);
+  }
 
   return (
-    <li className={`session ${s.status}`}>
+    <li className={`session ${s.status} ${isRace ? "session-race" : ""} ${s.isNext ? "session-next" : ""}`}>
       <div className="session-row">
         <div className="session-main">
           <strong>{line}</strong>
           {note ? <span className="session-note">{note}</span> : null}
         </div>
-        {showStatus ? <em>{statusLabel(s.status)}</em> : null}
+        {badge ? <span className="session-badge">{badge}</span> : null}
       </div>
     </li>
   );
@@ -115,13 +123,16 @@ function WeekCard({
   w,
   current,
   cardRef,
+  z2Label,
 }: {
   w: WeekStatus;
   current?: boolean;
   cardRef?: (el: HTMLElement | null) => void;
+  z2Label: string | null;
 }) {
   const over = w.overTarget;
   const fill = Math.min(w.progressPct, 100);
+  const expected = Math.min(w.expectedPct, 100);
   return (
     <article
       ref={cardRef}
@@ -132,13 +143,29 @@ function WeekCard({
         {current ? " · this week" : ""}
         {w.targetMi === 0 ? " · rest" : ""}
       </h3>
+      {w.week.focus ? <p className="week-focus muted">{w.week.focus}</p> : null}
       <p className="meter-label">
         {formatShortDate(w.week.start)}–{formatShortDate(w.week.end)} · {w.loggedMi.toFixed(1)} /{" "}
         {w.targetMi} mi
         {over ? " · over" : ""}
+        {z2Label ? ` · ${z2Label}` : ""}
       </p>
-      <div className={`meter ${over ? "meter-over" : ""}`}>
+      <div
+        className={`meter ${over ? "meter-over" : ""}`}
+        role="progressbar"
+        aria-valuenow={Math.round(fill)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Week ${w.week.id} mileage ${w.loggedMi.toFixed(1)} of ${w.targetMi}`}
+      >
         <div className="meter-fill" style={{ width: `${fill}%` }} />
+        {w.targetMi > 0 && expected > 0 && expected < 100 ? (
+          <span
+            className="meter-expected"
+            style={{ left: `${expected}%` }}
+            title={`Expected by today · ${expected}%`}
+          />
+        ) : null}
       </div>
       {w.sessions.length === 0 ? (
         <p className="muted week-focus">No runs planned</p>
@@ -150,6 +177,41 @@ function WeekCard({
         </ul>
       )}
     </article>
+  );
+}
+
+function NextSessionHero({ s }: { s: SessionStatus }) {
+  const pace = s.paceRec;
+  const type = s.session.type;
+  const showPace =
+    type !== "strength" &&
+    pace &&
+    pace.minSecPerMi > 0 &&
+    (type === "easy" ||
+      type === "easy_strides" ||
+      type === "long" ||
+      type === "quality" ||
+      type === "threshold");
+  return (
+    <section className="next-hero panel" aria-label="Next session">
+      <p className="next-hero-eyebrow">
+        {s.status === "today" ? "Today" : "Next"} · {weekdayShort(s.session.date)}{" "}
+        {formatShortDate(s.session.date)}
+      </p>
+      <h2 className="next-hero-title">
+        {sessionTypeLabel(type)}
+        {type !== "strength" ? ` · ${s.session.targetMi} mi` : ""}
+      </h2>
+      {showPace ? (
+        <p className="next-hero-pace">
+          {paceToString(pace!.minSecPerMi)}–{paceToString(pace!.maxSecPerMi)}
+          {pace?.hrZoneLabel && pace.hrZoneLabel !== "—"
+            ? ` · ${pace.hrZoneLabel} ${pace.hrZoneRange}`
+            : ""}
+        </p>
+      ) : null}
+      {s.session.notes ? <p className="next-hero-note muted">{s.session.notes}</p> : null}
+    </section>
   );
 }
 
@@ -191,6 +253,9 @@ export function Dashboard() {
     return (
       <div className="shell">
         <p className="error">{error}</p>
+        <button type="button" className="btn" onClick={load}>
+          Retry
+        </button>
       </div>
     );
   }
@@ -211,8 +276,14 @@ export function Dashboard() {
     : week
       ? [week]
       : [];
-  const estDelta =
-    pred.deltaMinVsPrevEst != null ? pred.deltaMinVsPrevEst : pred.deltaMinVsPrior;
+  const bGoal = pred.goals.find((g) => g.label === "B");
+  const estLabel = pred.estimatedHalfSec ? formatHalfShort(pred.estimatedHalfSec) : "—";
+  const showEstDelta =
+    pred.deltaMinVsPrevEst != null && pred.deltaMinVsPrevEst !== 0
+      ? pred.deltaMinVsPrevEst
+      : null;
+  const z2 = plan.paceGuidance.hrZones?.z2;
+  const z2Label = z2 ? `Z2 ${z2.min}–${z2.max}` : null;
 
   return (
     <div className="shell">
@@ -221,81 +292,68 @@ export function Dashboard() {
           <h1 className="brand brand-title">Monterey Bay Half 11/8</h1>
           <p className="plan-label">Training plan · Quinn TV</p>
         </div>
-        <div className="hero-goals">
-          <h2 className="goals-heading">Goals</h2>
-          {pred.goals.map((g) => (
-            <div key={g.label} className="goal-row">
-              <span className="goal-name">
-                {g.label} · {g.timeLabel}
-              </span>
-              <strong>{g.pct}%</strong>
-            </div>
-          ))}
-          <div className="goal-row goal-est">
-            <span className="goal-name">
-              Est ·{" "}
-              {pred.estimatedHalfSec ? formatHalfShort(pred.estimatedHalfSec) : "—"}
+        <p className="goals-strip" aria-label="Goal snapshot">
+          <span>Est {estLabel}</span>
+          {showEstDelta != null ? (
+            <span className={showEstDelta < 0 ? "delta-good" : ""}>
+              {showEstDelta > 0 ? "+" : ""}
+              {showEstDelta} min
             </span>
-            <strong className={estDelta != null && estDelta < 0 ? "delta-good" : ""}>
-              {formatDeltaMin(estDelta)}
-            </strong>
-          </div>
-          <p className="muted small goal-footnote">
-            {report.daysToRace}d · prior {pred.priorHalfLabel}
-            {pred.deltaMinVsPrevEst != null
-              ? " · Δ vs last log"
-              : pred.deltaMinVsPrior != null
-                ? " · Δ vs prior half"
-                : ""}
-          </p>
-        </div>
+          ) : null}
+          <span>B {bGoal?.pct ?? "—"}%</span>
+          <span>{report.daysToRace}d</span>
+        </p>
       </header>
 
-      <nav className="tabs" aria-label="Sections">
-        {(
-          [
-            ["plan", "This week"],
-            ["summary", "Summary"],
-            ["log", "Log"],
-            ["recent", "Recent"],
-            ["backtest", "Backtest"],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            className={`tab ${tab === id ? "tab-active" : ""}`}
-            onClick={() => setTab(id)}
-          >
-            {label}
-          </button>
-        ))}
+      {report.nextSession ? <NextSessionHero s={report.nextSession} /> : null}
+
+      <nav className="tabs-wrap" aria-label="Sections">
+        <div className="tabs" role="tablist">
+          {(
+            [
+              ["plan", "This week"],
+              ["summary", "Summary"],
+              ["log", "Log"],
+              ["recent", "Recent"],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={tab === id}
+              className={`tab ${tab === id ? "tab-active" : ""}`}
+              onClick={() => setTab(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </nav>
 
       {tab === "plan" ? (
-        <>
-          <section className="weeks-scroll-wrap">
-            <div className="weeks-scroll">
-              {weeks.map((w) => {
-                const isCurrent = w.week.id === week?.week.id;
-                return (
-                  <WeekCard
-                    key={w.week.id}
-                    w={w}
-                    current={isCurrent}
-                    cardRef={
-                      isCurrent
-                        ? (el) => {
-                            currentWeekEl.current = el;
-                          }
-                        : undefined
-                    }
-                  />
-                );
-              })}
-            </div>
-          </section>
-        </>
+        <section className="weeks-scroll-wrap">
+          <div className="weeks-scroll">
+            {weeks.map((w) => {
+              const isCurrent = w.week.id === week?.week.id;
+              return (
+                <WeekCard
+                  key={w.week.id}
+                  w={w}
+                  current={isCurrent}
+                  z2Label={z2Label}
+                  cardRef={
+                    isCurrent
+                      ? (el) => {
+                          currentWeekEl.current = el;
+                        }
+                      : undefined
+                  }
+                />
+              );
+            })}
+          </div>
+        </section>
       ) : null}
 
       {tab === "summary" ? (
@@ -326,7 +384,13 @@ export function Dashboard() {
                       {over ? " · over" : ""}
                     </span>
                   </div>
-                  <div className={`meter thin ${over ? "meter-over" : ""}`}>
+                  <div
+                    className={`meter thin ${over ? "meter-over" : ""}`}
+                    role="progressbar"
+                    aria-valuenow={Math.round(Math.min(pct, 100))}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                  >
                     <div
                       className="meter-fill"
                       style={{ width: `${Math.min(pct, 100)}%` }}
@@ -336,6 +400,26 @@ export function Dashboard() {
               );
             })}
           </ul>
+
+          <h2 className="subhead">Backtest</h2>
+          <p className="muted">{report.efficacy.verdict}</p>
+          <div className="pace-grid">
+            <div>
+              <span className="stat-label">MAE</span>
+              <strong>{Math.round(report.efficacy.maeSec)}s/mi</strong>
+            </div>
+            <div>
+              <span className="stat-label">Skill</span>
+              <strong>{(report.efficacy.skillScore * 100).toFixed(0)}%</strong>
+            </div>
+            <div>
+              <span className="stat-label">HR tagged</span>
+              <strong>
+                {report.efficacy.hrTaggedRuns}/{report.efficacy.usableRuns}
+              </strong>
+            </div>
+          </div>
+          <p>{report.efficacy.nextRunHint}</p>
         </section>
       ) : null}
 
@@ -345,7 +429,7 @@ export function Dashboard() {
           <ol className="howto">
             <li>Finish the run (Watch / Strava / Fitness).</li>
             <li>Add it here via screenshot, Health file, or manual entry.</li>
-            <li>A/B/C odds and Est update from what’s logged.</li>
+            <li>Odds and Est update from what’s logged.</li>
           </ol>
 
           <h2 className="subhead">Screenshots</h2>
@@ -368,7 +452,8 @@ export function Dashboard() {
             </a>
           </div>
           <p className="muted">
-            {data.runs.length} runs · easy ≤{plan.paceGuidance.hrEasyCap} bpm (Z2)
+            {data.runs.length} runs · easy ≤{plan.paceGuidance.hrEasyCap} bpm (Z2) · design B-pace ~
+            {paceToString(plan.athlete.designPaceSecPerMi ?? 595)}
           </p>
         </section>
       ) : null}
@@ -380,7 +465,7 @@ export function Dashboard() {
             {report.recentRuns.map((run) => {
               const bits = [
                 `${run.distanceMi.toFixed(2)} mi`,
-                `${paceToString(run.paceSecPerMi)}/mi`,
+                `${paceToString(run.paceSecPerMi, 10)}/mi`,
                 formatDuration(run.movingTimeSec),
                 run.averageHeartrate ? `${run.averageHeartrate} bpm` : null,
                 run.elevationFt ? `${run.elevationFt} ft` : null,
@@ -399,57 +484,6 @@ export function Dashboard() {
               );
             })}
           </ul>
-        </section>
-      ) : null}
-
-      {tab === "backtest" ? (
-        <section className="panel">
-          <h2>Backtest</h2>
-          <p className="muted">{report.efficacy.verdict}</p>
-          <div className="pace-grid">
-            <div>
-              <span className="stat-label">MAE</span>
-              <strong>{Math.round(report.efficacy.maeSec)}s/mi</strong>
-            </div>
-            <div>
-              <span className="stat-label">Skill</span>
-              <strong>{(report.efficacy.skillScore * 100).toFixed(0)}%</strong>
-            </div>
-            <div>
-              <span className="stat-label">HR tagged</span>
-              <strong>
-                {report.efficacy.hrTaggedRuns}/{report.efficacy.usableRuns}
-              </strong>
-            </div>
-          </div>
-          <p>{report.efficacy.nextRunHint}</p>
-          {report.efficacy.limitations.length ? (
-            <ul className="rationale">
-              {report.efficacy.limitations.map((l) => (
-                <li key={l}>{l}</li>
-              ))}
-            </ul>
-          ) : null}
-          {report.efficacy.samplePredictions.length ? (
-            <ul className="run-list">
-              {report.efficacy.samplePredictions.map((p) => (
-                <li key={`${p.date}-${p.actualPaceSec}`}>
-                  <div>
-                    <strong>
-                      {weekdayShort(p.date)} {formatShortDate(p.date)}
-                    </strong>
-                    <span>
-                      {[
-                        paceToString(p.actualPaceSec),
-                        `pred ${paceToString(p.predictedPaceSec)}`,
-                        `${p.errorSec >= 0 ? "+" : ""}${p.errorSec}s`,
-                      ].join(" · ")}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : null}
         </section>
       ) : null}
 

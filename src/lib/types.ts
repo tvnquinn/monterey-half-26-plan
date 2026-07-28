@@ -3,6 +3,8 @@ export type SessionType =
   | "easy_strides"
   | "long"
   | "quality"
+  | "threshold"
+  | "strength"
   | "race"
   | "rest";
 
@@ -30,7 +32,7 @@ export interface PlanWeek {
   id: number;
   start: string;
   end: string;
-  /** Single weekly mileage target (mi). */
+  /** Weekly training mileage target (mi). Prefer deriving from sessions. */
   targetMi: number;
   phase: Phase;
   focus: string;
@@ -40,8 +42,12 @@ export interface PlanWeek {
 export interface TrainingPlan {
   athlete: {
     name: string;
+    /** Stretch A-goal clock. */
     goalTime: string;
     goalPaceSecPerMi: number;
+    /** Design / B-goal clock — quality workouts anchor here. */
+    designGoalTime?: string;
+    designPaceSecPerMi?: number;
     priorHalf: string;
     notes: string;
   };
@@ -49,6 +55,8 @@ export interface TrainingPlan {
     name: string;
     date: string;
     distanceMi: number;
+    /** Course elev; Monterey ~0 flat coastal. */
+    elevationFtPerMi?: number;
   };
   constraints: {
     chicago: { start: string; end: string; maxRuns: number };
@@ -59,6 +67,7 @@ export interface TrainingPlan {
     easyMinSecPerMi: number;
     easyMaxSecPerMi: number;
     racePaceSecPerMi: number;
+    designPaceSecPerMi?: number;
     hrEasyCap: number;
     hrZones?: {
       z1: { max: number; label: string };
@@ -111,9 +120,19 @@ export interface SessionPaceRec {
   rationale: string;
 }
 
+export type SessionStatusKind =
+  | "done"
+  | "partial"
+  | "missed"
+  | "upcoming"
+  | "today"
+  | "optional_skipped";
+
 export interface SessionStatus {
   session: PlannedSession;
-  status: "done" | "partial" | "missed" | "upcoming" | "optional_skipped";
+  status: SessionStatusKind;
+  /** True only for the single next actionable session. */
+  isNext?: boolean;
   matchedRun?: RunActivity;
   distanceDeltaMi?: number;
   paceRec?: SessionPaceRec;
@@ -123,8 +142,10 @@ export interface WeekStatus {
   week: PlanWeek;
   loggedMi: number;
   targetMi: number;
-  /** Progress vs weekly target (can exceed 100). */
+  /** Progress vs weekly training target (can exceed 100). */
   progressPct: number;
+  /** Expected % of weekly target scheduled by today. */
+  expectedPct: number;
   overTarget: boolean;
   sessions: SessionStatus[];
   longestMi: number;
@@ -199,6 +220,8 @@ export interface CoachReport {
   mileageNarrative: MileageNarrative;
   summary: string;
   efficacy: EfficacyBacktestSummary;
+  /** Next actionable run/strength session across the plan. */
+  nextSession: SessionStatus | null;
 }
 
 export interface EfficacyBacktestSummary {

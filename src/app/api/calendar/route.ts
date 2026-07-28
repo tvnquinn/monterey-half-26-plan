@@ -19,21 +19,30 @@ export async function GET() {
 
   for (const week of plan.weeks) {
     for (const session of week.sessions) {
-      const title = `${session.type.replace("_", " ")} · ${session.targetMi} mi`;
+      const typeLabel = session.type.replaceAll("_", " ");
+      const title =
+        session.type === "strength"
+          ? `${typeLabel} · 15 min`
+          : session.type === "race"
+            ? `Race · ${session.targetMi} mi`
+            : `${typeLabel} · ${session.targetMi} mi`;
       const desc = [
         week.focus,
         session.notes || "",
         `Phase: ${week.phase}`,
-        `Week target: ${week.targetMi} mi`,
+        session.type !== "race"
+          ? `Week training target: ${week.targetMi} mi`
+          : "Race day — not counted in weekly training bar",
       ]
         .filter(Boolean)
         .join("\\n");
 
+      const startHour = session.type === "strength" ? 18 : 7;
       lines.push(
         "BEGIN:VEVENT",
         `UID:${session.id}@sub2-coach`,
-        `DTSTART:${formatIcsDate(session.date, 7, 0)}`,
-        `DTEND:${formatIcsDate(session.date, 8, 0)}`,
+        `DTSTART:${formatIcsDate(session.date, startHour, 0)}`,
+        `DTEND:${formatIcsDate(session.date, startHour + 1, 0)}`,
         `SUMMARY:${title}`,
         `DESCRIPTION:${desc}`,
         "END:VEVENT",
