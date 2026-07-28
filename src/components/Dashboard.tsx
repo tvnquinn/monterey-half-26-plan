@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import type { CoachReport, SessionStatus, TrainingPlan, WeekStatus } from "@/lib/types";
-import { formatDuration, formatHalfShort, paceToString, weekdayShort } from "@/lib/format";
+import { formatDuration, formatHalfShort, formatShortDate, paceToString, weekdayShort } from "@/lib/format";
 import { LogRunForm } from "@/components/LogRunForm";
 import { HealthUpload } from "@/components/HealthUpload";
 import { ScreenshotRunUpload } from "@/components/ScreenshotRunUpload";
@@ -51,7 +51,7 @@ function SessionRow({ s }: { s: SessionStatus }) {
         <summary>
           <div className="session-summary-main">
             <strong>
-              {weekdayShort(s.session.date)} {s.session.date.slice(5)} ·{" "}
+              {weekdayShort(s.session.date)} {formatShortDate(s.session.date)} ·{" "}
               {s.session.type.replace("_", " ")}
             </strong>
             <span>
@@ -100,7 +100,7 @@ function WeekCard({ w, current }: { w: WeekStatus; current?: boolean }) {
         {w.targetMi === 0 ? " · rest" : ""}
       </h3>
       <p className="meter-label">
-        {w.week.start.slice(5)}–{w.week.end.slice(5)} · {w.loggedMi.toFixed(1)} /{" "}
+        {formatShortDate(w.week.start)}–{formatShortDate(w.week.end)} · {w.loggedMi.toFixed(1)} /{" "}
         {w.targetMi} mi
         {over ? " · over" : ""}
       </p>
@@ -175,8 +175,8 @@ export function Dashboard() {
     <div className="shell">
       <header className="hero hero-compact">
         <div className="hero-copy">
-          <h1 className="brand brand-title">Monterey Bay Half</h1>
-          <p className="plan-label">Training plan · Nov 8</p>
+          <h1 className="brand brand-title">Monterey Bay Half 11/8</h1>
+          <p className="plan-label">Training plan · Quinn TV</p>
         </div>
         <div className="hero-goals">
           {pred.goals.map((g) => (
@@ -260,7 +260,7 @@ export function Dashboard() {
                 <li key={w.weekId}>
                   <div className="mileage-row">
                     <span>
-                      W{w.weekId} · {w.start.slice(5)}
+                      W{w.weekId} · {formatShortDate(w.start)}
                     </span>
                     <span>
                       {w.loggedMi.toFixed(1)} / {w.targetMi}
@@ -322,7 +322,7 @@ export function Dashboard() {
               <li key={run.id}>
                 <div>
                   <strong>
-                    {weekdayShort(run.startDate)} {run.startDate.slice(0, 10)}
+                    {weekdayShort(run.startDate)} {formatShortDate(run.startDate)}
                   </strong>
                   <span>{run.name}</span>
                 </div>
@@ -375,7 +375,7 @@ export function Dashboard() {
                 <li key={`${p.date}-${p.actualPaceSec}`}>
                   <div>
                     <strong>
-                      {weekdayShort(p.date)} {p.date.slice(5)}
+                      {weekdayShort(p.date)} {formatShortDate(p.date)}
                     </strong>
                   </div>
                   <div className="run-metrics">

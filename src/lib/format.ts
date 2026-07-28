@@ -31,6 +31,17 @@ export function formatDuration(totalSec: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+/** Display date as M/D or M/D/YY from ISO date/datetime. */
+export function formatShortDate(iso: string, withYear = false): string {
+  const key = iso.slice(0, 10);
+  const m = key.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return iso;
+  const month = Number(m[2]);
+  const day = Number(m[3]);
+  if (withYear) return `${month}/${day}/${Number(m[1]) % 100}`;
+  return `${month}/${day}`;
+}
+
 /** Half marathon clock as h:mm (drops seconds). */
 export function formatHalfShort(totalSec: number): string {
   const h = Math.floor(totalSec / 3600);

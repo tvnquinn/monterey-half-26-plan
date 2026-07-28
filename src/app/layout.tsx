@@ -15,7 +15,7 @@ const body = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Monterey Bay Half · Training Plan",
+  title: "Monterey Bay Half 11/8 · Quinn TV",
   description:
     "Monterey Bay Half training plan with adaptive A/B/C goal odds and weekly mileage tracking.",
 };
