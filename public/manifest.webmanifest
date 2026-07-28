@@ -1,0 +1,16 @@
+{
+  "name": "Monterey Bay Half · Quinn TV",
+  "short_name": "Monterey Half",
+  "description": "Monterey Bay Half training plan",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a1219",
+  "theme_color": "#0a1219",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

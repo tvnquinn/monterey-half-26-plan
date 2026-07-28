@@ -18,6 +18,18 @@ export const metadata: Metadata = {
   title: "Monterey Bay Half 11/8 · Quinn TV",
   description:
     "Monterey Bay Half training plan with adaptive A/B/C goal odds and weekly mileage tracking.",
+  applicationName: "Monterey Half",
+  appleWebApp: {
+    capable: true,
+    title: "Monterey Half",
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({

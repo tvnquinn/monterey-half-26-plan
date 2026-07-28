@@ -1,87 +1,60 @@
-# Monterey Half 26 Plan
+# Monterey Bay Half 11/8 · Quinn TV
 
-> Temporarily housed in the Coursera MATLAB repo so it can be moved to `tvnquinn/monterey-half-26-plan` later.
+Personal half marathon training coach for **Monterey Bay Half (Nov 8, 2026)**.
 
+**Live:** https://half-marathon-plan-kappa.vercel.app
 
-SUB-2 half marathon coach
+> Temporarily housed under this Coursera repo; intended later move to `tvnquinn/monterey-half-26-plan`.
 
-Personal adaptive training tracker for a Nov 8 half marathon (sub-2 stretch goal).
+## iPhone: pin as a home-screen app
 
-Hosted on **Vercel** with **Supabase** so you can open it from anywhere (phone, travel, Chicago, Italy).
+1. Open https://half-marathon-plan-kappa.vercel.app in **Safari** (not Chrome)
+2. Tap the **Share** button (square with arrow)
+3. Scroll and tap **Add to Home Screen**
+4. Name it (e.g. `Monterey Half`) → **Add**
+
+It opens full-screen like an app. For best results keep using Safari the first time.
+
+## Learnings
+
+See **[LEARNINGS.md](./LEARNINGS.md)** — preferences from Quinn’s iteration loops (schedule, goals, UI, Higdon comparison, pitfalls).
 
 ## What it does
 
-- Stores your **15-week plan** (Chicago + Italy constraints baked in)
-- Syncs **detailed run stats** from Strava (distance, pace, HR, elevation, splits, calories)
-- Matches runs to planned sessions and tracks weekly mileage
-- Retunes **easy-pace guidance** from recent runs
-- Emits **active recommendations** / plan-change signals
-- Exports an **.ics calendar** of all planned sessions
+- 15-week plan with Chicago + Italy constraints (Italy week of Sep 14 = zero running)
+- Log runs via screenshots, Health JSON/GPX, or manual entry
+- Matches runs to sessions; weekly mileage + long-run tracking
+- Dynamic A/B/C goal odds + half estimate from logged runs
+- Per-session pace + HR zone guidance (collapsed under each run)
+- Summary narrative (ahead / on track / behind)
+- Calendar `.ics` export
 
-## Deploy (recommended): Vercel + Supabase
+## Stack
 
-### 1. Create Supabase tables
-
-In your Supabase project → **SQL Editor**, run:
-
-[`supabase/schema.sql`](./supabase/schema.sql)
-
-### 2. Deploy the app on Vercel
-
-From this folder:
-
-```bash
-cd running-coach
-npx vercel
-```
-
-Or in the Vercel dashboard: **Add New Project** → import this repo → set **Root Directory** to `running-coach`.
-
-### 3. Set environment variables (Vercel → Settings → Environment Variables)
-
-| Name | Value |
-|------|--------|
-| `SUPABASE_URL` | `https://YOUR_PROJECT.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | service_role key (server only) |
-| `STRAVA_CLIENT_ID` | from Strava API settings |
-| `STRAVA_CLIENT_SECRET` | from Strava API settings |
-| `STRAVA_REDIRECT_URI` | `https://YOUR_VERCEL_DOMAIN/api/strava/callback` |
-| `NEXT_PUBLIC_APP_URL` | `https://YOUR_VERCEL_DOMAIN` |
-
-Redeploy after saving env vars.
-
-### 4. Point Strava at your live URL
-
-In [Strava API settings](https://www.strava.com/settings/api):
-
-- **Authorization Callback Domain**: your Vercel domain (e.g. `sub2-coach.vercel.app`)
-- Callback path used by the app: `/api/strava/callback`
-
-### 5. First use on the live site
-
-1. Open the Vercel URL on your phone
-2. Tap **Connect Strava**
-3. Tap **Sync runs**
-4. Tap **Add to calendar** for reminders
-
-You can now use it away from home — data lives in Supabase, not on your laptop.
+- Next.js on **Vercel**
+- **Supabase** for runs storage
+- Plan source: `data/plan.json`
 
 ## Local development
 
 ```bash
-cd running-coach
-cp .env.example .env.local
+cd monterey-half-26-plan
+cp .env.example .env.local   # if present
 npm install
 npm run dev
 ```
 
-- Without Supabase env vars, the app falls back to local `data/runs.json` (fine for laptop-only testing).
-- With Supabase env vars locally, it uses the same cloud DB as production.
+## Deploy
 
-## OpenClaw (optional)
+Root directory on Vercel: `monterey-half-26-plan`.
 
-`POST /api/openclaw/ingest` accepts a run JSON (or array) and upserts into the same store.
+Needed env (typical):
 
-## Plan source
+| Name | Purpose |
+|------|--------|
+| `SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | server writes |
+| `NEXT_PUBLIC_APP_URL` | public site URL |
+| `GEMINI_API_KEY` or `OPENAI_API_KEY` | optional screenshot parse |
 
-Edit `data/plan.json` to change weekly mileage, sessions, or pace defaults. Redeploy (or run locally) after edits.
+Schema: `supabase/schema.sql`
