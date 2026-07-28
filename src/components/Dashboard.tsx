@@ -45,44 +45,25 @@ function formatDeltaMin(delta: number | null): string {
 
 function SessionRow({ s }: { s: SessionStatus }) {
   const pace = s.paceRec;
+  const typeLabel = s.session.type.replace("easy_strides", "strides").replaceAll("_", " ");
+  const bits = [
+    `${s.session.targetMi} mi`,
+    pace ? `${paceToString(pace.minSecPerMi)}–${paceToString(pace.maxSecPerMi)}` : null,
+    pace?.hrZoneRange ? `${pace.hrZoneLabel} ${pace.hrZoneRange}` : null,
+  ].filter(Boolean);
+
   return (
     <li className={`session ${s.status}`}>
-      <details className="session-details">
-        <summary>
-          <div className="session-summary-main">
-            <strong>
-              {weekdayShort(s.session.date)} {formatShortDate(s.session.date)} ·{" "}
-              {s.session.type.replace("_", " ")}
-            </strong>
-            <span>
-              {s.session.targetMi} mi
-              {pace ? ` · ${paceToString(pace.targetSecPerMi)}/mi` : ""}
-              {pace?.hrZoneLabel
-                ? ` · ${pace.hrZoneLabel}`
-                : pace?.hrTarget
-                  ? ` · ≤${pace.hrTarget}`
-                  : ""}
-            </span>
-          </div>
-          <em>{statusLabel(s.status)}</em>
-        </summary>
-        <div className="session-guidance">
-          {pace ? (
-            <p>
-              <strong>
-                {paceToString(pace.minSecPerMi)}–{paceToString(pace.maxSecPerMi)}/mi
-              </strong>
-              {pace.hrZoneRange ? (
-                <>
-                  {" "}
-                  · {pace.hrZoneLabel} {pace.hrZoneRange} bpm
-                </>
-              ) : null}
-            </p>
-          ) : null}
-          {s.session.notes ? <p className="muted">{s.session.notes}</p> : null}
+      <div className="session-row">
+        <div className="session-main">
+          <strong>
+            {weekdayShort(s.session.date)} {formatShortDate(s.session.date)} · {typeLabel}
+          </strong>
+          <span>{bits.join(" · ")}</span>
+          {s.session.notes ? <span className="session-note">{s.session.notes}</span> : null}
         </div>
-      </details>
+        <em>{statusLabel(s.status)}</em>
+      </div>
     </li>
   );
 }

@@ -46,7 +46,7 @@ Preferences and product decisions distilled from building/iterating the Monterey
 - Dedupe near-duplicate runs (±1 day, similar distance) so mileage isn’t double-counted
 - Odds / Est must **update from logged runs**, but stay **honest early-season** (no inflated sub-2 %)
 - Single **%** per goal — not ranges like `20–30%`
-- Collapsed per-session guidance: **pace band + HR zone**, not long prose
+- Collapsed per-session guidance → **flat rows** (no accordion): distance · pace band · HR zone · notes if any
 - Don’t flood the UI with a separate “recommendations” card on the landing view
 
 ## UI / product preferences
