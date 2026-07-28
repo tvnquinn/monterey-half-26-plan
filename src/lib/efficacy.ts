@@ -74,6 +74,10 @@ export function buildEfficacyPoints(
 } {
   const sorted = [...runs]
     .filter((r) => r.distanceMi >= 1 && r.paceSecPerMi > 0)
+    // Runs whose pace was back-filled from a monthly average are not
+    // observations — every run in that month carries the same number, so
+    // scoring predictions against them measures the imputation, not the model.
+    .filter((r) => !(r.raw as { paceImputed?: boolean } | undefined)?.paceImputed)
     .sort((a, b) => a.startDate.localeCompare(b.startDate));
 
   const { lo, hi } = outlierBounds(sorted.map((r) => r.paceSecPerMi));
