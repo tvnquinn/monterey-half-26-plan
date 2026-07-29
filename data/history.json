@@ -9009,5 +9009,41 @@
         }
       ]
     }
+  },
+  {
+    "id": "hae-2026-07-29-2.90",
+    "source": "manual",
+    "name": "Outdoor Run",
+    "startDate": "2026-07-29T09:10:00-07:00",
+    "distanceMi": 2.9,
+    "movingTimeSec": 2007,
+    "elapsedTimeSec": 2081,
+    "paceSecPerMi": 692,
+    "elevationFt": 60,
+    "averageHeartrate": 158,
+    "maxHeartrate": 172,
+    "splits": [
+      {
+        "mile": 1,
+        "movingTimeSec": 745,
+        "paceSecPerMi": 745,
+        "elevationGain": -21,
+        "averageHeartrate": 155
+      },
+      {
+        "mile": 2,
+        "movingTimeSec": 703,
+        "paceSecPerMi": 703,
+        "elevationGain": -1,
+        "averageHeartrate": 157
+      },
+      {
+        "mile": 2.9,
+        "movingTimeSec": 559,
+        "paceSecPerMi": 621,
+        "elevationGain": 37,
+        "averageHeartrate": 164
+      }
+    ]
   }
 ]

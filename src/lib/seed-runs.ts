@@ -1,8 +1,8 @@
 import type { RunActivity } from "./types";
 
 /**
- * Real training history: 63 runs, Feb 2025 - Jul 2026, 52 with measured heart
- * rate and 3 with per-mile splits. Sources are Health Auto Export, Apple
+ * Real training history: 64 runs, Feb 2025 - Jul 2026, with measured heart
+ * rate on all but a handful. Sources are Health Auto Export, Apple
  * workout-detail screens, and Strava. Five runs carry `raw.paceImputed`
  * (distance exact, pace from a month average, no HR) and are excluded from
  * model fitting and backtest scoring.
@@ -883,5 +883,19 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 148,
     maxHeartrate: 181,
     averageCadence: 175,
+  },
+  {
+    id: "hae-2026-07-29-2.90",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-07-29T09:10:00-07:00",
+    distanceMi: 2.9,
+    movingTimeSec: 2007,
+    elapsedTimeSec: 2081,
+    paceSecPerMi: 692,
+    elevationFt: 60,
+    averageHeartrate: 158,
+    maxHeartrate: 172,
+    splits: [{"mile":1,"movingTimeSec":745,"paceSecPerMi":745,"elevationGain":-21,"averageHeartrate":155},{"mile":2,"movingTimeSec":703,"paceSecPerMi":703,"elevationGain":-1,"averageHeartrate":157},{"mile":2.9,"movingTimeSec":559,"paceSecPerMi":621,"elevationGain":37,"averageHeartrate":164}],
   },
 ];

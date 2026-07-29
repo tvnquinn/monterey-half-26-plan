@@ -364,21 +364,41 @@ function longRunRecencyWeight(ageDays: number): number {
   return 0;
 }
 
-/** Longest run still doing work for you, discounted by how long ago it was. */
+/** How far back a long run still counts as *evidence* you can cover the distance. */
+const EVIDENCE_WINDOW_DAYS = 150;
+
+/**
+ * Longest run, measured two ways, because they answer different questions.
+ *
+ * `effectiveMi` — how much durability you still carry, decayed by age. Drives
+ *   the physiological penalty.
+ * `evidenceMi` — the longest you actually covered inside a generous window,
+ *   undecayed. Drives the confidence gate.
+ *
+ * Collapsing these into one number put a hard `>= 8` threshold on a
+ * continuously decaying quantity: Quinn's 10.06-miler decayed past 8.0 on day
+ * 70 and confidence flipped medium → low overnight with no change in his
+ * training. Fitness fades; the fact that you ran ten miles does not.
+ */
 function builtLongest(
   runs: RunActivity[],
   today: string,
   tz?: string,
-): { effectiveMi: number; sourceMi: number; ageDays: number } {
+): { effectiveMi: number; sourceMi: number; ageDays: number; evidenceMi: number } {
   let best = { effectiveMi: 0, sourceMi: 0, ageDays: 0 };
+  let evidenceMi = 0;
   for (const r of runs) {
     const ageDays = daysBetweenKeys(runDayKey(r.startDate, tz), today);
+    if (ageDays < 0) continue;
     const effectiveMi = r.distanceMi * longRunRecencyWeight(ageDays);
     if (effectiveMi > best.effectiveMi) {
       best = { effectiveMi, sourceMi: r.distanceMi, ageDays };
     }
+    if (ageDays <= EVIDENCE_WINDOW_DAYS) {
+      evidenceMi = Math.max(evidenceMi, r.distanceMi);
+    }
   }
-  return best;
+  return { ...best, evidenceMi };
 }
 
 export function estimateHalf(input: EstimateInput): HalfEstimate {
@@ -457,12 +477,12 @@ export function estimateHalf(input: EstimateInput): HalfEstimate {
   }
 
   let confidence: HalfEstimate["confidence"] = "low";
-  if (efTrend && efTrend.n >= 8 && longestMi >= 8) confidence = "medium";
+  if (efTrend && efTrend.n >= 8 && longest.evidenceMi >= 8) confidence = "medium";
   if (
     efTrend &&
     efTrend.n >= 14 &&
     efTrend.r2 >= 0.25 &&
-    longestMi >= 10 &&
+    longest.evidenceMi >= 10 &&
     effectiveWeeklyMi >= 20 &&
     hardEffortSec != null
   ) {
