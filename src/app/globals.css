@@ -1195,3 +1195,24 @@ a {
   font-size: 1.1rem;
   padding-top: 0.7rem;
 }
+
+/* An off-schedule run that absorbed a planned session. The plan is struck
+   through rather than removed so the log still shows what was asked for. */
+.session.substituted {
+  border-left: 2px solid rgba(201, 176, 122, 0.5);
+  padding-left: 0.6rem;
+}
+
+.session-planned {
+  display: block;
+  color: var(--muted);
+  opacity: 0.65;
+  font-size: 0.82rem;
+  text-decoration-thickness: 1px;
+}
+
+.session-actual {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--warn);
+}

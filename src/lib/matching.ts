@@ -1,4 +1,5 @@
 import { dayKeyOf, daysBetweenKeys, runDayKey } from "./dates";
+import { assessRun } from "./run-assessment";
 import type {
   PlanWeek,
   PlannedSession,
@@ -79,6 +80,7 @@ export function buildWeekStatus(
   week: PlanWeek,
   runs: RunActivity[],
   asOf = new Date(),
+  plan?: TrainingPlan,
 ): WeekStatus {
   const weekRuns = runsInRange(runs, week.start, week.end);
   const used = new Set<string>();
@@ -116,6 +118,53 @@ export function buildWeekStatus(
     }
     return { session, status: "missed" };
   });
+
+  // ---------------------------------------------------------------------
+  // Substitution: a run that matched no session absorbs a planned one.
+  //
+  // Without this, an off-schedule run counted toward weekly mileage but left
+  // every planned session sitting there as "upcoming" — so a week where the
+  // work got done in a different order looked like a week where nothing
+  // happened. The planned session is kept and struck through rather than
+  // deleted, so the log still shows what was originally asked for.
+  // ---------------------------------------------------------------------
+  const plannedLongMi = Math.max(
+    0,
+    ...week.sessions.filter((s) => s.type === "long").map((s) => s.targetMi),
+  );
+
+  for (const run of weekRuns) {
+    if (used.has(run.id)) continue;
+    if (raceSession && dateKey(run.startDate) === raceSession.date) continue;
+
+    // Prefer the planned session closest in distance; break ties by date.
+    let bestIdx = -1;
+    let bestScore = Infinity;
+    for (let i = 0; i < sessions.length; i++) {
+      const s = sessions[i];
+      if (s.matchedRun || s.substitutedBy) continue;
+      if (!isRunSession(s.session) || s.session.type === "race") continue;
+      if (s.session.targetMi <= 0) continue;
+      const distDelta = Math.abs(run.distanceMi - s.session.targetMi);
+      const dayDelta = Math.abs(daysBetweenKeys(s.session.date, dateKey(run.startDate)));
+      const score = distDelta + dayDelta * 0.15;
+      if (score < bestScore) {
+        bestScore = score;
+        bestIdx = i;
+      }
+    }
+    if (bestIdx === -1) continue;
+
+    used.add(run.id);
+    const target = sessions[bestIdx];
+    sessions[bestIdx] = {
+      ...target,
+      status: "substituted",
+      substitutedBy: run,
+      distanceDeltaMi: Number((run.distanceMi - target.session.targetMi).toFixed(2)),
+      assessment: plan ? assessRun({ run, plan, plannedLongMi }) : undefined,
+    };
+  }
 
   // Training miles only: exclude race-day long effort from weekly progress
   const loggedMi = Number(

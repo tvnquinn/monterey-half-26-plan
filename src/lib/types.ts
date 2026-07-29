@@ -1,3 +1,5 @@
+import type { RunAssessment } from "./run-assessment";
+
 export type SessionType =
   | "easy"
   | "easy_strides"
@@ -134,6 +136,7 @@ export type SessionStatusKind =
   | "missed"
   | "upcoming"
   | "today"
+  | "substituted"
   | "optional_skipped";
 
 export interface SessionStatus {
@@ -142,6 +145,10 @@ export interface SessionStatus {
   /** True only for the single next actionable session. */
   isNext?: boolean;
   matchedRun?: RunActivity;
+  /** An off-schedule run absorbed this planned session. */
+  substitutedBy?: RunActivity;
+  /** What the substituted run actually was, judged from the watch. */
+  assessment?: RunAssessment;
   distanceDeltaMi?: number;
   paceRec?: SessionPaceRec;
 }

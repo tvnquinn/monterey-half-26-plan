@@ -37,6 +37,8 @@ function statusLabel(status: string) {
       return "Today";
     case "upcoming":
       return "Up next";
+    case "substituted":
+      return "Swapped";
     case "optional_skipped":
       return "Skip OK";
     default:
@@ -90,9 +92,42 @@ function SessionRow({ s }: { s: SessionStatus }) {
     s.status === "done" ||
     s.status === "partial" ||
     s.status === "missed" ||
+    s.status === "substituted" ||
     s.status === "optional_skipped"
   ) {
     badge = statusLabel(s.status);
+  }
+
+  // An off-schedule run absorbed this session: strike the plan, show the run.
+  const sub = s.substitutedBy;
+  if (sub) {
+    const actual = [
+      `${weekdayShort(sub.startDate)} ${formatShortDate(sub.startDate)}`,
+      s.assessment?.label ?? "run",
+      `${sub.distanceMi.toFixed(2)}mi`,
+      `${paceToString(sub.paceSecPerMi)}/mi`,
+      sub.averageHeartrate ? `${sub.averageHeartrate}bpm` : null,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    const delta = s.distanceDeltaMi ?? 0;
+    return (
+      <li className="session substituted">
+        <div className="session-row">
+          <div className="session-main">
+            <s className="session-planned">{line}</s>
+            <strong className="session-actual">{actual}</strong>
+            <span className="session-note">
+              {delta === 0
+                ? "Swapped in for the planned session."
+                : `Swapped in · ${delta > 0 ? "+" : ""}${delta.toFixed(1)} mi vs planned.`}
+              {s.assessment ? ` ${s.assessment.why}` : ""}
+            </span>
+          </div>
+          <span className="session-badge">Swapped</span>
+        </div>
+      </li>
+    );
   }
 
   return (

@@ -87,7 +87,7 @@ export function buildCoachReport(
   const runs = dedupeRuns(runsInput);
   const daysToRace = daysBetweenKeys(today, plan.race.date);
 
-  const weekStatuses = plan.weeks.map((w) => buildWeekStatus(w, runs, asOf));
+  const weekStatuses = plan.weeks.map((w) => buildWeekStatus(w, runs, asOf, plan));
   const current =
     weekStatuses.find((w) => today >= w.week.start && today <= w.week.end) ?? null;
 
