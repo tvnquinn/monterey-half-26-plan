@@ -893,7 +893,7 @@ export const seedRuns: RunActivity[] = [
     movingTimeSec: 2007,
     elapsedTimeSec: 2081,
     paceSecPerMi: 692,
-    elevationFt: 60,
+    elevationFt: 37,
     averageHeartrate: 158,
     maxHeartrate: 172,
     splits: [{"mile":1,"movingTimeSec":745,"paceSecPerMi":745,"elevationGain":-21,"averageHeartrate":155},{"mile":2,"movingTimeSec":703,"paceSecPerMi":703,"elevationGain":-1,"averageHeartrate":157},{"mile":2.9,"movingTimeSec":559,"paceSecPerMi":621,"elevationGain":37,"averageHeartrate":164}],
