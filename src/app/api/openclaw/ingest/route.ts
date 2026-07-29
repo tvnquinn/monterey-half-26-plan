@@ -15,6 +15,21 @@ const dropSchema = z.object({
   averageHeartrate: z.number().optional(),
   maxHeartrate: z.number().optional(),
   calories: z.number().optional(),
+  temperatureF: z.number().optional(),
+  averageCadence: z.number().optional(),
+  // Per-mile splits drive progression detection in run-assessment; without
+  // them a negative-split run is indistinguishable from a steady one.
+  splits: z
+    .array(
+      z.object({
+        mile: z.number(),
+        movingTimeSec: z.number(),
+        paceSecPerMi: z.number(),
+        elevationGain: z.number().optional(),
+        averageHeartrate: z.number().optional(),
+      }),
+    )
+    .optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -39,6 +54,9 @@ export async function POST(req: NextRequest) {
         averageHeartrate: parsed.averageHeartrate,
         maxHeartrate: parsed.maxHeartrate,
         calories: parsed.calories,
+        temperatureF: parsed.temperatureF,
+        averageCadence: parsed.averageCadence,
+        splits: parsed.splits,
       };
     });
 
