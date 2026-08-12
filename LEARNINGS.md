@@ -16,7 +16,7 @@ Everything here comes from watch data in `data/history.json` (65 runs, 54 with h
 |---|---|
 | Prior half | **2:15:51**, 22 Jun 2025, 13.16 mi, avg HR **174**, max 188 |
 | First half | 2:22:18, 8 Jun 2025, avg HR 171 |
-| Max HR observed | **189** (during a half, never a max test — true max is probably higher) |
+| Max HR observed | **189** (during a half, never a max test) |
 | All-time best week | **19.8 mi** |
 | Median run, last 6 months | **4.50 mi** |
 | Median training elevation | **36–42 ft/mi** (San Francisco) |
@@ -88,7 +88,9 @@ projection = blend(estimate, priorHalf, by confidence)
 | Long-run decay | full to 35 d, half at 120 d, gone at 240 d | A hard 56-day cutoff discarded a 10-miler at 69 days and reported his longest as 5.76 mi. |
 | Confidence gate | uses **undecayed** longest inside 150 d | Gating on the decaying value made confidence flip medium→low overnight on a pure calendar tick. Fitness fades; the fact you ran 10 miles doesn't. |
 | Race-experience credit | downside sigma 1.15 → ~1.03 | Two completed halves with <5% HR drift genuinely lower blow-up risk. Raises C and B; correctly leaves A alone — experience makes you safer, not faster. |
-| Improvement credit | 20 s/wk × **adherence** | Was granted per remaining calendar week: ~7 free minutes at 15 weeks out, earned by nothing. |
+| Improvement credit | **30 s/wk × adherence** | Originally granted per calendar week regardless of training (~7 free min at 15 weeks). Then over-corrected to 20 s/wk, capping expected improvement at 4.2 min — about half what his own trainability supports when *regaining* a ~6% efficiency gap rather than building new. |
+| Adherence | excused for illness, shrunk toward 1.0 | Measured over all finished weeks, it read 0.34 off one travel week and one flu week, cutting the credit by two thirds. Flagged weeks are excused; with few weeks finished it regresses toward 1.0 (2 pseudo-weeks). |
+| Volume/durability bonuses | **race-week** load, discounted by adherence | These describe race day, so reading today's 6 mi/wk to project a race 13 weeks out conflated "where you are" with "where you'll be". The estimate already covers the former. |
 
 ### Run condition flags
 
@@ -180,6 +182,8 @@ Kept explicitly, because they were stated confidently and repeated.
 7. **"The new pace model beats the old one."** At n≈50 they're tied (MAE 37.2 vs 34.0 earlier, skill 0.42 vs 0.47). The win is robustness at small n.
 8. **"Strava Premium is needed for the data."** It isn't. The free bulk archive export (Settings → Download or Delete Your Account → Request Archive) gives original `.FIT` files at 1 Hz.
 9. **"The new adherence scenarios are ~1.5 min faster."** They were *slower*. Stated without checking; caught by Quinn.
+10. **"Your max HR is probably wrong and the zones may be throttling you."** Overstated. Same device throughout means consistent bias, and every use of HR in the model is a within-athlete comparison. Absolute accuracy doesn't matter here.
+11. **The projection was too conservative, and it wasn't the estimate's fault.** At 89 days out it read 2:19 — worse than a PR set 14 months earlier off a smaller block, on a hillier course. Cause was three compounding things: adherence crushed by two disrupted weeks, volume bonuses read off *today's* 6 mi/wk instead of race-week load, and a 20 s/wk credit rate. Fixed together; projection moved 2:19:17 → 2:13:33.
 
 ---
 
@@ -251,7 +255,7 @@ npx tsx scripts/elev-analysis.mts         # grade cost fitted from his splits
 
 - **Strava bulk archive** (`.FIT`, 1 Hz) would give per-second altitude and speed — enough to fit his true grade-adjusted pace curve and replace the 0.20 constant with a measured one. Currently the largest single source of modelling uncertainty.
 - **March 2026 is partially reconstructed.** Nine runs, 37.87 mi, transcribed from workout screens; the HAE export window starts 28 Apr.
-- **Max HR is unverified.** 189 was recorded during a half, and averaging 174 for 2h16m at 92% of max is implausibly high. If true max is nearer 195–200, the Z2 band (139–152) is set too low and easy runs are being throttled unnecessarily.
+- **Absolute max HR is unknown, and that's fine.** 189 was recorded during a half rather than a max test, so 174 average reads as 92% of max — implausibly high in absolute terms. But every reading comes from the same Apple Watch, so whatever bias exists is *consistent*, and the model only ever compares his readings to each other: efficiency factor is a ratio across his own runs, and the zones are derived from his own observed range. Don't chase a "true" max — it would change the physiological story and none of the maths.
 - **Pickleball and strength load are invisible.** The export shows 23 pickleball and 23 strength sessions alongside 39 runs. Real training load is well above the running mileage the app displays — a reason to stay conservative on volume jumps.
 - **Supabase has no temperature column.** Conditions credit computes to zero for him either way, but a hot-weather block would need the migration.
 - Five runs still carry `raw.paceImputed` (Oct 2025, Apr 3/7/21 2026) — distance exact, pace from a month average, excluded from model fitting.

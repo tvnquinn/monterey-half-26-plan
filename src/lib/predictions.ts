@@ -1,4 +1,4 @@
-import { dayKeyOf, daysBetweenKeys, runDayKey } from "./dates";
+import { dayKeyOf, daysBetweenKeys, runDayKey, shiftDayKey } from "./dates";
 import { estimateHalf } from "./fitness";
 import type {
   GoalOdds,
@@ -37,9 +37,20 @@ function clamp(n: number, lo: number, hi: number) {
 export interface TrainingSignal {
   /** Logged vs target across finished weeks. 1.0 = executed the plan. */
   adherence: number;
+  /** Trailing 4-week average right now. */
   avgWeeklyMi4: number;
+  /** Longest run in the last 28 days, right now. */
   longestMi28: number;
   weeksRemaining: number;
+  /**
+   * What the plan says his trailing 4-week average and longest run will be by
+   * race week. The projection describes race day, so it has to reason about
+   * race-day load — using today's 6 mi/wk to project a race twelve weeks out
+   * conflates "where you are" with "where you'll be", and the estimate already
+   * covers the former.
+   */
+  raceWeekMi4?: number;
+  raceWeekLongestMi?: number;
 }
 
 /**
@@ -66,18 +77,34 @@ export function raceDayProjectionSec(args: {
 
   // Remaining improvement, scaled by how well the plan is actually being run.
   const adherence = clamp(signal.adherence, 0, 1.1);
-  const perWeekSec = 20;
+  // 30 s of half-marathon time per remaining week at full adherence. Grounded
+  // in his own trainability: closing the ~6% efficiency-factor gap back to his
+  // April level is worth ~6 min after the 0.7 damping, over ~13 weeks. The
+  // previous 20 s/wk capped expected improvement at 4.2 min, which was about
+  // half what his history supports for *regaining* rather than building new.
+  const perWeekSec = 30;
   let credit = signal.weeksRemaining * perWeekSec * adherence;
 
-  // Durability and volume are earned, not scheduled.
-  if (signal.longestMi28 >= 10) credit += 45;
-  else if (signal.longestMi28 >= 8) credit += 20;
+  // Durability and volume bonuses describe race day, so they read the load he
+  // will have built by then — discounted by how reliably he is training —
+  // rather than the load he happens to be carrying today.
+  const projectedMi4 = Math.max(
+    signal.avgWeeklyMi4,
+    (signal.raceWeekMi4 ?? 0) * adherence,
+  );
+  const projectedLongest = Math.max(
+    signal.longestMi28,
+    (signal.raceWeekLongestMi ?? 0) * adherence,
+  );
 
-  if (signal.avgWeeklyMi4 >= 24) credit += 40;
-  else if (signal.avgWeeklyMi4 >= 18) credit += 20;
-  else if (signal.avgWeeklyMi4 > 0 && signal.avgWeeklyMi4 < 12) credit -= 45;
+  if (projectedLongest >= 10) credit += 45;
+  else if (projectedLongest >= 8) credit += 20;
 
-  // 15 weeks of 3–4 day training doesn't buy unlimited time.
+  if (projectedMi4 >= 24) credit += 40;
+  else if (projectedMi4 >= 18) credit += 20;
+  else if (projectedMi4 > 0 && projectedMi4 < 12) credit -= 45;
+
+  // 15 weeks of 4-day training doesn't buy unlimited time.
   credit = clamp(credit, -120, 480);
 
   return { projectedSec: Math.round(blended - credit), creditSec: Math.round(credit) };
@@ -292,7 +319,13 @@ export function buildMileageNarrative(args: {
 
 /** Adherence + load signals that feed the projection. */
 export function buildTrainingSignal(args: {
-  weeklyMileage: { weekId: number; start: string; loggedMi: number; targetMi: number }[];
+  weeklyMileage: {
+    weekId: number;
+    start: string;
+    loggedMi: number;
+    targetMi: number;
+    longMi: number;
+  }[];
   currentWeekId: number | null;
   runs: RunActivity[];
   daysToRace: number;
@@ -305,10 +338,39 @@ export function buildTrainingSignal(args: {
       w.targetMi > 0 &&
       (args.currentWeekId != null ? w.weekId < args.currentWeekId : w.start < today),
   );
-  const adherence = finished.length
-    ? finished.reduce((s, w) => s + Math.min(1.15, w.loggedMi / w.targetMi), 0) /
-      finished.length
-    : 1;
+
+  // Weeks lost to illness or injury say nothing about whether he'll follow the
+  // plan. A week is excused if a run inside it was flagged, or if it is empty
+  // and sits adjacent to a flagged week — being too ill to run at all is the
+  // case that leaves no run to flag.
+  const flaggedWeeks = new Set<number>();
+  for (const w of args.weeklyMileage) {
+    const end = shiftDayKey(w.start, 6);
+    const anyFlagged = args.runs.some((r) => {
+      const k = runDayKey(r.startDate, args.tz);
+      return k >= w.start && k <= end && r.condition;
+    });
+    if (anyFlagged) flaggedWeeks.add(w.weekId);
+  }
+  for (const w of args.weeklyMileage) {
+    if (w.loggedMi === 0 && w.targetMi > 0) {
+      if (flaggedWeeks.has(w.weekId - 1) || flaggedWeeks.has(w.weekId + 1)) {
+        flaggedWeeks.add(w.weekId);
+      }
+    }
+  }
+
+  const counted = finished.filter((w) => !flaggedWeeks.has(w.weekId));
+
+  // Shrink toward 1.0 when few weeks have finished. Two disrupted weeks is not
+  // evidence of a pattern, and without this the credit collapsed by two thirds
+  // on the strength of a travel week and a bout of flu.
+  const PSEUDO_WEEKS = 2;
+  const ratioSum = counted.reduce(
+    (s, w) => s + Math.min(1.15, w.loggedMi / w.targetMi),
+    0,
+  );
+  const adherence = (ratioSum + PSEUDO_WEEKS) / (counted.length + PSEUDO_WEEKS);
 
   const last28 = args.runs.filter((r) => {
     const d = daysBetweenKeys(runDayKey(r.startDate, args.tz), today);
@@ -317,10 +379,22 @@ export function buildTrainingSignal(args: {
   const avgWeeklyMi4 = last28.reduce((s, r) => s + r.distanceMi, 0) / 4;
   const longestMi28 = last28.reduce((m, r) => Math.max(m, r.distanceMi), 0);
 
+  // What the plan builds to by race week: the trailing 4-week average across
+  // the final four planned weeks, and the biggest long run in that window.
+  const tail = args.weeklyMileage.slice(-4);
+  const raceWeekMi4 = tail.length
+    ? tail.reduce((s, w) => s + w.targetMi, 0) / tail.length
+    : undefined;
+  const raceWeekLongestMi = args.weeklyMileage.length
+    ? Math.max(...args.weeklyMileage.map((w) => w.longMi))
+    : undefined;
+
   return {
     adherence,
     avgWeeklyMi4,
     longestMi28,
     weeksRemaining: Math.max(0, args.daysToRace / 7),
+    raceWeekMi4,
+    raceWeekLongestMi,
   };
 }
