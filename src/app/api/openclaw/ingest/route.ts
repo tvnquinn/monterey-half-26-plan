@@ -16,6 +16,9 @@ const dropSchema = z.object({
   maxHeartrate: z.number().optional(),
   calories: z.number().optional(),
   temperatureF: z.number().optional(),
+  condition: z
+    .enum(["illness", "injury", "heat", "travel", "altitude"])
+    .optional(),
   averageCadence: z.number().optional(),
   // Per-mile splits drive progression detection in run-assessment; without
   // them a negative-split run is indistinguishable from a steady one.
@@ -55,6 +58,7 @@ export async function POST(req: NextRequest) {
         maxHeartrate: parsed.maxHeartrate,
         calories: parsed.calories,
         temperatureF: parsed.temperatureF,
+        condition: parsed.condition,
         averageCadence: parsed.averageCadence,
         splits: parsed.splits,
       };

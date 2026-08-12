@@ -32,6 +32,7 @@ export function LogRunForm({ onLogged }: LogRunFormProps) {
   const [avgHr, setAvgHr] = useState("143");
   const [elevationFt, setElevationFt] = useState("");
   const [calories, setCalories] = useState("");
+  const [condition, setCondition] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -64,6 +65,7 @@ export function LogRunForm({ onLogged }: LogRunFormProps) {
           averageHeartrate: avgHr ? Number(avgHr) : undefined,
           elevationFt: elevationFt ? Number(elevationFt) : 0,
           calories: calories ? Number(calories) : undefined,
+          condition: condition || undefined,
         }),
       });
       const json = await res.json();
@@ -136,7 +138,24 @@ export function LogRunForm({ onLogged }: LogRunFormProps) {
             placeholder="optional"
           />
         </label>
+        {/* Flagged runs still count toward mileage but are kept out of the
+            fitness trend, so a sick week doesn't read as losing fitness. */}
+        <label>
+          Anything off?
+          <select value={condition} onChange={(e) => setCondition(e.target.value)}>
+            <option value="">Normal run</option>
+            <option value="illness">Ill / recovering</option>
+            <option value="injury">Injury niggle</option>
+            <option value="heat">Hot conditions</option>
+            <option value="travel">Travel / jet lag</option>
+            <option value="altitude">Altitude</option>
+          </select>
+        </label>
       </div>
+      <p className="muted small">
+        Flagged runs count toward weekly mileage but stay out of the fitness
+        trend — a sick run shouldn’t look like lost fitness.
+      </p>
       <div className="log-actions">
         <button type="submit" className="btn primary" disabled={busy}>
           Log run

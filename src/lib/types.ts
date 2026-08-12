@@ -1,5 +1,12 @@
 import type { RunAssessment } from "./run-assessment";
 
+export type RunCondition =
+  | "illness"
+  | "injury"
+  | "heat"
+  | "travel"
+  | "altitude";
+
 export type SessionType =
   | "easy"
   | "easy_strides"
@@ -113,6 +120,13 @@ export interface RunActivity {
   averageCadence?: number;
   /** Ambient temperature at run time (°F), when the watch recorded it. */
   temperatureF?: number;
+  /**
+   * Circumstance that made this run unrepresentative of fitness. Such runs
+   * still count toward volume and durability — the miles were real — but are
+   * excluded from the efficiency-factor trend, which would otherwise read
+   * illness or heat as aerobic decline.
+   */
+  condition?: RunCondition;
   calories?: number;
   sufferScore?: number;
   splits?: RunSplit[];

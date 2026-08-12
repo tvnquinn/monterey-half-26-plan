@@ -107,6 +107,11 @@ export function buildEfPoints(
       if (!hr || hr < hrFloor || hr > hrCeil) return false;
       if (r.distanceMi < 2) return false;
       if (r.paceSecPerMi <= 0) return false;
+      // Running through illness, injury or a heatwave depresses speed-per-beat
+      // without any change in fitness. Counting those runs lets a bad fortnight
+      // masquerade as aerobic decline and drags the race projection down for
+      // weeks after recovery.
+      if (r.condition) return false;
       return true;
     })
     .map((r) => {

@@ -59,6 +59,9 @@ function rowToRun(row: RunRow): RunActivity {
     calories: row.calories ?? undefined,
     sufferScore: row.suffer_score ?? undefined,
     splits: row.splits ?? undefined,
+    condition:
+      (row.raw as { condition?: RunActivity["condition"] } | null)?.condition ??
+      undefined,
     raw: row.raw ?? undefined,
   };
 }
@@ -81,7 +84,10 @@ function runToRow(run: RunActivity): RunRow {
     calories: run.calories ?? null,
     suffer_score: run.sufferScore ?? null,
     splits: run.splits ?? null,
-    raw: run.raw ?? null,
+    // Supabase has no condition column; ride along in raw so it round-trips.
+    raw: run.condition
+      ? { ...(run.raw ?? {}), condition: run.condition }
+      : (run.raw ?? null),
   };
 }
 
