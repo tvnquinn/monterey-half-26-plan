@@ -214,12 +214,12 @@
       "id": 4,
       "start": "2026-08-17",
       "end": "2026-08-23",
-      "targetMi": 16.5,
+      "targetMi": 18,
       "phase": "build",
-      "focus": "Long 6.5 · shorts growing",
+      "focus": "Long 7 · easy days on the 4.5 route",
       "sessions": [
         {
-          "id": "w4-mon",
+          "id": "w4-mon-s",
           "date": "2026-08-17",
           "type": "strength",
           "targetMi": 0,
@@ -237,22 +237,22 @@
           "id": "w4-wed",
           "date": "2026-08-19",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4.5,
           "optional": false
         },
         {
-          "id": "w4-thu",
-          "date": "2026-08-20",
+          "id": "w4-wed-s",
+          "date": "2026-08-19",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+          "notes": "15 min after the run: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w4-fri",
           "date": "2026-08-21",
           "type": "long",
-          "targetMi": 6.5,
+          "targetMi": 7,
           "optional": false
         },
         {
@@ -269,12 +269,12 @@
       "id": 5,
       "start": "2026-08-24",
       "end": "2026-08-30",
-      "targetMi": 18.5,
+      "targetMi": 20,
       "phase": "build",
-      "focus": "Build · long 7",
+      "focus": "Long 8 · strides",
       "sessions": [
         {
-          "id": "w5-mon",
+          "id": "w5-mon-s",
           "date": "2026-08-24",
           "type": "strength",
           "targetMi": 0,
@@ -285,36 +285,36 @@
           "id": "w5-tue",
           "date": "2026-08-25",
           "type": "easy",
-          "targetMi": 5,
+          "targetMi": 4.5,
           "optional": false
         },
         {
           "id": "w5-wed",
           "date": "2026-08-26",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 4.5,
           "optional": false
         },
         {
-          "id": "w5-thu",
-          "date": "2026-08-27",
+          "id": "w5-wed-s",
+          "date": "2026-08-26",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+          "notes": "15 min after the run: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w5-fri",
           "date": "2026-08-28",
           "type": "long",
-          "targetMi": 7,
+          "targetMi": 8,
           "optional": false
         },
         {
           "id": "w5-sun",
           "date": "2026-08-30",
           "type": "easy_strides",
-          "targetMi": 2.5,
+          "targetMi": 3,
           "optional": false,
           "notes": "6 × 20–25s"
         }
@@ -324,12 +324,12 @@
       "id": 6,
       "start": "2026-08-31",
       "end": "2026-09-06",
-      "targetMi": 20.5,
+      "targetMi": 22,
       "phase": "build",
-      "focus": "Peak before Italy · long 8 — no taper into the break",
+      "focus": "Peak before Italy · long 9 — no taper into the break",
       "sessions": [
         {
-          "id": "w6-mon",
+          "id": "w6-mon-s",
           "date": "2026-08-31",
           "type": "strength",
           "targetMi": 0,
@@ -340,39 +340,39 @@
           "id": "w6-tue",
           "date": "2026-09-01",
           "type": "easy",
-          "targetMi": 5,
+          "targetMi": 4.5,
           "optional": false
         },
         {
           "id": "w6-wed",
           "date": "2026-09-02",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 4.5,
           "optional": false
         },
         {
-          "id": "w6-thu",
-          "date": "2026-09-03",
+          "id": "w6-wed-s",
+          "date": "2026-09-02",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+          "notes": "15 min after the run: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w6-fri",
           "date": "2026-09-04",
           "type": "long",
-          "targetMi": 8,
+          "targetMi": 9,
           "optional": false,
-          "notes": "Last long before travel — go in fit, not rested"
+          "notes": "Go in fit, not rested"
         },
         {
           "id": "w6-sun",
           "date": "2026-09-06",
           "type": "easy_strides",
-          "targetMi": 3.5,
+          "targetMi": 4,
           "optional": false,
-          "notes": "6 × 20–25s"
+          "notes": "6 × 25s"
         }
       ]
     },
@@ -422,7 +422,7 @@
       "id": 9,
       "start": "2026-09-21",
       "end": "2026-09-27",
-      "targetMi": 14.5,
+      "targetMi": 15.5,
       "phase": "rebuild",
       "focus": "Back from Italy · straight into a real week",
       "sessions": [
@@ -435,25 +435,25 @@
           "notes": "First run back"
         },
         {
-          "id": "w9-thu",
-          "date": "2026-09-24",
+          "id": "w9-wed-s",
+          "date": "2026-09-23",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+          "notes": "15 min after the run: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w9-fri",
           "date": "2026-09-25",
           "type": "long",
-          "targetMi": 6,
+          "targetMi": 6.5,
           "optional": false
         },
         {
           "id": "w9-sun",
           "date": "2026-09-27",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 4.5,
           "optional": false
         }
       ]
@@ -462,12 +462,12 @@
       "id": 10,
       "start": "2026-09-28",
       "end": "2026-10-04",
-      "targetMi": 17,
+      "targetMi": 20,
       "phase": "quality",
-      "focus": "Long 6.5 · first threshold",
+      "focus": "Long 7.5 · first threshold",
       "sessions": [
         {
-          "id": "w10-mon",
+          "id": "w10-mon-s",
           "date": "2026-09-28",
           "type": "strength",
           "targetMi": 0,
@@ -478,38 +478,38 @@
           "id": "w10-tue",
           "date": "2026-09-29",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 4.5,
           "optional": false
         },
         {
           "id": "w10-wed",
           "date": "2026-09-30",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4,
           "optional": false
         },
         {
-          "id": "w10-thu",
-          "date": "2026-10-01",
+          "id": "w10-wed-s",
+          "date": "2026-09-30",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+          "notes": "15 min after the run: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w10-fri",
           "date": "2026-10-02",
           "type": "long",
-          "targetMi": 6.5,
+          "targetMi": 7.5,
           "optional": false
         },
         {
           "id": "w10-sun",
           "date": "2026-10-04",
           "type": "threshold",
-          "targetMi": 3,
+          "targetMi": 4,
           "optional": false,
-          "notes": "2 × 8 min comfortably hard · 3 min jog"
+          "notes": "1.5 wu · 2 × 8 min comfortably hard (3 min jog) · 1 cd"
         }
       ]
     },
@@ -517,12 +517,12 @@
       "id": 11,
       "start": "2026-10-05",
       "end": "2026-10-11",
-      "targetMi": 19,
+      "targetMi": 22.5,
       "phase": "quality",
-      "focus": "Long 7.5 · B-pace reps",
+      "focus": "Long 9 · B-pace reps",
       "sessions": [
         {
-          "id": "w11-mon",
+          "id": "w11-mon-s",
           "date": "2026-10-05",
           "type": "strength",
           "targetMi": 0,
@@ -540,31 +540,31 @@
           "id": "w11-wed",
           "date": "2026-10-07",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 4.5,
           "optional": false
         },
         {
-          "id": "w11-thu",
-          "date": "2026-10-08",
+          "id": "w11-wed-s",
+          "date": "2026-10-07",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+          "notes": "15 min after the run: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w11-fri",
           "date": "2026-10-09",
           "type": "long",
-          "targetMi": 7.5,
+          "targetMi": 9,
           "optional": false
         },
         {
           "id": "w11-sun",
           "date": "2026-10-11",
           "type": "quality",
-          "targetMi": 3,
+          "targetMi": 4.5,
           "optional": false,
-          "notes": "5 × 3 min @ B-pace · equal jog"
+          "notes": "1.5 wu · 5 × 3 min @ B-pace (equal jog) · 1 cd"
         }
       ]
     },
@@ -572,12 +572,12 @@
       "id": 12,
       "start": "2026-10-12",
       "end": "2026-10-18",
-      "targetMi": 21,
+      "targetMi": 20.7,
       "phase": "quality",
-      "focus": "Long 8.5 · threshold holds",
+      "focus": "Tune-up 10K · long cut back to absorb it",
       "sessions": [
         {
-          "id": "w12-mon",
+          "id": "w12-mon-s",
           "date": "2026-10-12",
           "type": "strength",
           "targetMi": 0,
@@ -588,7 +588,7 @@
           "id": "w12-tue",
           "date": "2026-10-13",
           "type": "easy",
-          "targetMi": 5,
+          "targetMi": 4.5,
           "optional": false
         },
         {
@@ -599,27 +599,28 @@
           "optional": false
         },
         {
-          "id": "w12-thu",
-          "date": "2026-10-15",
+          "id": "w12-wed-s",
+          "date": "2026-10-14",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+          "notes": "15 min after the run: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w12-fri",
           "date": "2026-10-16",
           "type": "long",
-          "targetMi": 8.5,
-          "optional": false
+          "targetMi": 6,
+          "optional": false,
+          "notes": "Easy — legs for Sunday"
         },
         {
           "id": "w12-sun",
           "date": "2026-10-18",
-          "type": "threshold",
-          "targetMi": 3.5,
+          "type": "quality",
+          "targetMi": 6.2,
           "optional": false,
-          "notes": "2 × 10 min comfortably hard · 3 min jog"
+          "notes": "10K TUNE-UP · open at B-pace, finish hard. Best fitness read of the block — the model needs a genuine hard effort."
         }
       ]
     },
@@ -627,12 +628,12 @@
       "id": 13,
       "start": "2026-10-19",
       "end": "2026-10-25",
-      "targetMi": 23,
+      "targetMi": 25.5,
       "phase": "peak",
-      "focus": "Peak · long 10 + B-pace miles",
+      "focus": "Peak · long 12",
       "sessions": [
         {
-          "id": "w13-mon",
+          "id": "w13-mon-s",
           "date": "2026-10-19",
           "type": "strength",
           "targetMi": 0,
@@ -643,7 +644,7 @@
           "id": "w13-tue",
           "date": "2026-10-20",
           "type": "easy",
-          "targetMi": 5,
+          "targetMi": 4.5,
           "optional": false
         },
         {
@@ -654,18 +655,18 @@
           "optional": false
         },
         {
-          "id": "w13-thu",
-          "date": "2026-10-22",
+          "id": "w13-wed-s",
+          "date": "2026-10-21",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+          "notes": "15 min after the run: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w13-fri",
           "date": "2026-10-23",
           "type": "long",
-          "targetMi": 10,
+          "targetMi": 12,
           "optional": false,
           "notes": "Last 1–2 mi @ B-pace OK"
         },
@@ -673,9 +674,9 @@
           "id": "w13-sun",
           "date": "2026-10-25",
           "type": "quality",
-          "targetMi": 3.5,
+          "targetMi": 4.5,
           "optional": false,
-          "notes": "2.5 mi continuous @ B-pace"
+          "notes": "1.5 wu · 2.5 mi @ B-pace · 0.5 cd"
         }
       ]
     },
@@ -683,23 +684,23 @@
       "id": 14,
       "start": "2026-10-26",
       "end": "2026-11-01",
-      "targetMi": 15,
+      "targetMi": 17.5,
       "phase": "taper",
       "focus": "Taper · volume down, sharpness stays",
       "sessions": [
         {
-          "id": "w14-mon",
+          "id": "w14-mon-s",
           "date": "2026-10-26",
           "type": "strength",
           "targetMi": 0,
           "optional": false,
-          "notes": "15 min: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
+          "notes": "15 min after the run: eccentric calf raise 3×15/side, hip abduction, glute bridge, ankle + hip mobility"
         },
         {
           "id": "w14-tue",
           "date": "2026-10-27",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4.5,
           "optional": false
         },
         {
@@ -713,7 +714,7 @@
           "id": "w14-fri",
           "date": "2026-10-30",
           "type": "long",
-          "targetMi": 6,
+          "targetMi": 7,
           "optional": false,
           "notes": "Last long"
         },
@@ -721,7 +722,7 @@
           "id": "w14-sun",
           "date": "2026-11-01",
           "type": "quality",
-          "targetMi": 2.5,
+          "targetMi": 3,
           "optional": false,
           "notes": "2 mi @ B-pace"
         }
@@ -731,12 +732,12 @@
       "id": 15,
       "start": "2026-11-02",
       "end": "2026-11-08",
-      "targetMi": 9,
+      "targetMi": 9.5,
       "phase": "race",
       "focus": "Race week · Fri shakeout, rest Sat, race Sun",
       "sessions": [
         {
-          "id": "w15-mon",
+          "id": "w15-mon-s",
           "date": "2026-11-02",
           "type": "strength",
           "targetMi": 0,
@@ -747,7 +748,7 @@
           "id": "w15-tue",
           "date": "2026-11-03",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 4.5,
           "optional": false
         },
         {
@@ -764,7 +765,7 @@
           "type": "easy_strides",
           "targetMi": 2,
           "optional": false,
-          "notes": "Shakeout · 4 × 20s · not a long"
+          "notes": "Shakeout · not a long"
         },
         {
           "id": "w15-sun",

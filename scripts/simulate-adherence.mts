@@ -50,12 +50,17 @@ function simulate(fraction: number): RunActivity[] {
   const totalDays = (new Date(RACE).getTime() - new Date(TODAY).getTime()) / 86_400_000;
 
   upcoming.forEach((s, i) => {
+    // A tune-up race is run at race effort, and you either do it or you don't —
+    // "80% of a 10K" is not a thing. Scaling it produced a discontinuity: at 80%
+    // it shrank below the Riegel floor, vanished from the estimate, and made
+    // less training look faster.
+    const isTuneUp = /TUNE-UP/.test(s.notes ?? "");
     const progress =
       (new Date(s.date).getTime() - new Date(TODAY).getTime()) / 86_400_000 / totalDays;
     // Fitness gain accrues over the block, scaled by how much of it gets run.
     const ef = EF_NOW + (EF_FULL - EF_NOW) * fraction * progress;
-    const hr = HR_BY_TYPE[s.type] ?? 148;
-    const distanceMi = Number((s.targetMi * fraction).toFixed(2));
+    const hr = isTuneUp ? HR_BY_TYPE.race : (HR_BY_TYPE[s.type] ?? 148);
+    const distanceMi = Number((s.targetMi * (isTuneUp ? 1 : fraction)).toFixed(2));
     const paceSecPerMi = Math.round(3600 / (ef * hr));
     const movingTimeSec = Math.round(paceSecPerMi * distanceMi);
     future.push({
