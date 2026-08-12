@@ -324,9 +324,9 @@
       "id": 6,
       "start": "2026-08-31",
       "end": "2026-09-06",
-      "targetMi": 22,
+      "targetMi": 23.5,
       "phase": "build",
-      "focus": "Peak before Italy · long 9 — no taper into the break",
+      "focus": "Pre-Italy 10K time trial · long trimmed to absorb it",
       "sessions": [
         {
           "id": "w6-mon-s",
@@ -362,17 +362,17 @@
           "id": "w6-fri",
           "date": "2026-09-04",
           "type": "long",
-          "targetMi": 9,
+          "targetMi": 7,
           "optional": false,
-          "notes": "Go in fit, not rested"
+          "notes": "Shortened — Sunday is the time trial"
         },
         {
           "id": "w6-sun",
           "date": "2026-09-06",
-          "type": "easy_strides",
-          "targetMi": 4,
+          "type": "quality",
+          "targetMi": 7.5,
           "optional": false,
-          "notes": "6 × 25s"
+          "notes": "10K TIME TRIAL · 0.8 wu · 6.2 all-out · 0.5 cd. Solo is fine. Three days before you fly, then two weeks to recover."
         }
       ]
     },
