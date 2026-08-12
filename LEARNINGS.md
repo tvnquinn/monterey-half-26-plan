@@ -251,7 +251,24 @@ npx tsx scripts/elev-analysis.mts         # grade cost fitted from his splits
 
 ---
 
-## 10. Open items
+## 10. Known model blind spots
+
+Things the model cannot see, so don't let a flat projection talk you out of them.
+
+- **No explicit detraining term for a gap.** A 14-day break registers only
+  indirectly, through the trailing 4-week volume average. Splitting a two-week
+  gap into two one-week gaps is worth real fitness physiologically and moves the
+  estimate by ~9 seconds. Trust the physiology, not the dashboard.
+- **`longest run` is a max, not a distribution.** Once something ≥8 mi sits in
+  the window, additional long runs below that are invisible to the estimate even
+  though they build durability.
+- **Cross-training and strength are uncounted.** 23 pickleball and 23 strength
+  sessions sit alongside 39 runs in the export. Real training load is well above
+  displayed mileage.
+- **Heat, altitude and travel are only handled by manual `condition` flags.**
+  Nothing is inferred.
+
+## 11. Open items
 
 - **Strava bulk archive** (`.FIT`, 1 Hz) would give per-second altitude and speed — enough to fit his true grade-adjusted pace curve and replace the 0.20 constant with a measured one. Currently the largest single source of modelling uncertainty.
 - **March 2026 is partially reconstructed.** Nine runs, 37.87 mi, transcribed from workout screens; the HAE export window starts 28 Apr.

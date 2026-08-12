@@ -415,8 +415,17 @@
       "end": "2026-09-20",
       "targetMi": 0,
       "phase": "italy",
-      "focus": "Italy — no running",
-      "sessions": []
+      "focus": "Italy — optional 6 mi mid-week, otherwise nothing",
+      "sessions": [
+        {
+          "id": "w8-wed",
+          "date": "2026-09-16",
+          "type": "long",
+          "targetMi": 6,
+          "optional": true,
+          "notes": "OPTIONAL · if the trip allows. Easy, last 10–15 min steady if it feels good. Splits a 14-day gap into two 7-day ones — that is the whole point, not the mileage. Do not chase distance in the heat on unknown roads."
+        }
+      ]
     },
     {
       "id": 9,
@@ -447,7 +456,8 @@
           "date": "2026-09-25",
           "type": "long",
           "targetMi": 6.5,
-          "optional": false
+          "optional": false,
+          "notes": "7.5 instead if you got the optional Italy run in"
         },
         {
           "id": "w9-sun",
