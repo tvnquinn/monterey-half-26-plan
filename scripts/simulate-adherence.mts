@@ -24,6 +24,15 @@ const EF_NOW = 0.0315;
 /** Where a fully-executed block should land him — his Mar-2026 / 2025 level. */
 const EF_FULL = 0.0335;
 
+/**
+ * 10K effort is run roughly 5% quicker than half-marathon effort. Without this
+ * the simulation gave the tune-up the *same* pace as the race itself — a
+ * 1:03:27 10K — and Riegel correctly read that as a 2:22 half, dragging the
+ * projection down by five minutes. The tune-up looked like a penalty for
+ * training more.
+ */
+const TUNE_UP_PACE_RATIO = 0.95;
+
 const HR_BY_TYPE: Record<string, number> = {
   easy: 148,
   easy_strides: 148,
@@ -61,7 +70,9 @@ function simulate(fraction: number): RunActivity[] {
     const ef = EF_NOW + (EF_FULL - EF_NOW) * fraction * progress;
     const hr = isTuneUp ? HR_BY_TYPE.race : (HR_BY_TYPE[s.type] ?? 148);
     const distanceMi = Number((s.targetMi * (isTuneUp ? 1 : fraction)).toFixed(2));
-    const paceSecPerMi = Math.round(3600 / (ef * hr));
+    const paceSecPerMi = Math.round(
+      (3600 / (ef * hr)) * (isTuneUp ? TUNE_UP_PACE_RATIO : 1),
+    );
     const movingTimeSec = Math.round(paceSecPerMi * distanceMi);
     future.push({
       id: `sim-${i}-${s.date}`,
