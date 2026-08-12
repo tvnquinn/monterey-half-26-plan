@@ -415,15 +415,15 @@
       "end": "2026-09-20",
       "targetMi": 0,
       "phase": "italy",
-      "focus": "Italy — optional 6 mi mid-week, otherwise nothing",
+      "focus": "Italy — optional 10 mi on the Cortina rail path",
       "sessions": [
         {
           "id": "w8-wed",
           "date": "2026-09-16",
           "type": "long",
-          "targetMi": 6,
+          "targetMi": 10,
           "optional": true,
-          "notes": "OPTIONAL · if the trip allows. Easy, last 10–15 min steady if it feels good. Splits a 14-day gap into two 7-day ones — that is the whole point, not the mileage. Do not chase distance in the heat on unknown roads."
+          "notes": "OPTIONAL · Cortina→Zuel rail path, flat. Run by EFFORT not pace — at 1220 m, ~13:40/mi feels like 13:10 at home. Keep HR ≤152. Fuel it (40–60g carb/hr past 90 min). Log it flagged ALTITUDE. Southbound is net downhill, so the return leg will be slower — that is grade, not fading."
         }
       ]
     },
@@ -457,7 +457,7 @@
           "type": "long",
           "targetMi": 6.5,
           "optional": false,
-          "notes": "7.5 instead if you got the optional Italy run in"
+          "notes": "Go 8 if you got the optional 10 mi in Italy; 6.5 if not"
         },
         {
           "id": "w9-sun",

@@ -266,7 +266,15 @@ Things the model cannot see, so don't let a flat projection talk you out of them
   sessions sit alongside 39 runs in the export. Real training load is well above
   displayed mileage.
 - **Heat, altitude and travel are only handled by manual `condition` flags.**
-  Nothing is inferred.
+  Nothing is inferred. Flagging matters: a 6.5 mi run at 1220 m logged unflagged
+  read as **−8.0% EF** and cost 8 minutes of estimate, because it was the only
+  run in a two-week window and the trend leaned on it.
+- **`builtLongest` uses raw distance**, not duration or grade-adjusted distance.
+  A hard mountain 7-miler counts as less durability than an easy flat 9-miler.
+  Think in time on feet when terrain or altitude is unusual.
+- **`durabilityFactor` is a step function** with edges at 5/7/9/11 mi. Crossing
+  9.0 is worth ~2 min; 8.9 → 9.0 is worth the same as 8.0 → 9.0. Do not plan
+  training around a bracket edge — it is a lookup table, not physiology.
 
 ## 11. Open items
 
