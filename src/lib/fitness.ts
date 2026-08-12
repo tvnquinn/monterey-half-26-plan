@@ -194,6 +194,18 @@ function medianPace(runs: RunActivity[]): number | null {
 const HARD_EFFORT_PACE_RATIO = 0.92;
 /** At or beyond this distance, finishing at all is the fitness demonstration. */
 const ENDURANCE_EFFORT_MI = 10;
+/**
+ * Shortest effort Riegel may be extrapolated from, as a fraction of race
+ * distance. The exponent is only dependable within roughly a 3× stretch; below
+ * that the projection is arithmetic dressed up as evidence.
+ *
+ * This mattered: a 3-mile B-pace rep session was being extrapolated 4.4× to a
+ * half and blended in at 35% weight. In an adherence simulation it made
+ * running 80% of the plan project *faster* than running 100%, because at 80%
+ * that session shrank under the old 3-mile floor and stopped polluting the
+ * estimate.
+ */
+const MIN_RIEGEL_FRACTION = 0.4;
 
 function bestHardEffortSec(
   runs: RunActivity[],
@@ -212,17 +224,24 @@ function bestHardEffortSec(
     .filter((r) => {
       const days = daysBetweenKeys(runDayKey(r.startDate, tz), today);
       if (days < 0 || days > 180) return false;
-      if (r.distanceMi < 3 || r.movingTimeSec <= 0) return false;
+      if (r.movingTimeSec <= 0) return false;
+      // Too short to extrapolate from without inventing the answer.
+      if (r.distanceMi < plan.race.distanceMi * MIN_RIEGEL_FRACTION) return false;
 
-      // A 10+ mile run is already most of a half. Riegel off it is informative
-      // regardless of intensity — and for an athlete whose race pace is only a
-      // few percent quicker than their jogging pace, a pure speed test would
-      // never fire. Quinn's 13.15 @ 10:20 sits 6% under his median, so the
-      // 8%-faster rule alone would have discarded his actual half.
-      if (r.distanceMi >= ENDURANCE_EFFORT_MI) return r.paceSecPerMi <= med * 1.02;
+      const hr = r.averageHeartrate;
+
+      // A 10+ mile run is most of a half, so the pace bar relaxes — for an
+      // athlete whose race pace is only a few percent quicker than his jogging
+      // pace, a pure speed test would never fire. Quinn's 13.15 @ 10:20 sits 6%
+      // under his median, so the 8%-faster rule alone discarded his actual
+      // half. But distance alone is not enough: an *easy* long run says nothing
+      // about race capability, so it still has to have been run hard.
+      if (r.distanceMi >= ENDURANCE_EFFORT_MI) {
+        if (r.paceSecPerMi > med * 1.02) return false;
+        return hr ? hr >= hardHr : r.paceSecPerMi <= med * 0.95;
+      }
 
       if (r.paceSecPerMi > med * HARD_EFFORT_PACE_RATIO) return false;
-      const hr = r.averageHeartrate;
       return hr ? hr >= hardHr : r.paceSecPerMi <= med * 0.85;
     })
     .map((r) => riegelSec(r.distanceMi, r.movingTimeSec, 13.1));
