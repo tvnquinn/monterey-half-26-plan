@@ -161,7 +161,7 @@
       "end": "2026-08-16",
       "targetMi": 14,
       "phase": "base",
-      "focus": "4th day starts · long 5.5",
+      "focus": "4th day starts · long 5",
       "sessions": [
         {
           "id": "w3-mon",
@@ -422,15 +422,15 @@
       "id": 9,
       "start": "2026-09-21",
       "end": "2026-09-27",
-      "targetMi": 11,
+      "targetMi": 14.5,
       "phase": "rebuild",
-      "focus": "Rebuild · first run back Wed",
+      "focus": "Back from Italy · straight into a real week",
       "sessions": [
         {
           "id": "w9-wed",
           "date": "2026-09-23",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4.5,
           "optional": false,
           "notes": "First run back"
         },
@@ -446,14 +446,14 @@
           "id": "w9-fri",
           "date": "2026-09-25",
           "type": "long",
-          "targetMi": 4.5,
+          "targetMi": 6,
           "optional": false
         },
         {
           "id": "w9-sun",
           "date": "2026-09-27",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 4,
           "optional": false
         }
       ]
@@ -462,9 +462,9 @@
       "id": 10,
       "start": "2026-09-28",
       "end": "2026-10-04",
-      "targetMi": 15,
+      "targetMi": 17,
       "phase": "quality",
-      "focus": "Long 5.5 · first threshold",
+      "focus": "Long 6.5 · first threshold",
       "sessions": [
         {
           "id": "w10-mon",
@@ -478,14 +478,14 @@
           "id": "w10-tue",
           "date": "2026-09-29",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4,
           "optional": false
         },
         {
           "id": "w10-wed",
           "date": "2026-09-30",
           "type": "easy",
-          "targetMi": 3,
+          "targetMi": 3.5,
           "optional": false
         },
         {
@@ -500,7 +500,7 @@
           "id": "w10-fri",
           "date": "2026-10-02",
           "type": "long",
-          "targetMi": 5.5,
+          "targetMi": 6.5,
           "optional": false
         },
         {
@@ -509,7 +509,7 @@
           "type": "threshold",
           "targetMi": 3,
           "optional": false,
-          "notes": "2 × 6 min comfortably hard · 3 min jog"
+          "notes": "2 × 8 min comfortably hard · 3 min jog"
         }
       ]
     },
@@ -517,9 +517,9 @@
       "id": 11,
       "start": "2026-10-05",
       "end": "2026-10-11",
-      "targetMi": 17,
+      "targetMi": 19,
       "phase": "quality",
-      "focus": "Long 6.5 · B-pace reps",
+      "focus": "Long 7.5 · B-pace reps",
       "sessions": [
         {
           "id": "w11-mon",
@@ -533,14 +533,14 @@
           "id": "w11-tue",
           "date": "2026-10-06",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 4.5,
           "optional": false
         },
         {
           "id": "w11-wed",
           "date": "2026-10-07",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4,
           "optional": false
         },
         {
@@ -555,7 +555,7 @@
           "id": "w11-fri",
           "date": "2026-10-09",
           "type": "long",
-          "targetMi": 6.5,
+          "targetMi": 7.5,
           "optional": false
         },
         {
@@ -572,9 +572,9 @@
       "id": 12,
       "start": "2026-10-12",
       "end": "2026-10-18",
-      "targetMi": 19,
+      "targetMi": 21,
       "phase": "quality",
-      "focus": "Long 7 · threshold holds",
+      "focus": "Long 8.5 · threshold holds",
       "sessions": [
         {
           "id": "w12-mon",
@@ -588,7 +588,7 @@
           "id": "w12-tue",
           "date": "2026-10-13",
           "type": "easy",
-          "targetMi": 4.5,
+          "targetMi": 5,
           "optional": false
         },
         {
@@ -610,7 +610,7 @@
           "id": "w12-fri",
           "date": "2026-10-16",
           "type": "long",
-          "targetMi": 7,
+          "targetMi": 8.5,
           "optional": false
         },
         {
@@ -627,9 +627,9 @@
       "id": 13,
       "start": "2026-10-19",
       "end": "2026-10-25",
-      "targetMi": 22,
+      "targetMi": 23,
       "phase": "peak",
-      "focus": "Peak · long 9 + B-pace miles",
+      "focus": "Peak · long 10 + B-pace miles",
       "sessions": [
         {
           "id": "w13-mon",
@@ -643,14 +643,14 @@
           "id": "w13-tue",
           "date": "2026-10-20",
           "type": "easy",
-          "targetMi": 4.5,
+          "targetMi": 5,
           "optional": false
         },
         {
           "id": "w13-wed",
           "date": "2026-10-21",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 4.5,
           "optional": false
         },
         {
@@ -665,7 +665,7 @@
           "id": "w13-fri",
           "date": "2026-10-23",
           "type": "long",
-          "targetMi": 9,
+          "targetMi": 10,
           "optional": false,
           "notes": "Last 1–2 mi @ B-pace OK"
         },
@@ -673,7 +673,7 @@
           "id": "w13-sun",
           "date": "2026-10-25",
           "type": "quality",
-          "targetMi": 4.5,
+          "targetMi": 3.5,
           "optional": false,
           "notes": "2.5 mi continuous @ B-pace"
         }
