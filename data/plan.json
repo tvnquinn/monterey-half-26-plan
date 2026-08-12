@@ -159,9 +159,9 @@
       "id": 3,
       "start": "2026-08-10",
       "end": "2026-08-16",
-      "targetMi": 14,
+      "targetMi": 15,
       "phase": "base",
-      "focus": "4th day starts · long 5",
+      "focus": "Back after illness · long 6",
       "sessions": [
         {
           "id": "w3-mon",
@@ -197,7 +197,7 @@
           "id": "w3-fri",
           "date": "2026-08-14",
           "type": "long",
-          "targetMi": 5,
+          "targetMi": 6,
           "optional": false
         },
         {
@@ -214,9 +214,9 @@
       "id": 4,
       "start": "2026-08-17",
       "end": "2026-08-23",
-      "targetMi": 16,
+      "targetMi": 16.5,
       "phase": "build",
-      "focus": "Long 6 · shorts growing",
+      "focus": "Long 6.5 · shorts growing",
       "sessions": [
         {
           "id": "w4-mon",
@@ -252,7 +252,7 @@
           "id": "w4-fri",
           "date": "2026-08-21",
           "type": "long",
-          "targetMi": 6,
+          "targetMi": 6.5,
           "optional": false
         },
         {
@@ -269,9 +269,9 @@
       "id": 5,
       "start": "2026-08-24",
       "end": "2026-08-30",
-      "targetMi": 18,
+      "targetMi": 18.5,
       "phase": "build",
-      "focus": "Build · long 6.5",
+      "focus": "Build · long 7",
       "sessions": [
         {
           "id": "w5-mon",
@@ -307,7 +307,7 @@
           "id": "w5-fri",
           "date": "2026-08-28",
           "type": "long",
-          "targetMi": 6.5,
+          "targetMi": 7,
           "optional": false
         },
         {
@@ -324,9 +324,9 @@
       "id": 6,
       "start": "2026-08-31",
       "end": "2026-09-06",
-      "targetMi": 20,
+      "targetMi": 20.5,
       "phase": "build",
-      "focus": "Peak before Italy · long 7.5 — no taper into the break",
+      "focus": "Peak before Italy · long 8 — no taper into the break",
       "sessions": [
         {
           "id": "w6-mon",
@@ -362,7 +362,7 @@
           "id": "w6-fri",
           "date": "2026-09-04",
           "type": "long",
-          "targetMi": 7.5,
+          "targetMi": 8,
           "optional": false,
           "notes": "Last long before travel — go in fit, not rested"
         },
