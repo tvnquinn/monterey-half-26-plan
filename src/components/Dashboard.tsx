@@ -67,6 +67,82 @@ function usefulNote(type: string, notes?: string): string | null {
   return cleaned || null;
 }
 
+/** Expanded detail for a session that has a real run behind it. */
+function RunStats({
+  run,
+  deltaMi,
+  assessment,
+}: {
+  run: NonNullable<SessionStatus["matchedRun"]>;
+  deltaMi: number;
+  assessment: SessionStatus["assessment"];
+}) {
+  const splits = run.splits?.filter((sp) => sp.paceSecPerMi > 0) ?? [];
+  const stats: [string, string][] = [
+    ["distance", `${run.distanceMi.toFixed(2)} mi`],
+    ["time", formatDuration(run.movingTimeSec)],
+    ["pace", `${paceToString(run.paceSecPerMi)}/mi`],
+  ];
+  if (run.averageHeartrate) {
+    stats.push([
+      "heart rate",
+      `${run.averageHeartrate}${run.maxHeartrate ? ` / ${run.maxHeartrate} max` : ""} bpm`,
+    ]);
+  }
+  if (run.elevationFt > 0) stats.push(["elevation", `${run.elevationFt} ft`]);
+  if (run.averageCadence) stats.push(["cadence", `${run.averageCadence} spm`]);
+  stats.push([
+    "vs planned",
+    deltaMi === 0 ? "on target" : `${deltaMi > 0 ? "+" : ""}${deltaMi.toFixed(2)} mi`,
+  ]);
+
+  return (
+    <div className="run-stats">
+      <dl className="run-stat-grid">
+        {stats.map(([k, v]) => (
+          <div key={k}>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+      {run.condition ? (
+        <p className="run-flagged">
+          Flagged “{run.condition}” — counts toward mileage, kept out of the
+          fitness trend.
+        </p>
+      ) : null}
+      {assessment ? <p className="muted small">{assessment.why}</p> : null}
+      {splits.length ? (
+        <table className="splits-table">
+          <thead>
+            <tr>
+              <th>mi</th>
+              <th>pace</th>
+              <th>hr</th>
+              <th>elev</th>
+            </tr>
+          </thead>
+          <tbody>
+            {splits.map((sp, i) => (
+              <tr key={i}>
+                <td>{sp.mile}</td>
+                <td>{paceToString(sp.paceSecPerMi)}</td>
+                <td>{sp.averageHeartrate ?? "—"}</td>
+                <td>
+                  {sp.elevationGain == null
+                    ? "—"
+                    : `${sp.elevationGain > 0 ? "+" : ""}${sp.elevationGain}`}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : null}
+    </div>
+  );
+}
+
 function SessionRow({ s }: { s: SessionStatus }) {
   const pace = s.paceRec;
   const type = s.session.type;
@@ -98,34 +174,43 @@ function SessionRow({ s }: { s: SessionStatus }) {
     badge = statusLabel(s.status);
   }
 
-  // An off-schedule run absorbed this session: strike the plan, show the run.
+  // Any session backed by a real run collapses into an expandable summary, so
+  // finished weeks stay readable but the detail is one tap away.
   const sub = s.substitutedBy;
-  if (sub) {
+  const run = sub ?? s.matchedRun;
+  if (run) {
     const actual = [
-      `${weekdayShort(sub.startDate)} ${formatShortDate(sub.startDate)}`,
+      `${weekdayShort(run.startDate)} ${formatShortDate(run.startDate)}`,
       s.assessment?.label ?? "run",
-      `${sub.distanceMi.toFixed(2)}mi`,
-      `${paceToString(sub.paceSecPerMi)}/mi`,
-      sub.averageHeartrate ? `${sub.averageHeartrate}bpm` : null,
+      `${run.distanceMi.toFixed(2)}mi`,
+      `${paceToString(run.paceSecPerMi)}/mi`,
+      run.averageHeartrate ? `${run.averageHeartrate}bpm` : null,
     ]
       .filter(Boolean)
       .join(" · ");
     const delta = s.distanceDeltaMi ?? 0;
     return (
-      <li className="session substituted">
-        <div className="session-row">
-          <div className="session-main">
-            <s className="session-planned">{line}</s>
-            <strong className="session-actual">{actual}</strong>
-            <span className="session-note">
-              {delta === 0
-                ? "Swapped in for the planned session."
-                : `Swapped in · ${delta > 0 ? "+" : ""}${delta.toFixed(1)} mi vs planned.`}
-              {s.assessment ? ` ${s.assessment.why}` : ""}
+      <li className={`session ${sub ? "substituted" : s.status}`}>
+        <details className="session-detail">
+          <summary>
+            <span className="session-main">
+              {sub ? <s className="session-planned">{line}</s> : null}
+              <strong className={sub ? "session-actual" : undefined}>
+                {sub ? actual : line}
+              </strong>
+              {!sub && run.averageHeartrate ? (
+                <span className="session-note">
+                  ran {run.distanceMi.toFixed(2)} mi · {paceToString(run.paceSecPerMi)}/mi
+                  {" · "}
+                  {run.averageHeartrate} bpm
+                  {s.assessment ? ` · ${s.assessment.label}` : ""}
+                </span>
+              ) : null}
             </span>
-          </div>
-          <span className="session-badge">Swapped</span>
-        </div>
+            <span className="session-badge">{badge ?? "Done"}</span>
+          </summary>
+          <RunStats run={run} deltaMi={delta} assessment={s.assessment} />
+        </details>
       </li>
     );
   }
@@ -150,11 +235,13 @@ function SessionRow({ s }: { s: SessionStatus }) {
 function WeekCard({
   w,
   current,
+  past,
   cardRef,
   z2Label,
 }: {
   w: WeekStatus;
   current?: boolean;
+  past?: boolean;
   cardRef?: (el: HTMLElement | null) => void;
   z2Label: string | null;
 }) {
@@ -164,11 +251,14 @@ function WeekCard({
   return (
     <article
       ref={cardRef}
-      className={`panel week-card ${current ? "week-card-current" : ""} ${over ? "week-over" : ""}`}
+      className={`panel week-card ${current ? "week-card-current" : ""} ${
+        past ? "week-card-past" : ""
+      } ${over ? "week-over" : ""}`}
     >
       <h3>
         Week {w.week.id}
         {current ? " · this week" : ""}
+        {past ? " · done" : ""}
         {w.targetMi === 0 ? " · rest" : ""}
       </h3>
       {w.week.focus ? <p className="week-focus muted">{w.week.focus}</p> : null}
@@ -381,8 +471,8 @@ export function Dashboard() {
   const { plan, report } = data;
   const pred = report.predictions;
   const week = report.currentWeek;
-  const weeks = report.upcomingWeeks.length
-    ? report.upcomingWeeks
+  const weeks = report.weeks.length
+    ? report.weeks
     : week
       ? [week]
       : [];
@@ -445,6 +535,7 @@ export function Dashboard() {
                   key={w.week.id}
                   w={w}
                   current={isCurrent}
+                  past={week != null && w.week.id < week.week.id}
                   z2Label={z2Label}
                   cardRef={
                     isCurrent

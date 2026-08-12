@@ -106,11 +106,10 @@ export function buildCoachReport(
     tz,
   });
 
-  const upcomingSource = current
-    ? weekStatuses.filter((w) => w.week.id >= current.week.id)
-    : weekStatuses;
-
-  const upcomingWeeks = upcomingSource.map((w) => ({
+  // Every week, past included. Previously this dropped anything before the
+  // current week, so finished weeks vanished from the UI and there was no way
+  // to look back at what you actually ran.
+  const weeks = weekStatuses.map((w) => ({
     ...w,
     sessions: attachPaceRecsToWeek({
       sessions: w.sessions,
@@ -162,9 +161,9 @@ export function buildCoachReport(
     tz,
   });
 
-  const nextSession = markNextSession(upcomingWeeks);
+  const nextSession = markNextSession(weeks);
   if (current) {
-    const withSessions = upcomingWeeks.find((w) => w.week.id === current.week.id);
+    const withSessions = weeks.find((w) => w.week.id === current.week.id);
     if (withSessions) current.sessions = withSessions.sessions;
   }
 
@@ -196,7 +195,7 @@ export function buildCoachReport(
     asOf: asOf.toISOString(),
     daysToRace,
     currentWeek: current,
-    upcomingWeeks,
+    weeks,
     recentRuns: runs.slice(0, 12),
     weeklyMileage,
     paceGuidance,

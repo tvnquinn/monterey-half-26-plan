@@ -236,7 +236,8 @@ export interface CoachReport {
   asOf: string;
   daysToRace: number;
   currentWeek: WeekStatus | null;
-  upcomingWeeks: WeekStatus[];
+  /** Every planned week, past and future, in plan order. */
+  weeks: WeekStatus[];
   recentRuns: RunActivity[];
   weeklyMileage: {
     weekId: number;

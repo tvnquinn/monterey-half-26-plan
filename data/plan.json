@@ -271,7 +271,7 @@
       "end": "2026-08-30",
       "targetMi": 18,
       "phase": "build",
-      "focus": "Biggest pre-Italy week · long 6.5",
+      "focus": "Build · long 6.5",
       "sessions": [
         {
           "id": "w5-mon",
@@ -324,9 +324,9 @@
       "id": 6,
       "start": "2026-08-31",
       "end": "2026-09-06",
-      "targetMi": 15,
+      "targetMi": 20,
       "phase": "build",
-      "focus": "Cutback · hold fitness into travel",
+      "focus": "Peak before Italy · long 7.5 — no taper into the break",
       "sessions": [
         {
           "id": "w6-mon",
@@ -340,14 +340,14 @@
           "id": "w6-tue",
           "date": "2026-09-01",
           "type": "easy",
-          "targetMi": 4,
+          "targetMi": 5,
           "optional": false
         },
         {
           "id": "w6-wed",
           "date": "2026-09-02",
           "type": "easy",
-          "targetMi": 3.5,
+          "targetMi": 4,
           "optional": false
         },
         {
@@ -362,17 +362,17 @@
           "id": "w6-fri",
           "date": "2026-09-04",
           "type": "long",
-          "targetMi": 5.5,
+          "targetMi": 7.5,
           "optional": false,
-          "notes": "Last long before travel"
+          "notes": "Last long before travel — go in fit, not rested"
         },
         {
           "id": "w6-sun",
           "date": "2026-09-06",
           "type": "easy_strides",
-          "targetMi": 2,
+          "targetMi": 3.5,
           "optional": false,
-          "notes": "Keep legs awake"
+          "notes": "6 × 20–25s"
         }
       ]
     },

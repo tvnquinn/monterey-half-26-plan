@@ -1216,3 +1216,95 @@ a {
   margin-top: 0.15rem;
   color: var(--warn);
 }
+
+/* Finished weeks stay in the scroller as history — dimmed so the current
+   week still reads as the focus. */
+.week-card-past {
+  opacity: 0.72;
+}
+
+.week-card-past:hover,
+.week-card-past:focus-within {
+  opacity: 1;
+}
+
+/* A completed session collapses to one line; tap to see the run. */
+.session-detail > summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.session-detail > summary::-webkit-details-marker {
+  display: none;
+}
+
+.session-detail > summary::after {
+  content: "▸";
+  color: var(--accent-2);
+  font-size: 0.8rem;
+  padding-top: 0.15rem;
+}
+
+.session-detail[open] > summary::after {
+  content: "▾";
+}
+
+.run-stats {
+  margin-top: 0.6rem;
+  padding: 0.65rem 0.7rem;
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.run-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+  gap: 0.5rem 0.75rem;
+  margin: 0;
+}
+
+.run-stat-grid dt {
+  font-size: 0.66rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.run-stat-grid dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.run-flagged {
+  margin: 0.6rem 0 0;
+  font-size: 0.8rem;
+  color: var(--warn);
+}
+
+.splits-table {
+  width: 100%;
+  margin-top: 0.7rem;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.splits-table th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.66rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-bottom: 0.25rem;
+}
+
+.splits-table td {
+  padding: 0.18rem 0;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+}

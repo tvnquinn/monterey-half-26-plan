@@ -87,6 +87,11 @@ export function buildWeekStatus(
   const today = dayKeyOf(asOf);
   const raceSession = week.sessions.find((s) => s.type === "race");
 
+  const weekLongMi = Math.max(
+    0,
+    ...week.sessions.filter((s) => s.type === "long").map((s) => s.targetMi),
+  );
+
   const sessions: SessionStatus[] = week.sessions.map((session) => {
     const matched = matchRunToSession(session, weekRuns, used);
     if (matched) {
@@ -98,6 +103,9 @@ export function buildWeekStatus(
         status,
         matchedRun: matched,
         distanceDeltaMi: Number((matched.distanceMi - session.targetMi).toFixed(2)),
+        assessment: plan
+          ? assessRun({ run: matched, plan, plannedLongMi: weekLongMi })
+          : undefined,
       };
     }
 
