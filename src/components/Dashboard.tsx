@@ -8,6 +8,7 @@ import {
   isNonRunSession,
   sessionShortLabel,
 } from "@/lib/session-glossary";
+import { assessRun } from "@/lib/run-assessment";
 import { LogRunForm } from "@/components/LogRunForm";
 import { HealthUpload } from "@/components/HealthUpload";
 import { ScreenshotRunUpload } from "@/components/ScreenshotRunUpload";
@@ -74,8 +75,8 @@ function RunStats({
   assessment,
 }: {
   run: NonNullable<SessionStatus["matchedRun"]>;
-  deltaMi: number;
-  assessment: SessionStatus["assessment"];
+  deltaMi?: number;
+  assessment?: SessionStatus["assessment"];
 }) {
   const splits = run.splits?.filter((sp) => sp.paceSecPerMi > 0) ?? [];
   const stats: [string, string][] = [
@@ -91,10 +92,12 @@ function RunStats({
   }
   if (run.elevationFt > 0) stats.push(["elevation", `${run.elevationFt} ft`]);
   if (run.averageCadence) stats.push(["cadence", `${run.averageCadence} spm`]);
-  stats.push([
-    "vs planned",
-    deltaMi === 0 ? "on target" : `${deltaMi > 0 ? "+" : ""}${deltaMi.toFixed(2)} mi`,
-  ]);
+  if (deltaMi != null) {
+    stats.push([
+      "vs planned",
+      deltaMi === 0 ? "on target" : `${deltaMi > 0 ? "+" : ""}${deltaMi.toFixed(2)} mi`,
+    ]);
+  }
 
   return (
     <div className="run-stats">
@@ -174,8 +177,9 @@ function SessionRow({ s }: { s: SessionStatus }) {
     badge = statusLabel(s.status);
   }
 
-  // Any session backed by a real run collapses into an expandable summary, so
-  // finished weeks stay readable but the detail is one tap away.
+  // A session backed by a real run shows what was actually run on one line.
+  // Full stats and splits live on the Recent tab — a week card is for scanning
+  // the plan, not for reading a workout report.
   const sub = s.substitutedBy;
   const run = sub ?? s.matchedRun;
   if (run) {
@@ -188,29 +192,24 @@ function SessionRow({ s }: { s: SessionStatus }) {
     ]
       .filter(Boolean)
       .join(" · ");
-    const delta = s.distanceDeltaMi ?? 0;
     return (
       <li className={`session ${sub ? "substituted" : s.status}`}>
-        <details className="session-detail">
-          <summary>
-            <span className="session-main">
-              {sub ? <s className="session-planned">{line}</s> : null}
-              <strong className={sub ? "session-actual" : undefined}>
-                {sub ? actual : line}
-              </strong>
-              {!sub && run.averageHeartrate ? (
-                <span className="session-note">
-                  ran {run.distanceMi.toFixed(2)} mi · {paceToString(run.paceSecPerMi)}/mi
-                  {" · "}
-                  {run.averageHeartrate} bpm
-                  {s.assessment ? ` · ${s.assessment.label}` : ""}
-                </span>
-              ) : null}
+        <div className="session-row">
+          <div className="session-main">
+            {sub ? <s className="session-planned">{line}</s> : null}
+            <strong className={sub ? "session-actual" : undefined}>
+              {sub ? actual : line}
+            </strong>
+            <span className="session-note">
+              {sub
+                ? "Swapped in for the planned session."
+                : `ran ${run.distanceMi.toFixed(2)} mi · ${paceToString(run.paceSecPerMi)}/mi${
+                    run.averageHeartrate ? ` · ${run.averageHeartrate} bpm` : ""
+                  }`}
             </span>
-            <span className="session-badge">{badge ?? "Done"}</span>
-          </summary>
-          <RunStats run={run} deltaMi={delta} assessment={s.assessment} />
-        </details>
+          </div>
+          <span className="session-badge">{badge ?? "Done"}</span>
+        </div>
       </li>
     );
   }
@@ -658,25 +657,32 @@ export function Dashboard() {
       {tab === "recent" ? (
         <section className="panel">
           <h2>Recent</h2>
+          <p className="muted small">Tap a run for splits and full stats.</p>
           <ul className="run-list">
             {report.recentRuns.map((run) => {
+              const assessment = assessRun({ run, plan });
               const bits = [
                 `${run.distanceMi.toFixed(2)} mi`,
                 `${paceToString(run.paceSecPerMi, 10)}/mi`,
                 formatDuration(run.movingTimeSec),
                 run.averageHeartrate ? `${run.averageHeartrate} bpm` : null,
-                run.elevationFt ? `${run.elevationFt} ft` : null,
               ].filter(Boolean);
               return (
                 <li key={run.id}>
-                  <div>
-                    <strong>
-                      {weekdayShort(run.startDate)} {formatShortDate(run.startDate)}
-                    </strong>
-                    <span>
-                      {run.name} · {bits.join(" · ")}
-                    </span>
-                  </div>
+                  <details className="session-detail">
+                    <summary>
+                      <span className="session-main">
+                        <strong>
+                          {weekdayShort(run.startDate)} {formatShortDate(run.startDate)}
+                          {" · "}
+                          {assessment.label}
+                          {run.condition ? ` · ${run.condition}` : ""}
+                        </strong>
+                        <span className="session-note">{bits.join(" · ")}</span>
+                      </span>
+                    </summary>
+                    <RunStats run={run} assessment={assessment} />
+                  </details>
                 </li>
               );
             })}
