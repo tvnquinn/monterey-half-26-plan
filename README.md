@@ -14,19 +14,43 @@ Personal half marathon training coach for **Monterey Bay Half (Nov 8, 2026)**.
 
 It opens full-screen like an app. For best results keep using Safari the first time.
 
-## Learnings
+## Start here
 
-See **[LEARNINGS.md](./LEARNINGS.md)** — preferences from Quinn’s iteration loops (schedule, goals, UI, Higdon comparison, pitfalls).
+**[LEARNINGS.md](./LEARNINGS.md) is the living document.** Athlete profile from real
+watch data, every model calibration and the evidence behind it, validation
+results, the bug catalogue, comparison against published Higdon/Pfitzinger
+plans, and a Corrections section listing beliefs that turned out to be wrong.
+
+Read it before changing the plan or the model — several obvious-seeming ideas
+have already been tried and disproved.
 
 ## What it does
 
-- 15-week plan with Chicago + Italy constraints (Italy week of Sep 14 = zero running)
+- 15-week plan around real constraints (Friday long, never Saturday; Chicago
+  travel; Italy 10–22 Sep with a hard zero week)
 - Log runs via screenshots, Health JSON/GPX, or manual entry
-- Matches runs to sessions; weekly mileage + long-run tracking
-- Dynamic A/B/C goal odds + half estimate from logged runs
-- Per-session pace (+ HR on RP/race days) on flat session rows
-- Summary narrative (ahead / on track / behind)
-- Calendar `.ics` export
+- Matches runs to sessions; off-schedule runs absorb the planned session they
+  most resemble, with the plan struck through rather than deleted
+- Classifies what each run actually was (easy / steady / hard / long, plus
+  negative-split detection) from heart rate and splits
+- Four-tier goal odds (A / A- / B / C) from a race-day projection, with
+  "if you raced today" shown alongside
+- Half estimate anchored on his prior race and moved by efficiency-factor
+  trend, Riegel from genuine hard efforts, durability and volume
+- Runs can be flagged ill / injured / hot so a bad fortnight doesn't read as
+  lost fitness
+- Summary narrative, weekly mileage history, calendar `.ics` export
+
+## Model at a glance
+
+```
+estimate    = what you'd run today
+projection  = race day, if you follow the plan   ← the goal odds come from this
+```
+
+Validated out-of-sample against his real 2:15:51 half: **+4.5 min (3.3%)**.
+Pace-model backtest over 30 held-out runs: **MAE 37 s/mi vs a 64 s/mi naive
+baseline (skill +42%)**.
 
 ## Stack
 
@@ -40,6 +64,23 @@ See **[LEARNINGS.md](./LEARNINGS.md)** — preferences from Quinn’s iteration 
 cp .env.example .env.local   # if present
 npm install
 npm run dev
+```
+
+## Analysis scripts
+
+```bash
+npx tsx scripts/validate-history.mts      # out-of-sample vs his real half
+npx tsx scripts/backtest.mts              # pace model, old vs new
+npx tsx scripts/simulate-adherence.mts    # projection at 100/90/80/60% of plan
+npx tsx scripts/explain-projection.mts    # estimate -> projection, step by step
+npx tsx scripts/elev-analysis.mts         # grade cost fitted from his splits
+```
+
+## Syncing run data to production
+
+```bash
+curl -X POST https://half-marathon-plan-kappa.vercel.app/api/openclaw/ingest \
+  -H "Content-Type: application/json" --data @runs.json
 ```
 
 ## Deploy

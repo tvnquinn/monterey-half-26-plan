@@ -1,106 +1,257 @@
-# Learnings from Quinn’s iterations
+# Learnings
 
-Preferences and product decisions distilled from building/iterating the Monterey Bay Half coach (Jul 2026). Use this when changing the plan or UI so we don’t re-learn the same things.
+Everything worth carrying forward from building and iterating this coach. Written so that picking the project up cold — months later, or for a different race — gives you the athlete profile, the model's calibration and *why each number is what it is*, the bugs already found, and the beliefs that turned out to be wrong.
 
-## Athlete & constraints
+**Read the "Corrections" section before trusting anything you remember.** Several confident claims in earlier versions of this file were disproved by real data.
 
-- **Athlete:** Quinn TV · race **Monterey Bay Half · 11/8/2026**
-- **Design target = B `2:10` (~9:55/mi)**; A `2:00` is stretch; C `2:30` finish-strong
-- **Prior half:** `2:15:56` → treat as **~2:16** (~10:23/mi)
-- **True easy HR ~143 bpm**; 150+ usually surge/drift
-- **HR zones (estimated):** Z1 ≤138 · Z2 139–152 · Z3 153–165 · Z4 166–179 · Z5 180+
-- **Injury history:** knee / calf → protect easy days; don’t stack aggressive early quality
-- **Travel:** Chicago late Jul/early Aug (max ~2 easy runs) · Italy **Sep 10–22** with **full zero week of Sep 14**; first run back **Wed Sep 23** (not on trip end day)
-- Can run **Wed before Italy flight**; avoid packing runs onto travel day
+Last substantive update: **11 Aug 2026**.
 
-## Schedule preferences
+---
 
-- Prefer **Friday long** + **Sunday short** (easy / strides / threshold / B-pace)
-- **Never Sat + Sun**
-- Default midweek: **Tue + Wed short 4th day** (~3 mi easy, or bike/elliptical if knee talks)
-- **Strength 2×/week** (15 min: single-leg calf raises, hip abduction, step-downs) on non-run days
-- Week 7 exception: **Tue + Wed** before Italy flight (no 4th day into travel)
-- Weeks are **Mon–Sun**; race is **Sunday Nov 8** (Wed sharpen + Fri shakeout)
+## 1. Athlete profile — measured, not assumed
 
-## Pace / speed (important)
+Everything here comes from watch data in `data/history.json` (65 runs, 54 with heart rate, Feb 2025 – Aug 2026).
 
-- Easy ~12:00–12:40/mi does **not** need to become race pace overnight — easy stays easy (Z2)
-- Quality workouts anchor to **B-pace ~9:45–10:00**, not A 9:09 (that’s threshold/VO2 for current fitness)
-- Progression: strides → threshold Sundays alternating with B-pace practice → continuous B-pace miles
-- Threshold = “comfortably hard, could hold ~1 hr” (2×8–10 min)
-- Quality lives on **Sunday** after Italy rebuild; Friday stays the long
-- Summer heat understates fitness vs cool Nov race; Monterey is flat — model credits both
+| | |
+|---|---|
+| Prior half | **2:15:51**, 22 Jun 2025, 13.16 mi, avg HR **174**, max 188 |
+| First half | 2:22:18, 8 Jun 2025, avg HR 171 |
+| Max HR observed | **189** (during a half, never a max test — true max is probably higher) |
+| All-time best week | **19.8 mi** |
+| Median run, last 6 months | **4.50 mi** |
+| Median training elevation | **36–42 ft/mi** (San Francisco) |
+| Median run temperature | **62 °F** (range 52–77; only one run ever above 70) |
+| Race | Monterey Bay Half, 8 Nov 2026 — flat (~3 ft/mi), ~58 °F |
+| Goals | A `2:00` · A- `2:05` · **B `2:10` (design target)** · C `2:30` |
+| Expected race HR | ~175 |
 
-## Training philosophy (vs famous plans)
+### Hard-won facts about how he responds
 
-- **Closest famous plan:** Hal Higdon **Intermediate 1** half (long ladder to **10**, late quality, 2-week taper)
-- **4 run days/week** keeps long-run share nearer ~35–42% (3 days pushed longs to 45–48%)
-- Rebuild after Italy: **13 → 16 → 19 → 16 cutback → 22 peak** (no five-week grind)
-- Weekly `targetMi` is derived from non-optional non-race sessions; race week bar = training only
-- Easy intensity is more **Daniels / 80-20 / Z2** than classic Higdon pace charts
-- Peak long **10 mi**; Italy zero requires softer neighbors
+- **Built from zero to 13.1 in ~7 weeks (2025) on 90 lifetime miles.** Weekly volume peaked at 19.8.
+- **The 2:22 → 2:15:51 jump in 14 days decomposes as ~2.4 min from racing harder (HR 171→174) and ~4.0 min from real fitness (EF +3.0%).** Don't quote the 6.5 min as pure fitness.
+- **He never returns from a break at under 4 miles.** After 244 days off: 4.21 mi. After 21 days off: **10.06 mi**. After 13 days off while ill: 4.84 mi. Rebuild weeks that start below ~4.5 mi waste a week.
+- **Durability is his strength; consistency is his limiter.** The May 2026 10-miler was 2h16m at HR 139–153 with **−1.4% decoupling** (excluding one climb mile). He can hold Z2 for half-marathon *duration* — he just can't yet hold it *fast*.
+- **Intensity discipline is already fixed.** 2025: 12 of 13 runs ≥2 mi were Z3/Z4. 2026: 9 of 13 are Z2. Don't re-teach this lesson.
+- **He likes a specific 4.5 mi route** with a start and a destination. Standardising easy days on it is training-neutral and adherence-positive — do it.
 
-## Plan / coaching rules that stuck
+### Efficiency factor history (speed per heartbeat, the core fitness signal)
 
-- Weekly mileage target = **one number**, not a wide band (e.g. `18`, not `15–22`)
-- Show **over target** when logged > weekly target
-- Progress bar = logged vs **that** target
-- Dedupe near-duplicate runs (±1 day, similar distance) so mileage isn’t double-counted
-- Odds / Est must **update from logged runs**, but stay **honest early-season** (no inflated sub-2 %)
-- Single **%** per goal — not ranges like `20–30%`
-- Collapsed per-session guidance → **flat rows** (no accordion): distance · pace band · HR zone · notes if any
-- Don’t flood the UI with a separate “recommendations” card on the landing view
+```
+2025-05  0.0339      2026-03  0.0336      2026-06  0.0303   ← stress dip
+2025-06  0.0339      2026-04  0.0339      2026-07  0.0315   ← recovering
+                     2026-05  0.0333      2026-08  (ill, excluded)
+```
 
-## UI / product preferences
+He was at **PR-equivalent efficiency as recently as April 2026**. The current gap is ~7% and recent — regaining, not building from scratch.
 
-### Information architecture
+---
 
-- Tabs: **This week · Summary · Log · Recent · Backtest** in **one horizontal scroll row**
-- Landing = this-week cards (horizontal), guidance **collapsed under each run**
-- **Summary** = all-week mileage + planned **long** + narrative (ahead / on track / behind)
-- Log tab includes how updates work + screenshot / Health / manual
-- Week scroller should **open on the current week**
+## 2. Hard constraints
 
-### Branding & copy
+- **Long run Friday. Never Saturday.** Pickleball Sat/Sun, unplanned.
+- Run days: **Tue · Wed · Fri (long) · Sun**. Four days.
+- **Mon** heavy lower strength · **Wed** light strength after the easy run · **Thu full rest** (Higdon rests before the long run; this used to be a strength day and shouldn't be).
+- Knee / calf history — protect easy days, don't stack quality early.
+- Travel: Chicago late Jul/early Aug. **Italy 10–22 Sep**, with the week of 14 Sep a hard zero; first run back Wed 23 Sep.
+- Weeks are Mon–Sun. Race is Sunday 8 Nov.
 
-- Title: **Monterey Bay Half 11/8**
-- Subtitle: **Training plan · Quinn TV**
-- Goals card titled **Goals** (A/B/C + Est)
-- Dates as **7/27**, not `07-27`
-- Cut unnecessary wording; labels should be self-explanatory or removed
-- Removed confusing Pace / Conf / Easy grid (was meaningless without context)
+---
 
-### Visual
+## 3. The model
 
-- Theme: **Monterey night** — cool water / fog / mountain, **dim for night phone use**
-- Not neon lime / purple AI defaults
-- Fonts: calm display (Fraunces) + readable body (Source Sans 3)
-- Brand title readable on iPhone one line; Goals heading prominent; **% not oversized**
-- Week cards **nearly full width** with a thin peek + edge fade so swipe is obvious
-- Recent run stats on **one line** (`·` separated), not multi-column stacks
+`src/lib/fitness.ts` is the core. The estimate is **anchored on a real race result and moved by observed fitness change** — never inferred from scratch off training runs.
 
-### Data entry reality
+```
+estimate = priorHalf
+         × (1 − EF_trend_delta × 0.7)     damping: EF drift isn't all fitness
+         × durabilityFactor(longest run)
+         × volumeFactor(built weekly volume)
+         − conditionsCredit                terrain only, see below
+         [× blended 35% with Riegel if a genuine hard effort exists]
 
-- Strava API subscription blocked full sync → prefer **GPX / Health JSON / screenshots / manual**
-- Screenshot parse needs vision API key when used
-- Seed / manual duplicates of the same outdoor run inflate weekly mileage — prefer GPX truth
+projection = blend(estimate, priorHalf, by confidence)
+           − improvement credit earned from logged volume × adherence
+```
 
-## Things that bit us (avoid repeating)
+`estimatedHalfSec` = **what you'd run today**. `projectedSec` = **race day, if you follow the plan** — and the goal odds come from the projection, not the estimate. Both are shown in the UI because conflating them is the single most natural misreading.
 
-1. Hard-capping upcoming weeks to 6 hid the rest of the plan
-2. Wide weekly bands felt vague; single targets feel actionable
-3. Early odds model over-credited “weeks left” → ~36% sub-2 felt too confident; honest early A closer to ~10%
-4. Separate recommendation cards + wordy collapsed text created noise
-5. Sat + Sun doubles conflicted with how Quinn actually trains
-6. Peak long at 8 was too soft vs Higdon Intermediate 1 expectations
-7. Hand-authored `targetMi` drifted from session sums → progress capped ~97%
-8. Quality paced at A-goal when fitness is ~10:20 — injury bait; design around B
-9. 3 days/week forced long runs to 43–48% of weekly volume
-10. Italy end date + first rebuild run on same day (off-by-one)
+### Calibration decisions and their evidence
 
-## Open / optional later
+| Knob | Value | Why |
+|---|---|---|
+| EF damping | 0.7 | EF drift partly reflects weather, terrain, freshness |
+| EF slope clamp | ±1.5%/wk | Nobody sustains more aerobic gain than that |
+| Elevation cost | **0.20 s/mi per ft/mi** | Two independent methods agree: within-run regression over 22 mile-splits with HR controlled gives 0.489 s/ft of *net* change → ~2.2 min over 13.1 at his terrain; 0.20 on *cumulative* gain gives ~1.8 min. A whole-run regression says 0.64 but absorbs route choice — he picks hills on easy days. Deliberately conservative. |
+| Heat credit | **none** | He trains in SF at a 62 °F median with one run ever above 70. His prior-half anchor was run at 56 °F. There is no heat penalty to refund. An earlier month-based rule handed out ~4 free minutes for "summer training." |
+| Riegel floor | **40% of race distance** (5.24 mi) | The exponent is dependable within ~3×. A 3-mile rep session extrapolated 4.4× to a half and got blended at 35% weight. |
+| Endurance effort | ≥10 mi **and** Z3+ HR | Distance alone let an *easy* 10-miler at HR 146 project a 2:42 half. |
+| Long-run decay | full to 35 d, half at 120 d, gone at 240 d | A hard 56-day cutoff discarded a 10-miler at 69 days and reported his longest as 5.76 mi. |
+| Confidence gate | uses **undecayed** longest inside 150 d | Gating on the decaying value made confidence flip medium→low overnight on a pure calendar tick. Fitness fades; the fact you ran 10 miles doesn't. |
+| Race-experience credit | downside sigma 1.15 → ~1.03 | Two completed halves with <5% HR drift genuinely lower blow-up risk. Raises C and B; correctly leaves A alone — experience makes you safer, not faster. |
+| Improvement credit | 20 s/wk × **adherence** | Was granted per remaining calendar week: ~7 free minutes at 15 weeks out, earned by nothing. |
 
-- Health Auto Export auto-push if wanted
-- Gemini/OpenAI key for screenshot logging
-- Weather API instead of month heuristic for heat adjustment
-- If fitness rises, tighten B-pace band toward A only when earned
+### Run condition flags
+
+`RunActivity.condition` (`illness` / `injury` / `heat` / `travel` / `altitude`) keeps a run in the mileage and durability totals but **out of the EF trend**. Set it from the manual log form ("Anything off?").
+
+Worth the feature: one sick run on 11 Aug swung the trend from −1.3% (R²=0.01) to −5.8% (R²=0.16) and the estimate from 2:21 to 2:24 — three minutes of "fitness loss" that was a head cold, and it would have dragged for weeks because the trend fits over 16 weeks.
+
+### Validation
+
+- **Out-of-sample against his real 2:15:51**, using only data that existed the day before: predicted **2:20:24, error +4.5 min (3.3%)**.
+- **Pace-model backtest**, 30 held-out runs: MAE **37 s/mi** against a 64 s/mi naive-mean baseline → **skill +42%**.
+- Ridge + feature gating vs the original 7-feature OLS is roughly **tied** at n≈50. It's a small-sample safeguard, not an accuracy win. Don't claim otherwise.
+
+---
+
+## 4. Plan design rules for Quinn
+
+Current shape (15 weeks, race 8 Nov):
+
+```
+wk    1    2    3    4    5     6    7   8     9   10    11    12    13    14   15
+mi   11   12   15   18   20  23.5   10   0  15.5   20  22.5  20.7  25.5  17.5  9.5
+long  –    5    6    7    8     7    –   –   6.5  7.5     9     6    12     7    –
+                                  ↑TT                        ↑TT          peak
+```
+
+- **Peak 25.5 mi, peak long 12** — between Higdon Novice 2 and Intermediate 1. He has run this distance before; Novice 1 is too soft.
+- **Long run is 40–47% of weekly volume, and that is correct.** See Corrections.
+- **Two 10K time trials** (6 Sep pre-Italy, 18 Oct). Solo is fine.
+- **Easy days at 4.5 mi** wherever load allows. Taper and race week keep shorter runs.
+- **No cutback before a travel break.** The break *is* the de-load; tapering into it wastes a week.
+- Every jump ≤ ~20% except the two post-break returns, which are returns rather than progressions.
+
+### Why the time trials matter more than they look
+
+The estimator needs a hard effort ≥5.24 mi at Z3+ to feed Riegel. Without one it reasons from the June 2025 race — on 1 Oct that would be a **466-day-old** anchor.
+
+```
+standing on 1 Oct, no Sept effort   est 2:23:37   method prior_only
+standing on 1 Oct, with a 10K TT    est 2:18:11   method hard_effort
+```
+
+**A 5K does nothing** — 3.1 mi is under the Riegel floor; verified, the estimate doesn't move. Minimum useful TT distance is ~5.5 mi. A 5K is also poorly targeted for him: VO2max isn't his limiter.
+
+**The TT only helps if it's actually raced.** Riegel from that 10K swings the implied half **2:13 / 2:20 / 2:27** depending on whether he races it, runs it at half pace, or jogs it. Two of those are worse than no data at all.
+
+### Adherence sensitivity
+
+Simulated forward from 12 Aug, standing on race morning:
+
+| plan completed | miles | race-day projection | B odds |
+|---|---|---|---|
+| 100% | 209 | **2:11:22** | 41% |
+| 90% | 188 | 2:12:39 | 33% |
+| 80% | 167 | 2:13:22 | 28% |
+| 60% | 126 | 2:17:12 | 18% |
+| 0% | 0 | 2:21:09 | 8% |
+
+Roughly **a minute per 10% of mileage** in the 80–100% band, steepening below. Adherence shows up far more in goal *odds* than in headline time. Assumes EF returns toward 0.0335 in proportion to volume run — that endpoint is an assumption, not a model output.
+
+---
+
+## 5. Comparison to published plans
+
+| | weeks | run days | peak wk | peak long | long % | tune-ups | taper |
+|---|---|---|---|---|---|---|---|
+| **This plan** | 15 | 4 | 25.5 | 12 | 47% | 2 | 2 wk |
+| Higdon Novice 1 | 12 | 4 | 23 | 10 | 43% | 2 | 1 wk |
+| Higdon Novice 2 | 12 | 4 | 23 | 12 | 52% | 2 | 1 wk |
+| Higdon Intermediate 1 | 12 | 5 | 34 | 12 | 35% | 2 | 1 wk |
+| Pfitzinger (*Faster Road Racing*) | 12 | 5–7 | 46–63 | 16 | ~30% | — | — |
+
+Sources: [Novice 1](https://www.halhigdon.com/training-programs/half-marathon-training/novice-1-half-marathon/) · [Novice 2](https://www.halhigdon.com/training-programs/half-marathon-training/novice-2-half-marathon/) · [Intermediate 1](https://www.halhigdon.com/training-programs/half-marathon-training/intermediate-1-half-marathon/) · [Pfitzinger overview](https://runningwithrock.com/pete-pfitzinger-half-marathon-plans/)
+
+The gap to Intermediate 1 is almost entirely its **fifth run day** — that's what buys the extra 8 miles, not longer runs. Pfitzinger is a different tier entirely and not a useful reference at this volume.
+
+---
+
+## 6. Corrections — earlier beliefs that were wrong
+
+Kept explicitly, because they were stated confidently and repeated.
+
+1. **"Long run should be 30–35% of weekly volume."** Wrong reference. That's marathon guidance where weekly volume is double. Higdon Novice 2 runs its long at **52%**; Novice 1 at 43%. At four days and low mileage, 40–47% is textbook.
+2. **"Closest famous plan is Higdon Intermediate 1, long ladder to 10."** Intermediate 1 is 5 days, 34 mi peak, and its long ladder goes to **12**. The plan actually matched **Novice 1** almost exactly before being deliberately moved up.
+3. **The seed data was fabricated.** Every number the app showed before 28 Jul — including a 2:12 estimate — was computed from 12 invented runs. Real data put it 10+ minutes slower.
+4. **"You're ~2 min/mi slower than your 2025 peak."** True in raw pace, misleading in cause: he now runs at HR ~149 versus ~166 then. Much of the gap is deliberate intensity choice, not decline. Efficiency factor is the honest comparison.
+5. **"+12.6% HR drift on the 7/27 run" read as fading.** It was a progression run — splits went 13:14 → 10:43. Without per-mile splits, decoupling and negative splits are indistinguishable.
+6. **"Summer training understates cool-race fitness."** Not in San Francisco. See heat credit above.
+7. **"The new pace model beats the old one."** At n≈50 they're tied (MAE 37.2 vs 34.0 earlier, skill 0.42 vs 0.47). The win is robustness at small n.
+8. **"Strava Premium is needed for the data."** It isn't. The free bulk archive export (Settings → Download or Delete Your Account → Request Archive) gives original `.FIT` files at 1 Hz.
+9. **"The new adherence scenarios are ~1.5 min faster."** They were *slower*. Stated without checking; caught by Quinn.
+
+---
+
+## 7. Bug catalogue
+
+Every one of these shipped and was caught later. Check for the same class of error when extending.
+
+**Estimation**
+- Flat `bestPace × 0.78 × 13.1` — one downhill run moved the projection **28 minutes**.
+- Riegel applied to easy runs — a 12:25/mi jog at HR 155 projected a **2:54** half.
+- The hard-effort rule discarded his *actual half* — 13.15 mi at 10:20 sits only 6% under his median, so a speed-only test never fired.
+- Riegel from a 3-mile rep session made **80% of the plan project faster than 100%**.
+- Taper read as detraining: volume/durability keyed to the trailing 28 days, so race week looked like fitness loss.
+- Improvement credit granted per calendar week regardless of training.
+- Fixed uncertainty spread produced "94% for C" at 15 weeks out.
+
+**Data integrity**
+- `dedupeRuns` scored a `gpx-` id at +30 and heart rate at +5 — HR-less copies beat richer ones.
+- `/api/openclaw/ingest` validated away `splits`, `temperature`, `condition` despite the columns existing.
+- Duplicate `raw` key in `runToRow` silently dropped the condition flag.
+- Imputed monthly-average paces were scored in the backtest — measuring the imputation, not the model.
+
+**Time and state**
+- `toISOString().slice(0,10)` for day keys — evening Pacific runs landed on the next UTC day.
+- Hard thresholds on decaying quantities: confidence flipped medium→low on a date change with no training change.
+- `buildCoachReport` filtered weeks to `id >= current`, so finished weeks vanished.
+
+**Dead weight**
+- `buildRecommendations` (~160 lines) shipped on every API response and was never rendered.
+
+---
+
+## 8. UI decisions that stuck
+
+- Tabs: **This week · Summary · Log · Recent**. Week scroller opens on the current week; finished weeks stay, dimmed and labelled "done".
+- **Week cards are for scanning, Recent is for detail.** Splits tables and full stats belong on Recent, not inside a week card.
+- Off-schedule runs **absorb** the planned session they most resemble (distance-dominant, date as tiebreak). Planned line struck through, actual run beneath — never delete what was asked for.
+- Runs get a character assessment (`easy` / `steady` / `hard` / `long`, plus progression detection) that deliberately **does not reuse `SessionType`** — a 2.9 mi jog that drifted into Z3 is not a "threshold session".
+- One estimated pace per row, not a band. Non-run sessions in a distinct warm hue.
+- Show **both** "if you raced today" and "race day, on plan" — the odds come from the second.
+- Single % per goal. Dates as `7/27`. Dim theme for night phone use.
+
+---
+
+## 9. Operations
+
+**Deploy:** push to `main` → Vercel auto-deploys. No CLI token needed.
+**Live:** https://half-marathon-plan-kappa.vercel.app
+
+**Sync run data to production:**
+```bash
+curl -X POST https://half-marathon-plan-kappa.vercel.app/api/openclaw/ingest \
+  -H "Content-Type: application/json" --data @runs.json
+```
+Storage is Supabase; `data/runs.json` is local-only and gitignored. Note Supabase stores timestamps in UTC — `runDayKey` converts back to Pacific, so a run logged at 19:00 PT appears as the next day in raw rows and the correct day everywhere else.
+
+**Scripts:**
+```bash
+npx tsx scripts/validate-history.mts      # out-of-sample vs his real half
+npx tsx scripts/backtest.mts              # pace model, old vs new
+npx tsx scripts/simulate-adherence.mts    # projection at 100/90/80/60% of plan
+npx tsx scripts/explain-projection.mts    # estimate → projection, step by step
+npx tsx scripts/elev-analysis.mts         # grade cost fitted from his splits
+```
+
+---
+
+## 10. Open items
+
+- **Strava bulk archive** (`.FIT`, 1 Hz) would give per-second altitude and speed — enough to fit his true grade-adjusted pace curve and replace the 0.20 constant with a measured one. Currently the largest single source of modelling uncertainty.
+- **March 2026 is partially reconstructed.** Nine runs, 37.87 mi, transcribed from workout screens; the HAE export window starts 28 Apr.
+- **Max HR is unverified.** 189 was recorded during a half, and averaging 174 for 2h16m at 92% of max is implausibly high. If true max is nearer 195–200, the Z2 band (139–152) is set too low and easy runs are being throttled unnecessarily.
+- **Pickleball and strength load are invisible.** The export shows 23 pickleball and 23 strength sessions alongside 39 runs. Real training load is well above the running mileage the app displays — a reason to stay conservative on volume jumps.
+- **Supabase has no temperature column.** Conditions credit computes to zero for him either way, but a hot-weather block would need the migration.
+- Five runs still carry `raw.paceImputed` (Oct 2025, Apr 3/7/21 2026) — distance exact, pace from a month average, excluded from model fitting.
