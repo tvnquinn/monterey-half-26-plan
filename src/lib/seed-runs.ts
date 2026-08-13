@@ -913,4 +913,18 @@ export const seedRuns: RunActivity[] = [
     condition: "illness",
     splits: [{"mile":1,"movingTimeSec":830,"paceSecPerMi":830,"elevationGain":-55,"averageHeartrate":148},{"mile":2,"movingTimeSec":843,"paceSecPerMi":843,"elevationGain":-140,"averageHeartrate":144},{"mile":3,"movingTimeSec":781,"paceSecPerMi":781,"elevationGain":2,"averageHeartrate":153},{"mile":4,"movingTimeSec":793,"paceSecPerMi":793,"elevationGain":1,"averageHeartrate":154},{"mile":4.8,"movingTimeSec":707,"paceSecPerMi":884,"elevationGain":-2,"averageHeartrate":149}],
   },
+  {
+    id: "hae-2026-08-12-3.69",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-08-12T09:15:00-07:00",
+    distanceMi: 3.69,
+    movingTimeSec: 2776,
+    elapsedTimeSec: 2900,
+    paceSecPerMi: 752,
+    elevationFt: 4,
+    averageHeartrate: 153,
+    maxHeartrate: 176,
+    splits: [{"mile":1,"movingTimeSec":756,"paceSecPerMi":756,"elevationGain":-28,"averageHeartrate":148},{"mile":2,"movingTimeSec":756,"paceSecPerMi":756,"elevationGain":2,"averageHeartrate":152},{"mile":3,"movingTimeSec":745,"paceSecPerMi":745,"elevationGain":-2,"averageHeartrate":156},{"mile":3.69,"movingTimeSec":519,"paceSecPerMi":752,"elevationGain":2,"averageHeartrate":160}],
+  },
 ];
