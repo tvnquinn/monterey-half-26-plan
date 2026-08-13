@@ -80,6 +80,7 @@ projection = blend(estimate, priorHalf, by confidence)
 | Knob | Value | Why |
 |---|---|---|
 | EF damping | 0.7 | EF drift partly reflects weather, terrain, freshness |
+| EF slope shrinkage | `slope² / (slope² + SE²)` | Ten efficiency readings scattered 0.0305–0.0344 (R²=0.05) still moved the estimate 2.4 min — one ordinary run could swing the projection more than a week of training. Shrinking by signal share fixes it. Chosen over an R² threshold because R² conflates scatter with sample size: a real +0.5%/wk trend under 8% noise has R²=0.08 but 77% signal at n=40, while his R²=0.05 at n=10 is 30%. |
 | EF slope clamp | ±1.5%/wk | Nobody sustains more aerobic gain than that |
 | Elevation cost | **0.20 s/mi per ft/mi** | Two independent methods agree: within-run regression over 22 mile-splits with HR controlled gives 0.489 s/ft of *net* change → ~2.2 min over 13.1 at his terrain; 0.20 on *cumulative* gain gives ~1.8 min. A whole-run regression says 0.64 but absorbs route choice — he picks hills on easy days. Deliberately conservative. |
 | Heat credit | **none** | He trains in SF at a 62 °F median with one run ever above 70. His prior-half anchor was run at 56 °F. There is no heat penalty to refund. An earlier month-based rule handed out ~4 free minutes for "summer training." |

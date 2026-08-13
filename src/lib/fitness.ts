@@ -44,6 +44,8 @@ export interface EfTrend {
   /** Total fractional change across the observed window, clamped. */
   deltaPct: number;
   r2: number;
+  /** Fraction of the raw slope judged to be signal rather than noise. */
+  signalShare: number;
 }
 
 export type EstimateMethod = "prior_only" | "ef_trend" | "hard_effort" | "blended";
@@ -166,12 +168,31 @@ export function fitEfTrend(points: EfPoint[]): EfTrend | null {
   }
   const r2 = ssTot > 0 ? clamp(1 - ssRes / ssTot, 0, 1) : 0;
 
+  // Shrink the slope toward zero by how much of it is actually signal.
+  //
+  // Without this, ten efficiency readings scattered between 0.0305 and 0.0344 —
+  // an R² of 0.05, meaning the line explains 5% of the variance — still moved
+  // the race estimate by 2.4 minutes. Adding a single ordinary run could swing
+  // the projection more than a week of training, because the fit was reading
+  // noise as trend.
+  //
+  // Signal share is slope² / (slope² + SE²): when the standard error rivals the
+  // slope itself, almost nothing survives; when the trend is clean, it passes
+  // through nearly intact. This is why the synthetic athletes still recover
+  // their known trajectories — their data is clean, so R² is high.
+  const seSlope =
+    xs.length > 2 ? Math.sqrt(ssRes / (xs.length - 2) / den) : Infinity;
+  const signalShare = Number.isFinite(seSlope)
+    ? rawSlope ** 2 / (rawSlope ** 2 + seSlope ** 2)
+    : 0;
+  const shrunkSlope = rawSlope * signalShare;
+
   // No one gains more than ~1.5%/wk of aerobic efficiency for long.
-  const slopePerWeek = clamp(rawSlope, -0.015, 0.015);
+  const slopePerWeek = clamp(shrunkSlope, -0.015, 0.015);
   const weeks = spanDays / 7;
   const deltaPct = clamp(Math.exp(slopePerWeek * weeks) - 1, -0.08, 0.1);
 
-  return { n: points.length, spanDays, slopePerWeek, deltaPct, r2 };
+  return { n: points.length, spanDays, slopePerWeek, deltaPct, r2, signalShare };
 }
 
 /** Median pace across recent runs — the reference for "was this actually fast?". */
@@ -456,7 +477,7 @@ export function estimateHalf(input: EstimateInput): HalfEstimate {
     efBased = priorHalfSec * (1 - efTrend.deltaPct * EF_DAMPING);
     const dir = efTrend.deltaPct >= 0 ? "faster" : "slower";
     basis.push(
-      `EF ${(efTrend.deltaPct * 100).toFixed(1)}% ${dir} at the same HR over ${efTrend.spanDays}d (${efTrend.n} runs, R²=${efTrend.r2.toFixed(2)}).`,
+      `EF ${(efTrend.deltaPct * 100).toFixed(1)}% ${dir} at the same HR over ${efTrend.spanDays}d (${efTrend.n} runs, R²=${efTrend.r2.toFixed(2)}, ${Math.round(efTrend.signalShare * 100)}% signal).`,
     );
   } else {
     basis.push(
