@@ -252,7 +252,32 @@ npx tsx scripts/elev-analysis.mts         # grade cost fitted from his splits
 
 ---
 
-## 10. Known model blind spots
+## 10. Considered and rejected
+
+Ideas that looked right, were built and measured, and did not survive. Don't
+re-litigate without new evidence.
+
+**Normalising efficiency factor for run duration.** EF genuinely falls as a run
+lengthens — cardiac drift, measured at ~7%/hr across his own runs (n=17,
+R²=0.18). The worry was that lengthening long runs would read as fitness
+decline. Two attempts:
+
+1. *Duration as a covariate in the trend regression.* Fails outright. In a
+   training block, duration and date are collinear, and on synthetic athletes
+   with a known +0.5%/wk trend the recovered slope collapsed to **zero**.
+2. *Fixed 5%/hr normalisation before fitting.* Works mechanically — synthetics
+   recover 0.47%/wk against 0.50 true — but measuring the actual benefit showed
+   it was not worth it. Simulating the whole plan at constant fitness with real
+   drift baked in, the uncorrected phantom trend is **0.19 min** of race time;
+   corrected, 0.06 min. A 0.13-minute gain, against a change that moved his
+   live trend from −0.8% to −3.4% on the strength of a single May long run,
+   with no ground truth to validate against.
+
+The confound is real but immaterial *at this plan's shape*, because long runs
+are spread through the block rather than concentrated late. If a future plan
+stacks its longest runs in the final weeks, re-measure before assuming the same.
+
+## 11. Known model blind spots
 
 Things the model cannot see, so don't let a flat projection talk you out of them.
 
@@ -277,7 +302,7 @@ Things the model cannot see, so don't let a flat projection talk you out of them
   9.0 is worth ~2 min; 8.9 → 9.0 is worth the same as 8.0 → 9.0. Do not plan
   training around a bracket edge — it is a lookup table, not physiology.
 
-## 11. Open items
+## 12. Open items
 
 - **Strava bulk archive** (`.FIT`, 1 Hz) would give per-second altitude and speed — enough to fit his true grade-adjusted pace curve and replace the 0.20 constant with a measured one. Currently the largest single source of modelling uncertainty.
 - **March 2026 is partially reconstructed.** Nine runs, 37.87 mi, transcribed from workout screens; the HAE export window starts 28 Apr.
