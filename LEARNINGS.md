@@ -4,13 +4,45 @@ Everything worth carrying forward from building and iterating this coach. Writte
 
 **Read the "Corrections" section before trusting anything you remember.** Several confident claims in earlier versions of this file were disproved by real data.
 
-Last substantive update: **11 Aug 2026**.
+Last substantive update: **16 Aug 2026**.
+
+---
+
+## 0. Where things stand — read this first
+
+**Race:** Monterey Bay Half, 8 Nov 2026. **84 days out** as of 16 Aug.
+
+| | |
+|---|---|
+| Estimate (raced today) | **2:28** |
+| Projection (race day, on plan) | **2:16** |
+| Confidence | medium |
+| Odds | A 6% · A- 13% · **B 25%** · C 86% |
+| Data | 67 runs, 56 with heart rate, 7 with splits |
+
+**Weeks so far:** W1 7.4/11 (Chicago travel, met the 2-run constraint) ·
+W2 0/12 (**flu — excused from adherence**) · W3 **14.69/15, 98%** — first
+complete week since the illness.
+
+**Currently on:** W4, 18 mi, long 7 on Friday. Plan runs
+`11/12/15/18/20/23.5/10/0/15.5/20/22.5/20.7/25.5/17.5/9.5` with longs
+`5/6/7/8/7 → [Italy] → 6.5/7.5/9/6/12/7` and a peak of 25.5 mi.
+
+**Two time trials are the highest-leverage sessions in the block:**
+10K on **6 Sep** (pre-Italy, on the flat Cortina→Zuel rail path if the optional
+Italy run happens) and 10K on **18 Oct**. Riegel swings the implied half
+2:13 / 2:20 / 2:27 depending on whether he races, tempos, or jogs them — two of
+those readings are worse than no data. **They only help if actually raced.**
+
+**Recent trajectory:** heart-rate drift on flat easy running went +5.4% (13 Aug,
+six days post-flu) → **+2.0%** (14 Aug long run, −2.4% grade-adjusted
+decoupling). The illness has cleared aerobically.
 
 ---
 
 ## 1. Athlete profile — measured, not assumed
 
-Everything here comes from watch data in `data/history.json` (65 runs, 54 with heart rate, Feb 2025 – Aug 2026).
+Everything here comes from watch data in `data/history.json` (67 runs, 56 with heart rate, Feb 2025 – Aug 2026).
 
 | | |
 |---|---|
@@ -39,8 +71,13 @@ Everything here comes from watch data in `data/history.json` (65 runs, 54 with h
 ```
 2025-05  0.0339      2026-03  0.0336      2026-06  0.0303   ← stress dip
 2025-06  0.0339      2026-04  0.0339      2026-07  0.0315   ← recovering
-                     2026-05  0.0333      2026-08  (ill, excluded)
+                     2026-05  0.0333      2026-08  0.0307–0.0313
 ```
+
+August readings sit near the recent median. The 11 Aug run is flagged `illness`
+and excluded. **EF falls with run duration** (~7%/hr on his own runs), so a
+78-minute long run reading 0.0307 is not worse than a 45-minute run reading
+0.0315 — see *Considered and rejected* before treating that as decline.
 
 He was at **PR-equivalent efficiency as recently as April 2026**. The current gap is ~7% and recent — regaining, not building from scratch.
 
@@ -185,6 +222,8 @@ Kept explicitly, because they were stated confidently and repeated.
 9. **"The new adherence scenarios are ~1.5 min faster."** They were *slower*. Stated without checking; caught by Quinn.
 10. **"Your max HR is probably wrong and the zones may be throttling you."** Overstated. Same device throughout means consistent bias, and every use of HR in the model is a within-athlete comparison. Absolute accuracy doesn't matter here.
 11. **The projection was too conservative, and it wasn't the estimate's fault.** At 89 days out it read 2:19 — worse than a PR set 14 months earlier off a smaller block, on a hillier course. Cause was three compounding things: adherence crushed by two disrupted weeks, volume bonuses read off *today's* 6 mi/wk instead of race-week load, and a 20 s/wk credit rate. Fixed together; projection moved 2:19:17 → 2:13:33.
+12. **Logged a run on the wrong day** from a stale date in context. Run `date` before writing anything date-stamped — the reminder in context can lag the real clock by a day.
+13. **Built a test that couldn't fail.** Checking whether duration normalisation removed a phantom EF trend, the first version generated synthetic runs *without* drift — so correcting for it could only add error. Confirm the confound is actually present in the fixture before measuring the fix.
 
 ---
 
@@ -230,6 +269,12 @@ Every one of these shipped and was caught later. Check for the same class of err
 ---
 
 ## 9. Operations
+
+**The GitHub repo is the only durable copy.** The local scratchpad has been
+wiped mid-session twice — once losing `node_modules`, once losing `.git/HEAD`
+and `package.json` while leaving `data/` intact. Recovery is `git clone`, then
+re-apply anything uncommitted. Commit run data promptly; don't leave a logged
+run sitting uncommitted.
 
 **Deploy:** push to `main` → Vercel auto-deploys. No CLI token needed.
 **Live:** https://half-marathon-plan-kappa.vercel.app

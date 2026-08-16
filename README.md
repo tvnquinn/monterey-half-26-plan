@@ -16,7 +16,9 @@ It opens full-screen like an app. For best results keep using Safari the first t
 
 ## Start here
 
-**[LEARNINGS.md](./LEARNINGS.md) is the living document.** Athlete profile from real
+**[LEARNINGS.md](./LEARNINGS.md) is the living document.** Section 0 is a
+current-state snapshot — race countdown, latest estimate, weeks completed, what
+is next — so a cold start takes one read. Athlete profile from real
 watch data, every model calibration and the evidence behind it, validation
 results, the bug catalogue, comparison against published Higdon/Pfitzinger
 plans, and a Corrections section listing beliefs that turned out to be wrong.
