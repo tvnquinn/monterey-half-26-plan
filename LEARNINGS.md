@@ -117,6 +117,7 @@ projection = blend(estimate, priorHalf, by confidence)
 | Knob | Value | Why |
 |---|---|---|
 | EF damping | 0.7 | EF drift partly reflects weather, terrain, freshness |
+| EF heart-rate normalisation | **−0.36%/bpm, referenced to 145** | EF is meant to be intensity-independent inside the aerobic zone; for him it is not. Inside the model's 16-week window his heart rate trends **+0.81 bpm/wk at R²=0.72** — 12.4 bpm across the window — because he has been running easy days progressively harder. Uncorrected that is **−4.05% of phantom decline, worth 3.85 min of race time**, and it also halves recovery of a real trend (0.22%/wk recovered against 0.50 true). Corrected: −0.01% phantom, 0.50 recovered. Coefficient fitted as `log(EF) ~ HR + duration + time` over the full history (n=17, R²=0.85) where HR and date are nearly independent (R²=0.02), then held **fixed** — fitting it alongside time inside a block hits the same collinearity trap that returned a zero slope for duration. |
 | EF slope shrinkage | `slope² / (slope² + SE²)` | Ten efficiency readings scattered 0.0305–0.0344 (R²=0.05) still moved the estimate 2.4 min — one ordinary run could swing the projection more than a week of training. Shrinking by signal share fixes it. Chosen over an R² threshold because R² conflates scatter with sample size: a real +0.5%/wk trend under 8% noise has R²=0.08 but 77% signal at n=40, while his R²=0.05 at n=10 is 30%. |
 | EF slope clamp | ±1.5%/wk | Nobody sustains more aerobic gain than that |
 | Elevation cost | **0.20 s/mi per ft/mi** | Two independent methods agree: within-run regression over 22 mile-splits with HR controlled gives 0.489 s/ft of *net* change → ~2.2 min over 13.1 at his terrain; 0.20 on *cumulative* gain gives ~1.8 min. A whole-run regression says 0.64 but absorbs route choice — he picks hills on easy days. Deliberately conservative. |
@@ -302,7 +303,8 @@ npx tsx scripts/elev-analysis.mts         # grade cost fitted from his splits
 Ideas that looked right, were built and measured, and did not survive. Don't
 re-litigate without new evidence.
 
-**Normalising efficiency factor for run duration.** EF genuinely falls as a run
+**Normalising for run duration** — rejected, unlike the heart-rate correction
+above, which was measured the same way and kept. EF genuinely falls as a run
 lengthens — cardiac drift, measured at ~7%/hr across his own runs (n=17,
 R²=0.18). The worry was that lengthening long runs would read as fitness
 decline. Two attempts:

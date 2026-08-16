@@ -26,6 +26,26 @@ const RIEGEL_EXP = 1.06;
 /** EF gains partly reflect weather/terrain/freshness, not just fitness. */
 const EF_DAMPING = 0.7;
 
+/**
+ * Efficiency factor is supposed to be intensity-independent inside the aerobic
+ * zone. For Quinn it is not: it falls about 0.36% per bpm. Fitted as
+ * log(EF) ~ HR + duration + time over his full history (n=17, R²=0.85), where
+ * heart rate and date are nearly independent (R²=0.02) so the coefficient is
+ * not absorbing a real fitness trend.
+ *
+ * This matters because inside the model's 16-week window his heart rate has a
+ * strong upward trend — 0.81 bpm/wk at R²=0.72, 12.4 bpm across the window.
+ * Uncorrected that is -4.5% of phantom EF, against a total reported decline of
+ * -2.0%. He has been running his easy days progressively harder, and the model
+ * was reading that as losing fitness.
+ *
+ * Held fixed rather than fitted alongside time, because HR and date are
+ * collinear within a block — the same trap that made a fitted duration term
+ * return a zero slope on synthetic athletes with a known trend.
+ */
+const EF_HR_LOG_COEF = -0.0036;
+const EF_REFERENCE_HR = 145;
+
 export interface EfPoint {
   dateKey: string;
   weeksAgo: number;
@@ -144,9 +164,12 @@ export function fitEfTrend(points: EfPoint[]): EfTrend | null {
   );
   if (spanDays < 21) return null;
 
-  // x = weeks before today (negated so positive slope = improving over time)
+  // Normalise every reading to a common heart rate before fitting, so a block
+  // spent drifting toward harder easy runs doesn't masquerade as decline.
   const xs = points.map((p) => -p.weeksAgo);
-  const ys = points.map((p) => Math.log(p.ef));
+  const ys = points.map(
+    (p) => Math.log(p.ef) + EF_HR_LOG_COEF * (EF_REFERENCE_HR - p.hr),
+  );
   const mx = mean(xs);
   const my = mean(ys);
 
