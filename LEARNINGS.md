@@ -4,25 +4,25 @@ Everything worth carrying forward from building and iterating this coach. Writte
 
 **Read the "Corrections" section before trusting anything you remember.** Several confident claims in earlier versions of this file were disproved by real data.
 
-Last substantive update: **16 Aug 2026**.
+Last substantive update: **17 Aug 2026**.
 
 ---
 
 ## 0. Where things stand — read this first
 
-**Race:** Monterey Bay Half, 8 Nov 2026. **84 days out** as of 16 Aug.
+**Race:** Monterey Bay Half, 8 Nov 2026. **83 days out** as of 17 Aug.
 
 | | |
 |---|---|
-| Estimate (raced today) | **2:28** |
-| Projection (race day, on plan) | **2:16** |
+| Estimate (raced today) | **2:25** |
+| Projection (race day, on plan) | **2:15** |
 | Confidence | medium |
-| Odds | A 6% · A- 13% · **B 25%** · C 86% |
-| Data | 67 runs, 56 with heart rate, 7 with splits |
+| Odds | A 8% · A- 16% · **B 30%** · C 88% |
+| Data | 68 runs, 57 with heart rate, 8 with splits |
 
 **Weeks so far:** W1 7.4/11 (Chicago travel, met the 2-run constraint) ·
 W2 0/12 (**flu — excused from adherence**) · W3 **14.69/15, 98%** — first
-complete week since the illness.
+complete week since the illness · W4 5.1/18 after one day.
 
 **Currently on:** W4, 18 mi, long 7 on Friday. Plan runs
 `11/12/15/18/20/23.5/10/0/15.5/20/22.5/20.7/25.5/17.5/9.5` with longs
@@ -34,15 +34,24 @@ Italy run happens) and 10K on **18 Oct**. Riegel swings the implied half
 2:13 / 2:20 / 2:27 depending on whether he races, tempos, or jogs them — two of
 those readings are worse than no data. **They only help if actually raced.**
 
-**Recent trajectory:** heart-rate drift on flat easy running went +5.4% (13 Aug,
-six days post-flu) → **+2.0%** (14 Aug long run, −2.4% grade-adjusted
-decoupling). The illness has cleared aerobically.
+**Recent trajectory:** the same downhill-out 4.5-route was run three times in
+seven days, which controls for terrain almost perfectly:
+
+| | pace | avg HR | EF | note |
+|---|---|---|---|---|
+| 11 Aug, 4.84 mi | 13:51 | 150 | 0.0289 | flagged `illness` |
+| 14 Aug, 6.16 mi | 12:41 | 154 | 0.0307 | long run |
+| **17 Aug, 5.10 mi** | **12:27** | **147** | **0.0328** | easy · progression |
+
+Faster *and* seven beats cheaper than three days earlier. 0.0328 is his best
+efficiency factor on anything ≥5 mi since 22 May and back inside his
+2026 healthy band — the flu dip has fully cleared.
 
 ---
 
 ## 1. Athlete profile — measured, not assumed
 
-Everything here comes from watch data in `data/history.json` (67 runs, 56 with heart rate, Feb 2025 – Aug 2026).
+Everything here comes from watch data in `data/history.json` (68 runs, 57 with heart rate, Feb 2025 – Aug 2026).
 
 | | |
 |---|---|
@@ -71,11 +80,12 @@ Everything here comes from watch data in `data/history.json` (67 runs, 56 with h
 ```
 2025-05  0.0339      2026-03  0.0336      2026-06  0.0303   ← stress dip
 2025-06  0.0339      2026-04  0.0339      2026-07  0.0315   ← recovering
-                     2026-05  0.0333      2026-08  0.0307–0.0313
+                     2026-05  0.0333      2026-08  0.0307–0.0328
 ```
 
-August readings sit near the recent median. The 11 Aug run is flagged `illness`
-and excluded. **EF falls with run duration** (~7%/hr on his own runs), so a
+August readings sit near the recent median, and the 17 Aug run (0.0328) is the
+top of the band. The 11 Aug run is flagged `illness` and excluded.
+**EF falls with run duration** (~7%/hr on his own runs), so a
 78-minute long run reading 0.0307 is not worse than a 45-minute run reading
 0.0315 — see *Considered and rejected* before treating that as decline.
 
@@ -139,9 +149,9 @@ Worth the feature: one sick run on 11 Aug swung the trend from −1.3% (R²=0.01
 
 ### Validation
 
-- **Out-of-sample against his real 2:15:51**, using only data that existed the day before: predicted **2:20:24, error +4.5 min (3.3%)**.
-- **Pace-model backtest**, 30 held-out runs: MAE **37 s/mi** against a 64 s/mi naive-mean baseline → **skill +42%**.
-- Ridge + feature gating vs the original 7-feature OLS is roughly **tied** at n≈50. It's a small-sample safeguard, not an accuracy win. Don't claim otherwise.
+- **Out-of-sample against his real 2:15:51**, using only data that existed the day before: predicted **2:20:24, error +4.5 min (3.3%)**. Unchanged — it validates against June 2025 and later runs cannot move it.
+- **Pace-model backtest**, re-run 17 Aug over 33 held-out runs: MAE **45 s/mi** against a 68.5 s/mi naive-mean baseline → **skill +34%**. Earlier versions of this file quoted 37 s/mi and +42% over 30 runs; that was true of a smaller pool and is no longer what the script prints. See Corrections 14.
+- Ridge + feature gating vs the original 7-feature OLS is roughly **tied** at n≈50 — currently 45.0 s/mi vs 41.3 for the old OLS, skill 0.342 vs 0.397. It's a small-sample safeguard, not an accuracy win. Don't claim otherwise.
 
 ---
 
@@ -225,6 +235,8 @@ Kept explicitly, because they were stated confidently and repeated.
 11. **The projection was too conservative, and it wasn't the estimate's fault.** At 89 days out it read 2:19 — worse than a PR set 14 months earlier off a smaller block, on a hillier course. Cause was three compounding things: adherence crushed by two disrupted weeks, volume bonuses read off *today's* 6 mi/wk instead of race-week load, and a 20 s/wk credit rate. Fixed together; projection moved 2:19:17 → 2:13:33.
 12. **Logged a run on the wrong day** from a stale date in context. Run `date` before writing anything date-stamped — the reminder in context can lag the real clock by a day.
 13. **Built a test that couldn't fail.** Checking whether duration normalisation removed a phantom EF trend, the first version generated synthetic runs *without* drift — so correcting for it could only add error. Confirm the confound is actually present in the fixture before measuring the fix.
+14. **"MAE 37 s/mi, skill +42%" went stale and kept being quoted.** Re-running `backtest.mts` on 17 Aug gives **45.0 s/mi, skill 0.342** over 33 held-out runs — the figure in README and in this file was measured on a 30-run pool and was never refreshed as runs were added. Validation numbers decay; re-run the script before quoting one.
+15. **The pace model has a one-sided bias on recent runs.** Its last five held-out predictions all came in *fast*: −53, −136, −76, −74, −56 s/mi (7/29 through 8/17). A model that misses in the same direction five times running is not simply noisy. Today's −56 is the second-smallest of the five, so the run reads as a step forward relative to recent form — but don't take the model's "expect ~11:32/mi" hint at face value while the bias is unexamined.
 
 ---
 

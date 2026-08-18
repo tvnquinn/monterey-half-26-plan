@@ -51,8 +51,8 @@ projection  = race day, if you follow the plan   ← the goal odds come from thi
 ```
 
 Validated out-of-sample against his real 2:15:51 half: **+4.5 min (3.3%)**.
-Pace-model backtest over 30 held-out runs: **MAE 37 s/mi vs a 64 s/mi naive
-baseline (skill +42%)**.
+Pace-model backtest over 33 held-out runs: **MAE 45 s/mi vs a 68.5 s/mi naive
+baseline (skill +34%)**, re-measured 17 Aug 2026.
 
 ## Stack
 
