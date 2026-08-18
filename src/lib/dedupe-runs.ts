@@ -1,5 +1,3 @@
-import { differenceInCalendarDays, parseISO } from "date-fns";
-import { dateKey } from "./matching";
 import type { RunActivity } from "./types";
 
 /**
@@ -26,7 +24,30 @@ function preference(run: RunActivity): number {
   return score;
 }
 
-/** Drop near-duplicates (±1 day, similar distance) that inflate weekly mileage. */
+/**
+ * How far apart two records of the *same* run can be. Health Auto Export,
+ * Strava and a GPX file disagree by minutes at most; allowing three hours also
+ * covers a source that stamps the finish rather than the start.
+ *
+ * This used to be "within one calendar day", which is a different question. It
+ * was written to catch a run stored under the wrong day by the old
+ * `toISOString().slice(0, 10)` bug, but it also matched any two genuinely
+ * different runs on consecutive days at a similar distance — and the plan
+ * schedules exactly that, easy 4.5 on Tuesday and easy 4.5 on Wednesday, on
+ * the same route by design. Six weeks of the block pair identical back-to-back
+ * easy days; 27.5 of 240.7 planned miles were being deleted on arrival, with
+ * nothing shown to say so. Logged mileage feeds adherence and adherence sets
+ * the improvement credit, so it was quietly worth about a minute of projected
+ * race time.
+ *
+ * Comparing timestamps rather than day labels separates the two cases cleanly:
+ * re-imports of one run share a start time, consecutive-day runs sit ~24 h
+ * apart. Note this no longer masks a genuinely mis-dated row — a hand-entered
+ * copy a full day off is now kept, and has to be deleted from storage instead.
+ */
+const SAME_RUN_HOURS = 3;
+
+/** Drop re-imports of a run (same start time, similar distance) that inflate weekly mileage. */
 export function dedupeRuns(runs: RunActivity[]): RunActivity[] {
   const sorted = [...runs].sort(
     (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime(),
@@ -35,11 +56,12 @@ export function dedupeRuns(runs: RunActivity[]): RunActivity[] {
 
   for (const run of sorted) {
     const dupIdx = kept.findIndex((other) => {
-      const dayDiff = Math.abs(
-        differenceInCalendarDays(parseISO(dateKey(run.startDate)), parseISO(dateKey(other.startDate))),
-      );
-      if (dayDiff > 1) return false;
-      return Math.abs(run.distanceMi - other.distanceMi) <= 0.3;
+      if (Math.abs(run.distanceMi - other.distanceMi) > 0.3) return false;
+      const hoursApart =
+        Math.abs(
+          new Date(run.startDate).getTime() - new Date(other.startDate).getTime(),
+        ) / 3_600_000;
+      return hoursApart <= SAME_RUN_HOURS;
     });
 
     if (dupIdx === -1) {

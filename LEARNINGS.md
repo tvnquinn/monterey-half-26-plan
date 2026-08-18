@@ -270,6 +270,7 @@ Every one of these shipped and was caught later. Check for the same class of err
 
 **Data integrity**
 - `dedupeRuns` scored a `gpx-` id at +30 and heart rate at +5 — HR-less copies beat richer ones.
+- **`dedupeRuns` matched on calendar day, so it deleted real back-to-back runs.** Anything within ±1 day at a similar distance was treated as one run re-imported. The plan pairs identical easy days on the 4.5 route by design — Tue 4.5 + Wed 4.5 in weeks 4, 5, 6, 11 and 13, and 5.0 + 5.0 in week 7 — so **27.5 of 240.7 planned miles were set to vanish on arrival**, silently, and mileage feeds adherence which sets the improvement credit. It had already eaten two real runs (17 Jun 2025, 0.88 mi; 20 Apr 2026, 1.58 mi), both short enough not to move the estimate. It also collapsed genuine same-day doubles. Fixed by comparing start *timestamps* — re-imports share a start time, consecutive-day runs are ~24 h apart — with `scripts/dedupe-check.mts` holding both directions. **The ±1 day window was masking a mis-dated Supabase row** (`hae-2026-08-12-3.69`, the stale copy of the 13 Aug run left behind by commit `3892ed1`); the fix unmasks anything like it, so a bad row now has to be deleted rather than hidden.
 - `/api/openclaw/ingest` validated away `splits`, `temperature`, `condition` despite the columns existing.
 - Duplicate `raw` key in `runToRow` silently dropped the condition flag.
 - Imputed monthly-average paces were scored in the backtest — measuring the imputation, not the model.
