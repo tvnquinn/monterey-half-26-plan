@@ -44,7 +44,7 @@ seven days, which controls for terrain almost perfectly:
 | **17 Aug, 5.10 mi** | **12:27** | **147** | **0.0328** | easy · progression |
 
 Faster *and* seven beats cheaper than three days earlier. 0.0328 is his best
-efficiency factor on anything ≥5 mi since 22 May and back inside his
+efficiency factor on anything ≥5 mi since 25 May and back inside his
 2026 healthy band — the flu dip has fully cleared.
 
 ---
