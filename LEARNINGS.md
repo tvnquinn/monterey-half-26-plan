@@ -52,12 +52,12 @@ vs 78 min, at −6%/hr). Strip both and the same-route improvement is
 **about +2.5% in three days** — smaller than the headline, still real, and
 enough to say the flu dip has cleared.
 
-He ran this one in the evening rather than the afternoon and expected the
-cooler air to flatter it. It doesn't: see *Time of day and temperature* in
-Considered and rejected. He also reported **singing through the first four
-miles** — an independent talk-test confirmation of the 141–147 bpm readings,
-and the first time this block that perceived effort has been checked against
-the watch.
+He ran this one in the evening rather than the afternoon, which was cooler.
+The model has no temperature term and shouldn't grow one — see the heat credit
+below — so treat that as noise on the reading rather than as a correction to
+make. He also reported **singing through the first four miles**, an
+independent talk-test confirmation of the 141–147 bpm readings, and the first
+time this block that perceived effort has been checked against the watch.
 
 ---
 
@@ -98,7 +98,9 @@ Everything here comes from watch data in `data/history.json` (68 runs, 57 with h
 
 August readings sit near the recent median, and the 17 Aug run (0.0328) is the
 top of the band. The 11 Aug run is flagged `illness` and excluded.
-**EF falls with run duration** (~7%/hr on his own runs), so a
+**EF falls with run duration** (~7%/hr on his own runs; re-fitted 17 Aug across
+40 runs at −6.05%/hr, which is a useful independent check on a constant the
+model leans on and was originally fitted on 17), so a
 78-minute long run reading 0.0307 is not worse than a 45-minute run reading
 0.0315 — see *Considered and rejected* before treating that as decline.
 
@@ -144,7 +146,7 @@ projection = blend(estimate, priorHalf, by confidence)
 | EF slope shrinkage | `slope² / (slope² + SE²)` | Ten efficiency readings scattered 0.0305–0.0344 (R²=0.05) still moved the estimate 2.4 min — one ordinary run could swing the projection more than a week of training. Shrinking by signal share fixes it. Chosen over an R² threshold because R² conflates scatter with sample size: a real +0.5%/wk trend under 8% noise has R²=0.08 but 77% signal at n=40, while his R²=0.05 at n=10 is 30%. |
 | EF slope clamp | ±1.5%/wk | Nobody sustains more aerobic gain than that |
 | Elevation cost | **0.20 s/mi per ft/mi** | Two independent methods agree: within-run regression over 22 mile-splits with HR controlled gives 0.489 s/ft of *net* change → ~2.2 min over 13.1 at his terrain; 0.20 on *cumulative* gain gives ~1.8 min. A whole-run regression says 0.64 but absorbs route choice — he picks hills on easy days. Deliberately conservative. |
-| Heat credit | **none** | He trains in SF at a 62 °F median with one run ever above 70. His prior-half anchor was run at 56 °F. There is no heat penalty to refund. An earlier month-based rule handed out ~4 free minutes for "summer training." |
+| Heat credit | **none** | He trains in SF at a 62 °F median with one run ever above 70. His prior-half anchor was run at 56 °F. There is no heat penalty to refund. An earlier month-based rule handed out ~4 free minutes for "summer training." Checked again 17 Aug against efficiency factor directly: **−0.06%/°F, R²=0.002** over 25 runs spanning 52–77 °F. His range is too narrow for weather to register, in either direction. |
 | Riegel floor | **40% of race distance** (5.24 mi) | The exponent is dependable within ~3×. A 3-mile rep session extrapolated 4.4× to a half and got blended at 35% weight. |
 | Endurance effort | ≥10 mi **and** Z3+ HR | Distance alone let an *easy* 10-miler at HR 146 project a 2:42 half. |
 | Long-run decay | full to 35 d, half at 120 d, gone at 240 d | A hard 56-day cutoff discarded a 10-miler at 69 days and reported his longest as 5.76 mi. |
@@ -327,28 +329,6 @@ npx tsx scripts/elev-analysis.mts         # grade cost fitted from his splits
 
 Ideas that looked right, were built and measured, and did not survive. Don't
 re-litigate without new evidence.
-
-**Time of day and temperature** — measured on 17 Aug because he ran in the
-evening and guessed the cooler air had helped. It hadn't.
-
-```
-temperature, direct           -0.06%/degF   R2=0.002   n=25, range 52-77F
-hour of day, raw              -0.26%/hour   R2=0.017   n=40
-hour of day, duration-held    -0.38%/hour   R2=0.019   n=40   (2026 only: -0.69%)
-```
-
-Both coefficients are noise, and the hour-of-day sign is *negative* — later
-runs are marginally worse, not better — so a cool evening cannot be used to
-explain away a good reading. This is the same answer the heat credit already
-gives for the opposite case: San Francisco's range is too narrow for weather
-to matter to him.
-
-The trap worth naming: a raw split by time bucket looks like it shows
-something (morning 0.0349 vs afternoon 0.0332), but his morning runs are his
-*short* runs, and EF falls with duration. Holding duration fixed collapses it.
-The same multiple regression recovers duration at **−6.05%/hr** across 40
-runs, close to the ~7%/hr quoted above from n=17 — a useful independent check
-on a number the model leans on.
 
 **Normalising for run duration** — rejected, unlike the heart-rate correction
 above, which was measured the same way and kept. EF genuinely falls as a run
