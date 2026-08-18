@@ -39,13 +39,25 @@ seven days, which controls for terrain almost perfectly:
 
 | | pace | avg HR | EF | note |
 |---|---|---|---|---|
-| 11 Aug, 4.84 mi | 13:51 | 150 | 0.0289 | flagged `illness` |
-| 14 Aug, 6.16 mi | 12:41 | 154 | 0.0307 | long run |
-| **17 Aug, 5.10 mi** | **12:27** | **147** | **0.0328** | easy · progression |
+| 11 Aug, 4.84 mi | 13:51 | 150 | 0.0289 | flagged `illness`, 19:00 |
+| 14 Aug, 6.16 mi | 12:41 | 154 | 0.0307 | long run, 16:00 |
+| **17 Aug, 5.10 mi** | **12:27** | **147** | **0.0328** | easy · progression, 19:00 |
 
 Faster *and* seven beats cheaper than three days earlier. 0.0328 is his best
-efficiency factor on anything ≥5 mi since 25 May and back inside his
-2026 healthy band — the flu dip has fully cleared.
+efficiency factor on anything ≥5 mi since 25 May.
+
+**Size the gain honestly.** Raw EF reads +6.8% over 14 Aug, but two of his
+known confounds sit in that gap: heart rate (−0.36%/bpm) and duration (63 min
+vs 78 min, at −6%/hr). Strip both and the same-route improvement is
+**about +2.5% in three days** — smaller than the headline, still real, and
+enough to say the flu dip has cleared.
+
+He ran this one in the evening rather than the afternoon and expected the
+cooler air to flatter it. It doesn't: see *Time of day and temperature* in
+Considered and rejected. He also reported **singing through the first four
+miles** — an independent talk-test confirmation of the 141–147 bpm readings,
+and the first time this block that perceived effort has been checked against
+the watch.
 
 ---
 
@@ -73,7 +85,8 @@ Everything here comes from watch data in `data/history.json` (68 runs, 57 with h
 - **He never returns from a break at under 4 miles.** After 244 days off: 4.21 mi. After 21 days off: **10.06 mi**. After 13 days off while ill: 4.84 mi. Rebuild weeks that start below ~4.5 mi waste a week.
 - **Durability is his strength; consistency is his limiter.** The May 2026 10-miler was 2h16m at HR 139–153 with **−1.4% decoupling** (excluding one climb mile). He can hold Z2 for half-marathon *duration* — he just can't yet hold it *fast*.
 - **Intensity discipline is already fixed.** 2025: 12 of 13 runs ≥2 mi were Z3/Z4. 2026: 9 of 13 are Z2. Don't re-teach this lesson.
-- **He likes a specific 4.5 mi route** with a start and a destination. Standardising easy days on it is training-neutral and adherence-positive — do it.
+- **He likes a specific 4.5 mi route** with a start and a destination. Standardising easy days on it is training-neutral and adherence-positive — do it. It runs 190 ft downhill over the first two miles and gives most of it back later, so *within* a run on this route the early miles flatter pace and the late miles punish it. Three repeats in seven days (11/14/17 Aug) made it the cleanest terrain-controlled comparison in the whole dataset — worth preserving.
+- **Talk test agrees with the watch.** He sang through the first four miles of the 17 Aug run, which the watch had at 141–147 bpm. His Z2 band (139–152) is not merely a number derived from his own range; it matches perceived effort.
 
 ### Efficiency factor history (speed per heartbeat, the core fitness signal)
 
@@ -314,6 +327,28 @@ npx tsx scripts/elev-analysis.mts         # grade cost fitted from his splits
 
 Ideas that looked right, were built and measured, and did not survive. Don't
 re-litigate without new evidence.
+
+**Time of day and temperature** — measured on 17 Aug because he ran in the
+evening and guessed the cooler air had helped. It hadn't.
+
+```
+temperature, direct           -0.06%/degF   R2=0.002   n=25, range 52-77F
+hour of day, raw              -0.26%/hour   R2=0.017   n=40
+hour of day, duration-held    -0.38%/hour   R2=0.019   n=40   (2026 only: -0.69%)
+```
+
+Both coefficients are noise, and the hour-of-day sign is *negative* — later
+runs are marginally worse, not better — so a cool evening cannot be used to
+explain away a good reading. This is the same answer the heat credit already
+gives for the opposite case: San Francisco's range is too narrow for weather
+to matter to him.
+
+The trap worth naming: a raw split by time bucket looks like it shows
+something (morning 0.0349 vs afternoon 0.0332), but his morning runs are his
+*short* runs, and EF falls with duration. Holding duration fixed collapses it.
+The same multiple regression recovers duration at **−6.05%/hr** across 40
+runs, close to the ~7%/hr quoted above from n=17 — a useful independent check
+on a number the model leans on.
 
 **Normalising for run duration** — rejected, unlike the heart-rate correction
 above, which was measured the same way and kept. EF genuinely falls as a run
