@@ -14,10 +14,10 @@ Last substantive update: **18 Aug 2026**.
 
 | | |
 |---|---|
-| Estimate (raced today) | **2:25** |
+| Estimate (raced today) | **2:26** |
 | Projection (race day, on plan) | **2:15** |
 | Confidence | medium |
-| Odds | A 8% · A- 16% · **B 30%** · C 88% |
+| Odds | A 7% · A- 15% · **B 28%** · C 88% |
 | Data | 69 runs, 58 with heart rate, 9 with splits |
 
 **Weeks so far:** W1 7.4/11 (Chicago travel, met the 2-run constraint) ·
@@ -313,6 +313,28 @@ run sitting uncommitted.
 
 **Deploy:** push to `main` → Vercel auto-deploys. No CLI token needed.
 **Live:** https://half-marathon-plan-kappa.vercel.app
+
+**Deleting a run.** An upsert cannot correct a run's date, because the date is
+part of the id — you get both rows. Until 18 Aug there was no delete at all,
+which is why `hae-2026-08-12-3.69` sat in Supabase from 13 Aug and only became
+visible once `dedupeRuns` stopped matching on calendar day. Now:
+
+```bash
+curl -X DELETE https://half-marathon-plan-kappa.vercel.app/api/runs/<run-id> \
+  -H "x-admin-token: $ADMIN_TOKEN"
+```
+
+`ADMIN_TOKEN` is a Vercel production variable, set sensitive, so it cannot be
+read back — rotate it with `vercel env rm ADMIN_TOKEN production` then
+`vercel env add`. The route fails closed when the variable is unset. It is the
+only authenticated endpoint in the app: `/api/openclaw/ingest` is an open POST,
+and that asymmetry is deliberate, because a bad append is visible and
+reversible and a bad delete is neither.
+
+**Vercel project names differ from the repo name.** The repo is
+`monterey-half-26-plan`; the deployed project is **`half-marathon-plan`**.
+`vercel link --project monterey-half-26-plan` does not fail — it creates a new
+empty project. Check `vercel project ls` first.
 
 **Sync run data to production:**
 ```bash
