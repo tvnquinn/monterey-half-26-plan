@@ -4,13 +4,13 @@ Everything worth carrying forward from building and iterating this coach. Writte
 
 **Read the "Corrections" section before trusting anything you remember.** Several confident claims in earlier versions of this file were disproved by real data.
 
-Last substantive update: **17 Aug 2026**.
+Last substantive update: **18 Aug 2026**.
 
 ---
 
 ## 0. Where things stand — read this first
 
-**Race:** Monterey Bay Half, 8 Nov 2026. **83 days out** as of 17 Aug.
+**Race:** Monterey Bay Half, 8 Nov 2026. **82 days out** as of 18 Aug.
 
 | | |
 |---|---|
@@ -18,11 +18,11 @@ Last substantive update: **17 Aug 2026**.
 | Projection (race day, on plan) | **2:15** |
 | Confidence | medium |
 | Odds | A 8% · A- 16% · **B 30%** · C 88% |
-| Data | 68 runs, 57 with heart rate, 8 with splits |
+| Data | 69 runs, 58 with heart rate, 9 with splits |
 
 **Weeks so far:** W1 7.4/11 (Chicago travel, met the 2-run constraint) ·
 W2 0/12 (**flu — excused from adherence**) · W3 **14.69/15, 98%** — first
-complete week since the illness · W4 5.1/18 after one day.
+complete week since the illness · W4 9.8/18 after two days.
 
 **Currently on:** W4, 18 mi, long 7 on Friday. Plan runs
 `11/12/15/18/20/23.5/10/0/15.5/20/22.5/20.7/25.5/17.5/9.5` with longs
@@ -42,6 +42,12 @@ seven days, which controls for terrain almost perfectly:
 | 11 Aug, 4.84 mi | 13:51 | 150 | 0.0289 | flagged `illness`, 19:00 |
 | 14 Aug, 6.16 mi | 12:41 | 154 | 0.0307 | long run, 16:00 |
 | **17 Aug, 5.10 mi** | **12:27** | **147** | **0.0328** | easy · progression, 19:00 |
+| 18 Aug, 4.72 mi | 12:45 | 145 | 0.0325 | day after the above, 18:50 |
+
+Four passes in eight days now. The 18 Aug run is 18 s/mi slower on five fewer
+beats the day after a harder effort, which is what holding fitness looks like
+rather than losing it — normalised for heart rate the two sit at 0.0330 and
+0.0325.
 
 Faster *and* seven beats cheaper than three days earlier. 0.0328 is his best
 efficiency factor on anything ≥5 mi since 25 May.
@@ -63,7 +69,7 @@ time this block that perceived effort has been checked against the watch.
 
 ## 1. Athlete profile — measured, not assumed
 
-Everything here comes from watch data in `data/history.json` (68 runs, 57 with heart rate, Feb 2025 – Aug 2026).
+Everything here comes from watch data in `data/history.json` (69 runs, 58 with heart rate, Feb 2025 – Aug 2026).
 
 | | |
 |---|---|

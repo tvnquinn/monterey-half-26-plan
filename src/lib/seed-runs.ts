@@ -1,7 +1,7 @@
 import type { RunActivity } from "./types";
 
 /**
- * Real training history: 68 runs, Feb 2025 - Aug 2026, with measured heart
+ * Real training history: 69 runs, Feb 2025 - Aug 2026, with measured heart
  * rate on all but a handful. Sources are Health Auto Export, Apple
  * workout-detail screens, and Strava. Five runs carry `raw.paceImputed`
  * (distance exact, pace from a month average, no HR) and are excluded from
@@ -954,5 +954,19 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 147,
     maxHeartrate: 169,
     splits: [{"mile":1,"movingTimeSec":763,"paceSecPerMi":763,"elevationGain":-56,"averageHeartrate":145},{"mile":2,"movingTimeSec":752,"paceSecPerMi":752,"elevationGain":-136,"averageHeartrate":141},{"mile":3,"movingTimeSec":756,"paceSecPerMi":756,"elevationGain":3,"averageHeartrate":146},{"mile":4,"movingTimeSec":735,"paceSecPerMi":735,"elevationGain":-6,"averageHeartrate":147},{"mile":5,"movingTimeSec":732,"paceSecPerMi":732,"elevationGain":35,"averageHeartrate":152},{"mile":5.1,"movingTimeSec":72,"paceSecPerMi":720,"elevationGain":0,"averageHeartrate":160}],
+  },
+  {
+    id: "hae-2026-08-18-4.72",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-08-18T18:50:00-07:00",
+    distanceMi: 4.72,
+    movingTimeSec: 3608,
+    elapsedTimeSec: 3608,
+    paceSecPerMi: 765,
+    elevationFt: 0,
+    averageHeartrate: 145,
+    maxHeartrate: 159,
+    splits: [{"mile":1,"movingTimeSec":766,"paceSecPerMi":766,"elevationGain":-53,"averageHeartrate":142},{"mile":2,"movingTimeSec":770,"paceSecPerMi":770,"elevationGain":-140,"averageHeartrate":139},{"mile":3,"movingTimeSec":774,"paceSecPerMi":774,"elevationGain":0,"averageHeartrate":147},{"mile":4,"movingTimeSec":766,"paceSecPerMi":766,"elevationGain":0,"averageHeartrate":146},{"mile":4.72,"movingTimeSec":532,"paceSecPerMi":745,"elevationGain":-2,"averageHeartrate":153}],
   },
 ];
