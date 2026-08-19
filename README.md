@@ -78,6 +78,16 @@ npx tsx scripts/explain-projection.mts    # estimate -> projection, step by step
 npx tsx scripts/elev-analysis.mts         # grade cost fitted from his splits
 ```
 
+## Removing a bad run
+
+Correcting a run's date means writing the new row and deleting the old one —
+the date is inside the id, so an upsert leaves both behind.
+
+```bash
+curl -X DELETE https://half-marathon-plan-kappa.vercel.app/api/runs/<run-id> \
+  -H "x-admin-token: $ADMIN_TOKEN"
+```
+
 ## Syncing run data to production
 
 ```bash
@@ -97,5 +107,6 @@ Needed env (typical):
 | `SUPABASE_SERVICE_ROLE_KEY` | server writes |
 | `NEXT_PUBLIC_APP_URL` | public site URL |
 | `GEMINI_API_KEY` or `OPENAI_API_KEY` | optional screenshot parse |
+| `ADMIN_TOKEN` | required to delete a run; delete is refused if unset |
 
 Schema: `supabase/schema.sql`

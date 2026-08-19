@@ -126,6 +126,36 @@ async function upsertRunsSupabase(incoming: RunActivity[]): Promise<RunActivity[
   return loadRunsSupabase();
 }
 
+async function deleteRunSupabase(id: string): Promise<boolean> {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("runs")
+    .delete()
+    .eq("id", id)
+    .select("id");
+  if (error) throw new Error(`Supabase deleteRun failed: ${error.message}`);
+  return (data ?? []).length > 0;
+}
+
+/**
+ * Remove one run by id.
+ *
+ * There was no way to do this at all, which is how a mis-dated copy of the
+ * 13 Aug run (`hae-2026-08-12-3.69`, corrected in the repo by 3892ed1) sat in
+ * Supabase for days. `dedupeRuns` happened to hide it while it matched on
+ * calendar day, so the damage only surfaced once that was fixed to compare
+ * start times. Correcting a row's date means writing the new one and deleting
+ * the old — an upsert cannot do it, because the date is inside the primary key.
+ */
+export async function deleteRun(id: string): Promise<boolean> {
+  if (supabaseConfigured()) return deleteRunSupabase(id);
+  const existing = await loadRunsLocal();
+  const remaining = existing.filter((r) => r.id !== id);
+  if (remaining.length === existing.length) return false;
+  await saveRunsLocal(remaining);
+  return true;
+}
+
 export async function loadRuns(): Promise<RunActivity[]> {
   if (supabaseConfigured()) return loadRunsSupabase();
   return loadRunsLocal();
