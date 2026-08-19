@@ -69,7 +69,7 @@ time this block that perceived effort has been checked against the watch.
 
 ## 1. Athlete profile — measured, not assumed
 
-Everything here comes from watch data in `data/history.json` (69 runs, 58 with heart rate, Feb 2025 – Aug 2026).
+Everything here comes from watch data in `data/history.json` (69 runs, 58 with heart rate, **May 2025 – Aug 2026**). Earlier versions of this line said Feb 2025; the earliest run on record is 4 May 2025, and the February is 2026.
 
 | | |
 |---|---|
@@ -86,7 +86,7 @@ Everything here comes from watch data in `data/history.json` (69 runs, 58 with h
 
 ### Hard-won facts about how he responds
 
-- **Built from zero to 13.1 in ~7 weeks (2025) on 90 lifetime miles.** Weekly volume peaked at 19.8.
+- **Built from zero to 13.1 in 5 weeks, and to the 2:15:51 in 7.** First run on record is 4 May 2025 at 3.36 mi; the 2:22:18 half came 35 days later, the PR 14 days after that. Weekly volume peaked at 19.8 in the week of 2 Jun. Be careful which total you quote — **47.8 mi** preceded the first half, **77.0 mi** preceded the PR, and **90.2 mi** is the lifetime figure only if you count both races themselves. The "90 lifetime miles" shorthand used elsewhere is that third number.
 - **The 2:22 → 2:15:51 jump in 14 days decomposes as ~2.4 min from racing harder (HR 171→174) and ~4.0 min from real fitness (EF +3.0%).** Don't quote the 6.5 min as pure fitness.
 - **He never returns from a break at under 4 miles.** After 244 days off: 4.21 mi. After 21 days off: **10.06 mi**. After 13 days off while ill: 4.84 mi. Rebuild weeks that start below ~4.5 mi waste a week.
 - **Durability is his strength; consistency is his limiter.** The May 2026 10-miler was 2h16m at HR 139–153 with **−1.4% decoupling** (excluding one climb mile). He can hold Z2 for half-marathon *duration* — he just can't yet hold it *fast*.
@@ -258,6 +258,8 @@ Kept explicitly, because they were stated confidently and repeated.
 13. **Built a test that couldn't fail.** Checking whether duration normalisation removed a phantom EF trend, the first version generated synthetic runs *without* drift — so correcting for it could only add error. Confirm the confound is actually present in the fixture before measuring the fix.
 14. **"MAE 37 s/mi, skill +42%" went stale and kept being quoted.** Re-running `backtest.mts` on 17 Aug gives **45.0 s/mi, skill 0.342** over 33 held-out runs — the figure in README and in this file was measured on a 30-run pool and was never refreshed as runs were added. Validation numbers decay; re-run the script before quoting one.
 15. **The pace model has a one-sided bias on recent runs.** Its last five held-out predictions all came in *fast*: −53, −136, −76, −74, −56 s/mi (7/29 through 8/17). A model that misses in the same direction five times running is not simply noisy. Today's −56 is the second-smallest of the five, so the run reads as a step forward relative to recent form — but don't take the model's "expect ~11:32/mi" hint at face value while the bias is unexamined.
+16. **"Feb 2025 – Aug 2026" was never the range of the data.** The earliest run in `history.json` is **4 May 2025**; the only February on record is 2026. The wrong range sat in both LEARNINGS and the `seed-runs.ts` docstring and made the 2025 build look three months longer than the five weeks it actually was.
+17. **"Zero to 13.1 in ~7 weeks on 90 lifetime miles" compressed three different numbers into one.** He reached 13.1 in **5** weeks (4 May → 8 Jun) and the 2:15:51 in **7**. Prior mileage was **47.8 mi** before the first half and **77.0 mi** before the PR; 90.2 only counts if you include both races. Quoting 90 as "what he trained on" overstates the build by 17%.
 
 ---
 

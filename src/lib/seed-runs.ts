@@ -1,7 +1,7 @@
 import type { RunActivity } from "./types";
 
 /**
- * Real training history: 69 runs, Feb 2025 - Aug 2026, with measured heart
+ * Real training history: 69 runs, May 2025 - Aug 2026, with measured heart
  * rate on all but a handful. Sources are Health Auto Export, Apple
  * workout-detail screens, and Strava. Five runs carry `raw.paceImputed`
  * (distance exact, pace from a month average, no HR) and are excluded from
