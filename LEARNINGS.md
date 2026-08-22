@@ -4,25 +4,25 @@ Everything worth carrying forward from building and iterating this coach. Writte
 
 **Read the "Corrections" section before trusting anything you remember.** Several confident claims in earlier versions of this file were disproved by real data.
 
-Last substantive update: **18 Aug 2026**.
+Last substantive update: **21 Aug 2026**.
 
 ---
 
 ## 0. Where things stand — read this first
 
-**Race:** Monterey Bay Half, 8 Nov 2026. **82 days out** as of 18 Aug.
+**Race:** Monterey Bay Half, 8 Nov 2026. **79 days out** as of 21 Aug.
 
 | | |
 |---|---|
-| Estimate (raced today) | **2:26** |
-| Projection (race day, on plan) | **2:15** |
+| Estimate (raced today) | **2:22** |
+| Projection (race day, on plan) | **2:14** |
 | Confidence | medium |
-| Odds | A 7% · A- 15% · **B 28%** · C 88% |
-| Data | 69 runs, 58 with heart rate, 9 with splits |
+| Odds | A 9% · A- 19% · **B 35%** · C 91% |
+| Data | 70 runs, 59 with heart rate, 10 with splits |
 
 **Weeks so far:** W1 7.4/11 (Chicago travel, met the 2-run constraint) ·
 W2 0/12 (**flu — excused from adherence**) · W3 **14.69/15, 98%** — first
-complete week since the illness · W4 9.8/18 after two days.
+complete week since the illness · W4 **17.39/18, 97%** — best week of the block.
 
 **Currently on:** W4, 18 mi, long 7 on Friday. Plan runs
 `11/12/15/18/20/23.5/10/0/15.5/20/22.5/20.7/25.5/17.5/9.5` with longs
@@ -34,6 +34,13 @@ Italy run happens) and 10K on **18 Oct**. Riegel swings the implied half
 2:13 / 2:20 / 2:27 depending on whether he races, tempos, or jogs them — two of
 those readings are worse than no data. **They only help if actually raced.**
 
+**The 21 Aug long run moved the estimate 3:48**, the largest single-run move
+of the block, and it was durability rather than speed that did it. The
+10.06 mi from 20 May had decayed to an effective 6.6 mi at 93 days old; a
+fresh 7.57 replaces it outright and crosses `durabilityFactor`'s edge at 7
+(1.045 → 1.02). Worth knowing before reading it as a fitness jump: roughly
+2.5% of it is a lookup table, not physiology, and the next edge is at 9 mi.
+
 **Recent trajectory:** the same downhill-out 4.5-route was run three times in
 seven days, which controls for terrain almost perfectly:
 
@@ -43,11 +50,18 @@ seven days, which controls for terrain almost perfectly:
 | 14 Aug, 6.16 mi | 12:41 | 154 | 0.0307 | long run, 16:00 |
 | **17 Aug, 5.10 mi** | **12:27** | **147** | **0.0328** | easy · progression, 19:00 |
 | 18 Aug, 4.72 mi | 12:45 | 145 | 0.0325 | day after the above, 18:50 |
+| **21 Aug, 7.57 mi** | **12:13** | **149** | **0.0330** | long run, 17:50 |
 
-Four passes in eight days now. The 18 Aug run is 18 s/mi slower on five fewer
-beats the day after a harder effort, which is what holding fitness looks like
-rather than losing it — normalised for heart rate the two sit at 0.0330 and
-0.0325.
+Five passes in eleven days. The 21 Aug long run is the strongest reading of
+the block by some distance: **0.0330 over 93 minutes**, where the 14 Aug long
+managed 0.0307 over 78. Correct for heart rate and for the duration drift the
+model already fits at −6.05%/hr, and the two sit at 0.0323 and **0.0345** —
+a 6.8% gain in a week, on the same route.
+
+Its split shape answers a worry he raised on 18 Aug, that training slow would
+leave him unable to race fast: 13:01 · 12:18 · 12:25 · 11:55 · 11:46 · 12:08 ·
+**11:43**, all at 141–154 bpm. He ran his three quickest miles in months on
+the back half of a long run without leaving Z2/low-Z3.
 
 Faster *and* seven beats cheaper than three days earlier. 0.0328 is his best
 efficiency factor on anything ≥5 mi since 25 May.
@@ -69,7 +83,7 @@ time this block that perceived effort has been checked against the watch.
 
 ## 1. Athlete profile — measured, not assumed
 
-Everything here comes from watch data in `data/history.json` (69 runs, 58 with heart rate, **May 2025 – Aug 2026**). Earlier versions of this line said Feb 2025; the earliest run on record is 4 May 2025, and the February is 2026.
+Everything here comes from watch data in `data/history.json` (70 runs, 59 with heart rate, **May 2025 – Aug 2026**). Earlier versions of this line said Feb 2025; the earliest run on record is 4 May 2025, and the February is 2026.
 
 | | |
 |---|---|

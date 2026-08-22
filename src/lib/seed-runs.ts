@@ -1,7 +1,7 @@
 import type { RunActivity } from "./types";
 
 /**
- * Real training history: 69 runs, May 2025 - Aug 2026, with measured heart
+ * Real training history: 70 runs, May 2025 - Aug 2026, with measured heart
  * rate on all but a handful. Sources are Health Auto Export, Apple
  * workout-detail screens, and Strava. Five runs carry `raw.paceImputed`
  * (distance exact, pace from a month average, no HR) and are excluded from
@@ -968,5 +968,19 @@ export const seedRuns: RunActivity[] = [
     averageHeartrate: 145,
     maxHeartrate: 159,
     splits: [{"mile":1,"movingTimeSec":766,"paceSecPerMi":766,"elevationGain":-53,"averageHeartrate":142},{"mile":2,"movingTimeSec":770,"paceSecPerMi":770,"elevationGain":-140,"averageHeartrate":139},{"mile":3,"movingTimeSec":774,"paceSecPerMi":774,"elevationGain":0,"averageHeartrate":147},{"mile":4,"movingTimeSec":766,"paceSecPerMi":766,"elevationGain":0,"averageHeartrate":146},{"mile":4.72,"movingTimeSec":532,"paceSecPerMi":745,"elevationGain":-2,"averageHeartrate":153}],
+  },
+  {
+    id: "hae-2026-08-21-7.57",
+    source: "manual",
+    name: "Outdoor Run",
+    startDate: "2026-08-21T17:50:00-07:00",
+    distanceMi: 7.57,
+    movingTimeSec: 5551,
+    elapsedTimeSec: 5551,
+    paceSecPerMi: 733,
+    elevationFt: 3,
+    averageHeartrate: 149,
+    maxHeartrate: 159,
+    splits: [{"mile":1,"movingTimeSec":781,"paceSecPerMi":781,"elevationGain":-49,"averageHeartrate":141},{"mile":2,"movingTimeSec":738,"paceSecPerMi":738,"elevationGain":-136,"averageHeartrate":141},{"mile":3,"movingTimeSec":745,"paceSecPerMi":745,"elevationGain":-3,"averageHeartrate":148},{"mile":4,"movingTimeSec":715,"paceSecPerMi":715,"elevationGain":-1,"averageHeartrate":151},{"mile":5,"movingTimeSec":706,"paceSecPerMi":706,"elevationGain":3,"averageHeartrate":154},{"mile":6,"movingTimeSec":728,"paceSecPerMi":728,"elevationGain":-2,"averageHeartrate":154},{"mile":7,"movingTimeSec":703,"paceSecPerMi":703,"elevationGain":-2,"averageHeartrate":154},{"mile":7.57,"movingTimeSec":435,"paceSecPerMi":763,"elevationGain":-3,"averageHeartrate":152}],
   },
 ];
